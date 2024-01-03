@@ -77,18 +77,21 @@
                     </LinearLayout>
 
                     <LinearLayout
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
                         android:layout_marginTop="-20dp"
                         android:background="@drawable/edit_text_bg"
                         android:gravity="center_vertical"
+                        android:orientation="horizontal"
                         android:paddingHorizontal="30dp">
 
 
                         <EditText
                             android:id="@+id/password"
-                            android:layout_width="match_parent"
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
+                            android:layout_weight="1"
                             android:background="@null"
                             android:drawableStart="@drawable/ic_login_pwd_icon"
                             android:drawablePadding="10dp"
@@ -101,6 +104,14 @@
                             android:padding="10dp"
                             android:password="true"
                             android:textSize="12sp" />
+
+                        <ImageView
+                            android:id="@+id/showpassword"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:layout_marginEnd="17dp"
+                            android:background="@drawable/ic_showhide_password" />
                     </LinearLayout>
 
                 </LinearLayout>

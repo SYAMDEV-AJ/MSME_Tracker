@@ -7,8 +7,10 @@
         <entry key="..\:/GITHUB/MSMETracker/app/src/main/res/drawable/ic_login_pwd_icon.xml" value="0.188" />
         <entry key="..\:/GITHUB/MSMETracker/app/src/main/res/drawable/ic_login_user_icon.xml" value="0.188" />
         <entry key="..\:/GITHUB/MSMETracker/app/src/main/res/drawable/ic_rectangle_topbar.xml" value="0.188" />
+        <entry key="..\:/GITHUB/MSMETracker/app/src/main/res/drawable/ic_show_password.xml" value="0.188" />
+        <entry key="..\:/GITHUB/MSMETracker/app/src/main/res/drawable/ic_showhide_password.xml" value="0.188" />
         <entry key="..\:/GITHUB/MSMETracker/app/src/main/res/layout/activity_dashboard.xml" value="0.22" />
-        <entry key="..\:/GITHUB/MSMETracker/app/src/main/res/layout/activity_login.xml" value="0.1796875" />
+        <entry key="..\:/GITHUB/MSMETracker/app/src/main/res/layout/activity_login.xml" value="0.3333333333333333" />
         <entry key="..\:/GITHUB/MSMETracker/app/src/main/res/layout/activity_main.xml" value="0.165625" />
         <entry key="..\:/GITHUB/MSMETracker/app/src/main/res/layout/activity_splash.xml" value="0.1796875" />
         <entry key="..\:/GITHUB/MSMETracker/app/src/main/res/layout/custom_loader.xml" value="0.1796875" />

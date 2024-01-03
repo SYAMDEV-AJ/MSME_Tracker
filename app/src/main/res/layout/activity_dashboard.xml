@@ -169,7 +169,7 @@
 
 
                     <EditText
-                        android:id="@+id/employeeid"
+                        android:id="@+id/remarks"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:background="@null"
@@ -177,13 +177,26 @@
                         android:drawableTint="#2A5B83"
                         android:fontFamily="@font/montserrat_regular"
                         android:hint="Enter remarks here..."
-                        android:inputType="number"
-                        android:maxLength="6"
-                        android:maxLines="1"
+                        android:inputType="text"
                         android:padding="10dp"
                         android:textColor="@color/black"
                         android:textSize="12sp" />
+
+
                 </LinearLayout>
+
+                <TextView
+                    android:id="@+id/remarktoast"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="24dp"
+                    android:layout_marginTop="-10dp"
+                    android:layout_marginBottom="22dp"
+                    android:fontFamily="@font/montserrat_regular"
+                    android:text="*Please enter the Activity remark"
+                    android:textColor="@color/marooncolor"
+                    android:textSize="14sp"
+                    android:visibility="gone" />
 
             </LinearLayout>
 
@@ -267,13 +280,25 @@
         </LinearLayout>
 
         <TextView
+            android:id="@+id/startbtndisable"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:layout_gravity="center"
+            android:visibility="gone"
+            android:layout_marginBottom="62dp"
+            android:background="@drawable/ic_round_btn" />
+
+        <TextView
+            android:id="@+id/startbtnenable"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
             android:layout_gravity="center"
             android:layout_marginBottom="62dp"
-            android:background="@drawable/ic_round_btn" />
+            android:background="@drawable/ic_start_btn_enable" />
 
 
     </RelativeLayout>

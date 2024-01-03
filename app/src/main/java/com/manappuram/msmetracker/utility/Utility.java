@@ -442,6 +442,15 @@ public class Utility {
         return temp;
     }
 
+    public static String encodecusid(String text) {
+        try {
+            return MSMEApplication.getCryptLib().encryptPlainText(text, Common.myCrypt1("", ""), Common.myCrypt1("", ""));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
 
 
 
