@@ -13,7 +13,7 @@ import android.location.Geocoder;
 import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
+import android.os.Handler;
 import android.os.Looper;
 import android.provider.MediaStore;
 import android.provider.Settings;
@@ -26,14 +26,12 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.animation.DecelerateInterpolator;
 import android.view.animation.RotateAnimation;
-import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
-
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.app.ActivityCompat;
 import androidx.databinding.DataBindingUtil;
@@ -41,19 +39,16 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
-
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.jsibbold.zoomage.ZoomageView;
 import com.karumi.dexter.Dexter;
 import com.karumi.dexter.MultiplePermissionsReport;
 import com.karumi.dexter.PermissionToken;
 import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
-import com.manappuram.msmetracker.BuildConfig;
 import com.manappuram.msmetracker.R;
 import com.manappuram.msmetracker.base.BaseActivity;
 import com.manappuram.msmetracker.dashboard.adapter.AdapterSpinner;
@@ -61,13 +56,13 @@ import com.manappuram.msmetracker.dashboard.modelclass.ActivitylistResponse;
 import com.manappuram.msmetracker.dashboard.modelclass.ImageViewResponse;
 import com.manappuram.msmetracker.dashboard.modelclass.StartServiceResponse;
 import com.manappuram.msmetracker.databinding.ActivityDashboardBinding;
+import com.manappuram.msmetracker.databinding.ActivityDistanceCalculationBinding;
 import com.manappuram.msmetracker.utility.Utility;
 import com.manappuram.msmetracker.viewmodel.LoginViewmodel;
 import com.squareup.picasso.Picasso;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -78,25 +73,11 @@ import java.util.Locale;
 import pub.devrel.easypermissions.EasyPermissions;
 
 
-public class DashboardActivity extends BaseActivity {
+public class DistanceCalculationActivity extends BaseActivity {
 
-    ActivityDashboardBinding binding;
+    ActivityDistanceCalculationBinding binding;
     LoginViewmodel viewmodel;
-    AdapterSpinner adapter;
-    String activityid = "", activityname = "", currentlatitiudestring = "", currentlongitudestring = "";
-    String remarks = "";
-    String imageid = "";
-    String imagename = "";
-    double currentLatitude;
-    double currentLongitude;
 
-    AlertDialog.Builder builder;
-    AlertDialog alertDialog;
-
-
-    List<ActivitylistResponse.get_activity_list_data> spinnerlist = new ArrayList<>();
-
-    AlertDialog dialog;
 
     String[] perms = {
             Manifest.permission.CAMERA,
@@ -104,51 +85,66 @@ public class DashboardActivity extends BaseActivity {
             Manifest.permission.ACCESS_FINE_LOCATION,
             Manifest.permission.ACCESS_COARSE_LOCATION
     };
+    String activityid = "";
+    String activityname = "";
+    String startlatitude = "";
+    String startlongitude = "";
+    String endremark = "", startimagename = "";
+    String endlocationlat = "", endlocationlog = "", startimageid = "", endimageid = "";
 
     private static final int REQUEST_CAPTURE_IMAGE = 1;
+
+    Handler handler;
+    Runnable runnable;
+    AlertDialog dialog;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_dashboard);
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_distance_calculation);
         viewmodel = ViewModelProviders.of(this).get(LoginViewmodel.class);
         mActivity = this;
 
-        checkAndRequestPermissions();
+        activityid = getIntent().getStringExtra("activityid");
+        activityname = getIntent().getStringExtra("activityname");
+        startlatitude = getIntent().getStringExtra("startlatitude");
+        startlongitude = getIntent().getStringExtra("startlongitude");
+        endremark = getIntent().getStringExtra("endremark");
+        startimagename = getIntent().getStringExtra("startimagename");
+        startimageid = getIntent().getStringExtra("startimageid");
+
+
+        binding.startimagename.setText(startimagename);
+        binding.spinnevalue.setText(activityname);
+        binding.remarks.setText(endremark);
+        binding.remarks.setEnabled(false);
+        binding.titleempname.setText(name);
+
         fetchLastLocation();
         getCurrentLocation();
-        startbtnclick();
-        stopbtnClick();
-        startbtnenablecheck();
-        activityadapterspinner();
-        observers();
-        RecyclerviewData();
-        imageviewclick();
+        checkAndRequestPermissions();
 
-
-        binding.titleempname.setText(name);
-        binding.activityselection.setOnClickListener(new View.OnClickListener() {
+        Handler handler = new Handler();
+        Runnable runnable = new Runnable() {
             @Override
-            public void onClick(View v) {
-
-                binding.chatrecyclerlayout.setVisibility(View.VISIBLE);
-                binding.linelayout.setVisibility(View.VISIBLE);
-                Animation animation = AnimationUtils.loadAnimation(getBaseContext(), R.anim.slide_from_top);
-                animation.setStartOffset(0);
-                binding.chatrecyclerlayout.startAnimation(animation);
-
-                RotateAnimation rotateAnimation = new RotateAnimation(0.0f, 180.0f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
-                rotateAnimation.setInterpolator(new DecelerateInterpolator());
-                rotateAnimation.setRepeatCount(0);
-                rotateAnimation.setDuration(300);
-                rotateAnimation.setFillAfter(true);
-                binding.arrow.startAnimation(rotateAnimation);
-
+            public void run() {
+                if (ActivityCompat.checkSelfPermission(DistanceCalculationActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(DistanceCalculationActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                    requestforMediaPermission();
+                } else {
+                    ChooseTypeBottomsheet();
+                }
 
             }
-        });
+        };
+        Toast.makeText(mActivity, "Please Wait for a Second", Toast.LENGTH_SHORT).show();
 
+        handler.postDelayed(runnable, 2000);
+
+
+        observers();
+        imageviewclick();
+        imageviewendclick();
     }
 
     private void imageviewclick() {
@@ -157,9 +153,9 @@ public class DashboardActivity extends BaseActivity {
             public void onClick(View v) {
 
                 Toast.makeText(mActivity, "clicked", Toast.LENGTH_SHORT).show();
-                String imageview = Utility.encodecusid(sessionId + "$" + imageid);
+                String imageview = Utility.encodecusid(sessionId + "$" + startimageid);
                 String encrypted = imageview.replaceAll("\\s", "");
-                Log.i("imageview", encrypted);
+
                 showProgress();
                 viewmodel.photo_view(encrypted, "1");
             }
@@ -168,67 +164,38 @@ public class DashboardActivity extends BaseActivity {
 
     }
 
-    private void stopbtnClick() {
-
-        binding.stopbtn.setOnClickListener(new View.OnClickListener() {
+    private void imageviewendclick() {
+        binding.endimageviewbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                if (binding.startimagename.getText().toString().equals("")) {
-                    Toast.makeText(mActivity, "Please Upload Starting Image", Toast.LENGTH_SHORT).show();
-                } else if (binding.remarks.getText().toString().equals("")) {
-                    Toast.makeText(mActivity, "Please Enter Remarks", Toast.LENGTH_SHORT).show();
+                Toast.makeText(mActivity, "clicked", Toast.LENGTH_SHORT).show();
+                String imageview = Utility.encodecusid(sessionId + "$" + endimageid);
+                String encrypted = imageview.replaceAll("\\s", "");
 
-                } else {
-
-
-                    showAlertDialog(mActivity, (dialog, i) -> {
-
-                    });
-
-
-                }
-
+                showProgress();
+                viewmodel.photo_view(encrypted, "2");
             }
         });
+
+
     }
 
 
     private void observers() {
 
-        viewmodel.getActivitylistResponseMutableLiveData().observe(this, new Observer<ActivitylistResponse>() {
-            @Override
-            public void onChanged(ActivitylistResponse activitylistResponse) {
-                spinnerlist.clear();
-                if (activitylistResponse.getStatus().equals("111")) {
-                    spinnerlist.addAll(activitylistResponse.getGet_activity_list_data());
-                    adapter.notifyDataSetChanged();
-
-                } else {
-                    Toast.makeText(mActivity, activitylistResponse.getResult(), Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
-
-        viewmodel.getStartServiceResponseMutableLiveData().observe(this, new Observer<StartServiceResponse>() {
+        viewmodel.getEndServiceResponseMutableLiveData().observe(this, new Observer<StartServiceResponse>() {
             @Override
             public void onChanged(StartServiceResponse startServiceResponse) {
                 hideProgress();
                 if (startServiceResponse.getStatus().equals("111")) {
+                    endimageid = startServiceResponse.getName();
 
-                    binding.remarks.setText("");
-                    binding.activityselection.setEnabled(false);
-                    binding.stopbtn.setVisibility(View.VISIBLE);
-                    binding.startbtnenable.setVisibility(View.GONE);
-
-                    imageid = startServiceResponse.getResult();
-                    imagename = startServiceResponse.getName();
-                    binding.startimagename.setText(imagename);
+                    Toast.makeText(mActivity, "Successfully Uploaded", Toast.LENGTH_SHORT).show();
 
                 } else {
                     Toast.makeText(mActivity, startServiceResponse.getResult(), Toast.LENGTH_SHORT).show();
-                    binding.stopbtn.setVisibility(View.GONE);
-                    binding.startbtnenable.setVisibility(View.VISIBLE);
+
                 }
             }
         });
@@ -260,92 +227,8 @@ public class DashboardActivity extends BaseActivity {
             }
         });
 
-
     }
 
-    private void activityadapterspinner() {
-        String data = Utility.encodecusid(sessionId + "$" + "0");
-        String encrypted = data.replaceAll("\\s", "");
-        viewmodel.Get_activity_list(encrypted);
-
-    }
-
-    private void startbtnenablecheck() {
-        binding.remarks.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                if (!binding.remarks.getText().toString().equals("")) {
-                    binding.startbtnenable.setVisibility(View.VISIBLE);
-                    binding.startbtndisable.setVisibility(View.GONE);
-                } else {
-                    binding.startbtnenable.setVisibility(View.GONE);
-                    binding.startbtndisable.setVisibility(View.VISIBLE);
-                }
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable editable) {
-
-            }
-        });
-    }
-
-    private void startbtnclick() {
-        binding.startbtnenable.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                if (binding.spinnevalue.getText().toString().contains("Select the Activity")) {
-                    Toast.makeText(mActivity, "Please Select an Activity", Toast.LENGTH_SHORT).show();
-
-                } else {
-                    remarks = binding.remarks.getText().toString();
-
-
-                    if (ActivityCompat.checkSelfPermission(DashboardActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(DashboardActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                        requestforMediaPermission();
-
-                    } else {
-
-                        ChooseTypeBottomsheet();
-                    }
-                }
-
-            }
-        });
-    }
-
-
-    private void RecyclerviewData() {
-        binding.chatrecycler.setLayoutManager(new LinearLayoutManager(mActivity));
-        adapter = new AdapterSpinner(mActivity, spinnerlist, new AdapterSpinner.spinnerclick() {
-            @Override
-            public void spinnerclick(String name, String id) {
-
-                activityid = id;
-                activityname = name;
-
-                RotateAnimation rotateAnimation = new RotateAnimation(180.0f, 0.0f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
-                rotateAnimation.setInterpolator(new DecelerateInterpolator());
-                rotateAnimation.setRepeatCount(0);
-                rotateAnimation.setDuration(300);
-                rotateAnimation.setFillAfter(true);
-                binding.arrow.startAnimation(rotateAnimation);
-
-                binding.chatrecyclerlayout.setVisibility(View.GONE);
-                binding.linelayout.setVisibility(View.GONE);
-                binding.spinnevalue.setText(name);
-            }
-
-        });
-        binding.chatrecycler.setAdapter(adapter);
-    }
 
     private void fetchLastLocation() {
         LocationManager locationManager;
@@ -400,24 +283,36 @@ public class DashboardActivity extends BaseActivity {
 
 
                             int lastLocationIndex = locationResult.getLocations().size() - 1;
-                            currentLatitude = locationResult.getLocations().get(lastLocationIndex).getLatitude();
-                            currentLongitude = locationResult.getLocations().get(lastLocationIndex).getLongitude();
+                            double endlatitude = locationResult.getLocations().get(lastLocationIndex).getLatitude();
+                            double endlongitude = locationResult.getLocations().get(lastLocationIndex).getLongitude();
 
-                            currentlatitiudestring = String.valueOf(currentLatitude);
-                            currentlongitudestring = String.valueOf(currentLongitude);
+                            endlocationlat = String.valueOf(endlatitude);
+                            endlocationlog = String.valueOf(endlongitude);
+
+                            double firstlat = Double.parseDouble(startlatitude);
+                            double firstlog = Double.parseDouble(startlongitude);
+
+                            handler = new Handler();
+                            runnable = new Runnable() {
+                                @Override
+                                public void run() {
+                                    distance(firstlat, firstlog, endlatitude, endlongitude);
+
+                                }
+                            };
+                            Toast.makeText(mActivity, "Distance is Calculating", Toast.LENGTH_SHORT).show();
+                            handler.postDelayed(runnable, 100);
 
 
-                            Log.i("locationnn", "<==" + currentLatitude);
-                            Log.i("locationnn", "<==" + currentLongitude);
-                            Log.i("locationnn", "<==" + currentlatitiudestring);
-                            Log.i("locationnn", "<==" + currentlongitudestring);
+                            Log.i("locationnnend", "<==" + endlocationlat);
+                            Log.i("locationnnend", "<==" + endlocationlog);
 
 
                             try {
                                 Geocoder geocoder;
                                 List<Address> addresses;
                                 geocoder = new Geocoder(mActivity, Locale.getDefault());
-                                addresses = geocoder.getFromLocation(currentLatitude, currentLongitude, 1);
+                                addresses = geocoder.getFromLocation(endlatitude, endlongitude, 1);
                                 String address = addresses.get(0).getAddressLine(0); // If any additional address line present than only, check with max available address lines by getMaxAddressLineIndex()
                                 String currentCity = addresses.get(0).getLocality();
 //                                binding.location.setText(address);
@@ -495,7 +390,7 @@ public class DashboardActivity extends BaseActivity {
                         Bundle extras = data.getExtras();
                         Bitmap photo = extras.getParcelable("data");
                         assert data != null;
-                        Uri selectedFileUri = getImageUri(DashboardActivity.this.getApplicationContext(), photo);
+                        Uri selectedFileUri = getImageUri(DistanceCalculationActivity.this.getApplicationContext(), photo);
                         UploadMedia(selectedFileUri);
 
 
@@ -509,7 +404,7 @@ public class DashboardActivity extends BaseActivity {
         long filesize;
         ByteArrayOutputStream bytes = null;
         try {
-            originalBitmap = MediaStore.Images.Media.getBitmap(DashboardActivity.this.getContentResolver(), businesspicUri);
+            originalBitmap = MediaStore.Images.Media.getBitmap(DistanceCalculationActivity.this.getContentResolver(), businesspicUri);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -519,8 +414,8 @@ public class DashboardActivity extends BaseActivity {
         byte[] imageInByte = bytes.toByteArray();
         filesize = (long) (imageInByte.length / 1024.0);//KB
 
-        String filename = Utility.getFileName(DashboardActivity.this, businesspicUri);
-        binding.startimagename.setText(filename);
+        String filename = Utility.getFileName(DistanceCalculationActivity.this, businesspicUri);
+        binding.endimagename.setText(filename);
         binding.imageuploadlayout.setVisibility(View.VISIBLE);
 
         if (filesize > 2048) {
@@ -534,17 +429,12 @@ public class DashboardActivity extends BaseActivity {
         } else {
             Log.e("TAG", "UploadMedia: " + filesize);
         }
-
-//        binding.profileEditImage.setImageBitmap(originalBitmap);
-
-        //   String profileimagevalue = Utility.BitMapToStringphoto(originalBitmap);
         String profileimagevalue = Base64.encodeToString(imageInByte, Base64.DEFAULT);
-
-
-        String data = Utility.encodecusid(sessionId + "$" + activityid + "~" + remarks + "~" + currentLatitude + "~" + currentLongitude + "~" + branchId + "~" + empCode);
+        String data = Utility.encodecusid(sessionId + "$" + activityid + "~" + endremark + "~" + endlocationlat + "~" + endlocationlog + "~" + "5");
         String enrypted = data.replaceAll("\\s", "");
+        Log.i("enddara", enrypted);
         showProgress();
-        viewmodel.MSME_start_activity(enrypted, profileimagevalue);
+        viewmodel.MSME_end_activity(enrypted, profileimagevalue);
 
 
     }
@@ -600,7 +490,7 @@ public class DashboardActivity extends BaseActivity {
                     }
 
                     @Override
-                    public void onPermissionRationaleShouldBeShown(List<com.karumi.dexter.listener.PermissionRequest> permissions, PermissionToken token) {
+                    public void onPermissionRationaleShouldBeShown(List<PermissionRequest> permissions, PermissionToken token) {
                         token.continuePermissionRequest();
                     }
                 }).onSameThread()
@@ -626,44 +516,39 @@ public class DashboardActivity extends BaseActivity {
 
     }
 
-    public void showAlertDialog(Context context, DialogInterface.OnClickListener listener) {
 
-        builder = new AlertDialog.Builder(context);
-        builder.setMessage("Alert!!!");
-        builder.setCancelable(true);
+    private double distance(double lat1, double lon1, double lat2, double lon2) {
+        double theta = lon1 - lon2;
+        double dist = Math.sin(deg2rad(lat1))
+                * Math.sin(deg2rad(lat2))
+                + Math.cos(deg2rad(lat1))
+                * Math.cos(deg2rad(lat2))
+                * Math.cos(deg2rad(theta));
+        dist = Math.acos(dist);
+        dist = rad2deg(dist);
+        dist = Math.round(dist * 60 * 1.60934);
+        int dist1 = (int) dist;
+        //dist = dist * 60 * 1.60934;
 
-        builder.setPositiveButton("Are you Sure Want to Stop?", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-
-                Intent intent = new Intent(mActivity, DistanceCalculationActivity.class);
-                intent.putExtra("activityid", activityid);
-                intent.putExtra("activityname", activityname);
-                intent.putExtra("startlatitude", currentlatitiudestring);
-                intent.putExtra("startlongitude", currentlongitudestring);
-                intent.putExtra("startimagename", imagename);
-                intent.putExtra("startimageid", imageid);
-                intent.putExtra("endremark", binding.remarks.getText().toString());
-                startActivity(intent);
-
-
-            }
-        });
-
-        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                alertDialog.dismiss();
-
-
-            }
-
-        });
-        alertDialog = builder.create();
-        alertDialog.show();
-
-
+        String finalDist = String.valueOf(dist1);
+        binding.totaldistance.setText(finalDist + " KM");
+        Log.i("ditancecalculation", String.valueOf(dist));
+        return (dist);
     }
 
+    private double deg2rad(double deg) {
+        return (deg * Math.PI / 180.0);
+    }
 
+    private double rad2deg(double rad) {
+        return (rad * 180.0 / Math.PI);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+//        fetchLastLocation();
+//        getCurrentLocation();
+    }
 }

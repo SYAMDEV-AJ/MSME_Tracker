@@ -1,6 +1,7 @@
 package com.manappuram.msmetracker.network;
 
 import com.manappuram.msmetracker.dashboard.modelclass.ActivitylistResponse;
+import com.manappuram.msmetracker.dashboard.modelclass.ImageViewResponse;
 import com.manappuram.msmetracker.dashboard.modelclass.StartServiceResponse;
 import com.manappuram.msmetracker.login.model.LoginResponse;
 
@@ -30,6 +31,16 @@ public interface APIInterface {
     @FormUrlEncoded
     Call<StartServiceResponse> MSME_start_activity(@Field("p_data") String p_data,
                                                    @Field("image") String image);
+
+    @POST("MSME_end_activity")
+    @FormUrlEncoded
+    Call<StartServiceResponse> MSME_end_activity(@Field("p_data") String p_data,
+                                                 @Field("image") String image);
+
+    @POST("photo_view")
+    @FormUrlEncoded
+    Call<ImageViewResponse> photo_view(@Field("p_data") String p_data,
+                                       @Field("flag") String image);
 
 
 }

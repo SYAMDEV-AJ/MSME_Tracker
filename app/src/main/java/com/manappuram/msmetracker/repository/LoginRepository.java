@@ -4,6 +4,7 @@ import com.manappuram.msmetracker.base.BaseRepository;
 import com.manappuram.msmetracker.base.BaseResponse;
 import com.manappuram.msmetracker.base.Event;
 import com.manappuram.msmetracker.dashboard.modelclass.ActivitylistResponse;
+import com.manappuram.msmetracker.dashboard.modelclass.ImageViewResponse;
 import com.manappuram.msmetracker.dashboard.modelclass.StartServiceResponse;
 import com.manappuram.msmetracker.login.model.LoginResponse;
 import com.manappuram.msmetracker.network.retrofit.ResponseListener;
@@ -73,6 +74,58 @@ public class LoginRepository extends BaseRepository {
         new RetrofitRequest<>(call, new ResponseListener<StartServiceResponse>() {
             @Override
             public void onResponse(StartServiceResponse response, Headers headers) {
+                if (null != successResponse) {
+                    successResponse.onResponse(response);
+                }
+            }
+
+            @Override
+            public void onError(int status, BaseResponse errors) {
+                errorsMutable.postValue(new Event<>(errors));
+
+            }
+
+
+            @Override
+            public void onFailure(Throwable throwable) {
+                failMessageMutable.postValue(new Event<>(throwable.getMessage()));
+            }
+
+        }).enqueue();
+    }
+
+    public void MSME_end_activity(String p_data, String image, SuccessResponse successResponse) {
+
+        Call<StartServiceResponse> call = RetrofitClient.getAPIInterface().MSME_end_activity(p_data, image);
+        new RetrofitRequest<>(call, new ResponseListener<StartServiceResponse>() {
+            @Override
+            public void onResponse(StartServiceResponse response, Headers headers) {
+                if (null != successResponse) {
+                    successResponse.onResponse(response);
+                }
+            }
+
+            @Override
+            public void onError(int status, BaseResponse errors) {
+                errorsMutable.postValue(new Event<>(errors));
+
+            }
+
+
+            @Override
+            public void onFailure(Throwable throwable) {
+                failMessageMutable.postValue(new Event<>(throwable.getMessage()));
+            }
+
+        }).enqueue();
+    }
+
+    public void photo_view(String p_data, String image, SuccessResponse successResponse) {
+
+        Call<ImageViewResponse> call = RetrofitClient.getAPIInterface().photo_view(p_data, image);
+        new RetrofitRequest<>(call, new ResponseListener<ImageViewResponse>() {
+            @Override
+            public void onResponse(ImageViewResponse response, Headers headers) {
                 if (null != successResponse) {
                     successResponse.onResponse(response);
                 }

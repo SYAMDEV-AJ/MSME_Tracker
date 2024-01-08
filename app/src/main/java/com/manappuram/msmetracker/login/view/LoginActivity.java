@@ -106,13 +106,13 @@ public class LoginActivity extends BaseActivity {
                 if (flag.equals("1")) {
                     String deviceId = Settings.Secure.getString(LoginActivity.this.getContentResolver(), Settings.Secure.ANDROID_ID);
 
-//                    String empcode = binding.employeeid.getText().toString();
-                    String password = Utility.encodecusid(binding.password.getText().toString());
-                    String spaceremoved = password.replaceAll("\\s", "");
+////                    String empcode = binding.employeeid.getText().toString();
+//                    String password = Utility.encodecusid(binding.password.getText().toString());
+//                    String spaceremoved = password.replaceAll("\\s", "");
 //                    Log.i("dddd", spaceremoved);
 
                     showProgress();
-                    viewmodel.userLogin("68327", spaceremoved, "", deviceId);
+                    viewmodel.userLogin("68327", "wqv/NG39+Z6pAzqGwpsjlw==", "", deviceId);
 
 
                 } else if (flag.equals("2")) {

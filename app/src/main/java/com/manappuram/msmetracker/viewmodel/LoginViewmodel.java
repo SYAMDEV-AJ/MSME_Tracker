@@ -1,10 +1,13 @@
 package com.manappuram.msmetracker.viewmodel;
 
+import android.media.Image;
+
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.manappuram.msmetracker.base.BaseRepository;
 import com.manappuram.msmetracker.dashboard.modelclass.ActivitylistResponse;
+import com.manappuram.msmetracker.dashboard.modelclass.ImageViewResponse;
 import com.manappuram.msmetracker.dashboard.modelclass.StartServiceResponse;
 import com.manappuram.msmetracker.login.model.LoginResponse;
 import com.manappuram.msmetracker.repository.LoginRepository;
@@ -20,6 +23,8 @@ public class LoginViewmodel extends ViewModel {
     public MutableLiveData<LoginResponse> loginResponseMutableLiveData = new MutableLiveData<>();
     public MutableLiveData<ActivitylistResponse> activitylistResponseMutableLiveData = new MutableLiveData<>();
     public MutableLiveData<StartServiceResponse> startServiceResponseMutableLiveData = new MutableLiveData<>();
+    public MutableLiveData<StartServiceResponse> endServiceResponseMutableLiveData = new MutableLiveData<>();
+    public MutableLiveData<ImageViewResponse> imageViewResponseMutableLiveData = new MutableLiveData<>();
 
 
     public void userLogin(String empCode, String pwd, String tocken, String deviceid) {
@@ -40,6 +45,18 @@ public class LoginViewmodel extends ViewModel {
         });
     }
 
+    public void MSME_end_activity(String p_data, String image) {
+        getLoginRepository().MSME_end_activity(p_data, image, (BaseRepository.SuccessResponse<StartServiceResponse>) startServiceResponse -> {
+            endServiceResponseMutableLiveData.setValue(startServiceResponse);
+        });
+    }
+
+    public void photo_view(String p_data, String image) {
+        getLoginRepository().photo_view(p_data, image, (BaseRepository.SuccessResponse<ImageViewResponse>) imageViewResponse -> {
+            imageViewResponseMutableLiveData.setValue(imageViewResponse);
+        });
+    }
+
 
     public MutableLiveData<LoginResponse> getLoginResponseMutableLiveData() {
         return loginResponseMutableLiveData;
@@ -51,6 +68,14 @@ public class LoginViewmodel extends ViewModel {
 
     public MutableLiveData<StartServiceResponse> getStartServiceResponseMutableLiveData() {
         return startServiceResponseMutableLiveData;
+    }
+
+    public MutableLiveData<StartServiceResponse> getEndServiceResponseMutableLiveData() {
+        return endServiceResponseMutableLiveData;
+    }
+
+    public MutableLiveData<ImageViewResponse> getImageViewResponseMutableLiveData() {
+        return imageViewResponseMutableLiveData;
     }
 
 
