@@ -15,7 +15,7 @@ import androidx.lifecycle.ViewModelProviders;
 
 import com.manappuram.msmetracker.R;
 import com.manappuram.msmetracker.base.BaseActivity;
-import com.manappuram.msmetracker.dashboard.DashboardActivity;
+import com.manappuram.msmetracker.dashboard.view.DashboardActivity;
 import com.manappuram.msmetracker.databinding.ActivityLoginBinding;
 import com.manappuram.msmetracker.login.model.LoginResponse;
 import com.manappuram.msmetracker.network.ConnectionLiveData;
@@ -35,11 +35,12 @@ public class LoginActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_login);
         viewmodel = ViewModelProviders.of(this).get(LoginViewmodel.class);
-//        mActivity = this;
+        mActivity = this;
 
         ShowHidePass();
         checkInternetConnectivity();
         Login();
+        loginobserver();
 
 //        binding.loginBtn.setOnClickListener(new View.OnClickListener() {
 //            @Override
@@ -49,6 +50,47 @@ public class LoginActivity extends BaseActivity {
 //
 //            }
 //        });
+    }
+
+    private void loginobserver() {
+
+        viewmodel.getLoginResponseMutableLiveData().observe(LoginActivity.this, new Observer<LoginResponse>() {
+            @Override
+            public void onChanged(LoginResponse loginResponse) {
+                hideProgress();
+                if (loginResponse.getStatus().equals("111")) {
+
+
+                    editor.putString("empCode", loginResponse.getEmpDetails().getEmpCode());
+                    editor.putString("designation", loginResponse.getEmpDetails().getDesignation());
+                    editor.putString("postId", loginResponse.getEmpDetails().getPostId());
+                    editor.putString("sessionId", loginResponse.getEmpDetails().getSessionId() + ":" + loginResponse.getEmpDetails().getEmpCode());
+                    editor.putString("name", loginResponse.getEmpDetails().getName());
+                    editor.putString("brId", loginResponse.getEmpDetails().getBranchId());
+                    editor.putString("departId", loginResponse.getEmpDetails().getDeptId());
+                    editor.putString("areaId", loginResponse.getEmpDetails().getAreaId());
+                    editor.putString("regionId", loginResponse.getEmpDetails().getRegionId());
+                    editor.putString("zoneId", loginResponse.getEmpDetails().getZoneId());
+                    editor.putString("deptName", loginResponse.getEmpDetails().getDeptName());
+                    editor.putString("branch", loginResponse.getEmpDetails().getBranch());
+                    editor.putBoolean("login", false);
+                    String logindate = Utility.getTodayDate();
+                    editor.putString("logindate", logindate);
+
+                    editor.apply();
+
+                    Intent intent = new Intent(mActivity, DashboardActivity.class);
+                    startActivity(intent);
+
+                    Toast.makeText(mActivity, loginResponse.getResult(), Toast.LENGTH_SHORT).show();
+
+                } else {
+                    Toast.makeText(mActivity, loginResponse.getResult(), Toast.LENGTH_SHORT).show();
+
+                }
+            }
+        });
+
     }
 
     private void Login() {
@@ -64,27 +106,13 @@ public class LoginActivity extends BaseActivity {
                 if (flag.equals("1")) {
                     String deviceId = Settings.Secure.getString(LoginActivity.this.getContentResolver(), Settings.Secure.ANDROID_ID);
 
-                    String empcode = binding.employeeid.getText().toString();
+//                    String empcode = binding.employeeid.getText().toString();
                     String password = Utility.encodecusid(binding.password.getText().toString());
                     String spaceremoved = password.replaceAll("\\s", "");
-                    Log.i("dddd", spaceremoved);
+//                    Log.i("dddd", spaceremoved);
 
                     showProgress();
-                    viewmodel.userLogin(empcode, spaceremoved, "", deviceId);
-                    viewmodel.getLoginResponseMutableLiveData().observe(LoginActivity.this, new Observer<LoginResponse>() {
-                        @Override
-                        public void onChanged(LoginResponse loginResponse) {
-                            hideProgress();
-                            if (loginResponse.getStatus().equals("111")) {
-
-                                Toast.makeText(LoginActivity.this, loginResponse.getResult(), Toast.LENGTH_SHORT).show();
-
-                            } else {
-                                Toast.makeText(LoginActivity.this, loginResponse.getResult(), Toast.LENGTH_SHORT).show();
-
-                            }
-                        }
-                    });
+                    viewmodel.userLogin("68327", spaceremoved, "", deviceId);
 
 
                 } else if (flag.equals("2")) {

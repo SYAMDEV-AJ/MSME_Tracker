@@ -11,6 +11,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Matrix;
 import android.net.Uri;
 import android.provider.OpenableColumns;
 import android.text.SpannableString;
@@ -28,6 +29,7 @@ import android.widget.TextView;
 import com.google.android.material.snackbar.Snackbar;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.DateFormat;
@@ -451,6 +453,30 @@ public class Utility {
         return null;
     }
 
+    public static Bitmap scaleBitmap(Bitmap src, double newWidth, double newHeight) {
+        // src
+        float width = src.getWidth();
+        float height = src.getHeight();
+        // matrix
+        Matrix matrix = new Matrix();
+        //
+        float scaleWidth = ((float) newWidth) / width;
+        float scaleHeight = ((float) newHeight) / height;
+        //
+        matrix.postScale(scaleWidth, scaleHeight);
+        //
+        return Bitmap.createBitmap(src, 0, 0, (int) width, (int) height,
+                matrix, true);
+    }
+
+    public static Bitmap FileToBitMap(File file) {
+
+        //   File mSaveBit; // Your image file
+        String filePath = file.getPath();
+        Bitmap bitmap = BitmapFactory.decodeFile(filePath);
+
+        return bitmap;
+    }
 
 
 

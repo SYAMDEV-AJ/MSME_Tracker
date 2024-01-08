@@ -11,7 +11,7 @@ public class LoginResponse extends BaseResponse {
 
     @SerializedName("EmpDetails")
     @Expose
-    public List<LoginResponse.EmpDetails> EmpDetails = null;
+    public EmpDetails empDetails;
 
     public class EmpDetails implements Serializable {
 
@@ -158,5 +158,10 @@ public class LoginResponse extends BaseResponse {
         public void setZoneId(String zoneId) {
             this.zoneId = zoneId;
         }
+    }
+
+
+    public EmpDetails getEmpDetails() {
+        return empDetails;
     }
 }

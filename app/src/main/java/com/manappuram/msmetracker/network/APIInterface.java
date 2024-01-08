@@ -1,5 +1,7 @@
 package com.manappuram.msmetracker.network;
 
+import com.manappuram.msmetracker.dashboard.modelclass.ActivitylistResponse;
+import com.manappuram.msmetracker.dashboard.modelclass.StartServiceResponse;
 import com.manappuram.msmetracker.login.model.LoginResponse;
 
 import retrofit2.Call;
@@ -17,8 +19,17 @@ public interface APIInterface {
     @FormUrlEncoded
     Call<LoginResponse> Androidlogin(@Field("empCode") String empCode,
                                      @Field("pwd") String pwd,
-                                     @Field("deviceid") String deviceid,
-                                     @Field("tocken") String tocken);
+                                     @Field("tocken") String tocken,
+                                     @Field("deviceid") String deviceid);
+
+    @POST("Get_activity_list")
+    @FormUrlEncoded
+    Call<ActivitylistResponse> Get_activity_list(@Field("p_data") String p_data);
+
+    @POST("MSME_start_activity")
+    @FormUrlEncoded
+    Call<StartServiceResponse> MSME_start_activity(@Field("p_data") String p_data,
+                                                   @Field("image") String image);
 
 
 }
