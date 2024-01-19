@@ -88,7 +88,7 @@ public class DashboardActivity extends BaseActivity {
     ActivityDashboardBinding binding;
     LoginViewmodel viewmodel;
     AdapterSpinner adapter;
-    String activityid = "", activityname = "", currentlatitiudestring = "", currentlongitudestring = "", activitynamefrom = "";
+    String activityid = "", activityname = "", currentlatitiudestring = "", currentlongitudestring = "", activitynamefrom = "", unfinishedactivity = "";
     String remarks = "";
     String imageid = "";
     String imagename = "";
@@ -126,6 +126,7 @@ public class DashboardActivity extends BaseActivity {
         viewmodel = ViewModelProviders.of(this).get(LoginViewmodel.class);
         mActivity = this;
         activitynamefrom = (getIntent().getStringExtra("activityname")) != null ? getIntent().getStringExtra("activityname") : "";
+
         Log.i("SpinnerListDataNF", "<==" + activityname);
 //        mYourService = new YourService();
 //        mServiceIntent = new Intent(this, mYourService.getClass());
@@ -157,15 +158,12 @@ public class DashboardActivity extends BaseActivity {
                 Animation animation = AnimationUtils.loadAnimation(getBaseContext(), R.anim.slide_from_top);
                 animation.setStartOffset(0);
                 binding.chatrecyclerlayout.startAnimation(animation);
-
                 RotateAnimation rotateAnimation = new RotateAnimation(0.0f, 180.0f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
                 rotateAnimation.setInterpolator(new DecelerateInterpolator());
                 rotateAnimation.setRepeatCount(0);
                 rotateAnimation.setDuration(300);
                 rotateAnimation.setFillAfter(true);
                 binding.arrow.startAnimation(rotateAnimation);
-
-
             }
         });
 
@@ -193,6 +191,9 @@ public class DashboardActivity extends BaseActivity {
                     if (tt.getActivity_id().equals(activitynamefrom)) {
                         Log.i("SpinnerListDataL", "<==" + tt.getActivity_id());
                         binding.spinnevalue.setText(tt.getActivity_name());
+                        activityid = activitynamefrom;
+                        activityname = tt.getActivity_name();
+
                     }
                 }
             }
@@ -256,15 +257,15 @@ public class DashboardActivity extends BaseActivity {
 
                 if (activitylistResponse.getStatus().equals("111")) {
                     spinnerlist.addAll(activitylistResponse.getGet_activity_list_data());
-//                    if (activityname.equals("none")) {
-                    adapter.notifyDataSetChanged();
-//                    } else {
-//                        Toast.makeText(mActivity, "Please Complete the Unfinished task", Toast.LENGTH_SHORT).show();
-//                        binding.startbtnenable.setVisibility(View.GONE);
-//                        binding.stopbtn.setVisibility(View.VISIBLE);
-//                        binding.activityselection.setEnabled(false);
-//                        datatolist();
-//                    }
+                    if (activitynamefrom.equals("none")) {
+                        adapter.notifyDataSetChanged();
+                    } else {
+                        Toast.makeText(mActivity, "Please Complete the Unfinished task", Toast.LENGTH_SHORT).show();
+                        binding.startbtnenable.setVisibility(View.GONE);
+                        binding.stopbtn.setVisibility(View.VISIBLE);
+                        binding.activityselection.setEnabled(false);
+                        datatolist();
+                    }
 
                 } else {
                     Toast.makeText(mActivity, activitylistResponse.getResult(), Toast.LENGTH_SHORT).show();
@@ -303,8 +304,8 @@ public class DashboardActivity extends BaseActivity {
                     final View customLayout = getLayoutInflater().inflate(R.layout.custom_kyc_layout_new, null);
                     builder.setView(customLayout);
                     ZoomageView image = customLayout.findViewById(R.id.imageView);
-                    Picasso.get().invalidate("https://online.manappuram.com/TrackerAPI/images/" + imagenameofpic);
-                    Picasso.get().load(("https://online.manappuram.com/TrackerAPI/images/") + imagenameofpic).into(image);
+                    Picasso.get().invalidate("https://uatonpay.manappuram.com/TrackerAPI/images/" + imagenameofpic);
+                    Picasso.get().load(("https://uatonpay.manappuram.com/TrackerAPI/images/") + imagenameofpic).into(image);
 
                     builder.setPositiveButton("CANCEL", (dialog, which) -> {
                         dialog.dismiss();
@@ -699,6 +700,7 @@ public class DashboardActivity extends BaseActivity {
                 intent.putExtra("startimagename", imagename);
                 intent.putExtra("startimageid", imageid);
                 intent.putExtra("endremark", binding.remarks.getText().toString());
+                intent.putExtra("activitynamefrom", activitynamefrom);
                 startActivity(intent);
 
 
@@ -725,6 +727,13 @@ public class DashboardActivity extends BaseActivity {
     protected void onResume() {
         super.onResume();
         activityadapterspinner();
+//        if (activitynamefrom.equals("none")) {
+//
+//        } else {
+//            binding.spinnevalue.setText(unfinishedactivity);
+//        }
+
+
     }
 
     //    @Override

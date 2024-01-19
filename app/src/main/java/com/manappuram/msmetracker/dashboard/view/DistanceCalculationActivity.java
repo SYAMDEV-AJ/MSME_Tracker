@@ -79,7 +79,7 @@ public class DistanceCalculationActivity extends BaseActivity {
     String activityname = "";
     String startlatitude = "";
     String startlongitude = "";
-    String endremark = "", startimagename = "", profileimagevalue = "";
+    String endremark = "", startimagename = "", profileimagevalue = "", activitynamefrom = "";
     String endlocationlat = "", endlocationlog = "", startimageid = "", endimageid = "", endimagename = "", finalDist = "";
 
     private static final int REQUEST_CAPTURE_IMAGE = 1;
@@ -103,6 +103,13 @@ public class DistanceCalculationActivity extends BaseActivity {
         endremark = getIntent().getStringExtra("endremark");
         startimagename = getIntent().getStringExtra("startimagename");
         startimageid = getIntent().getStringExtra("startimageid");
+        activitynamefrom = getIntent().getStringExtra("activitynamefrom");
+
+        if (activitynamefrom.equals("none")) {
+
+        } else {
+            binding.startimagelayout.setVisibility(View.GONE);
+        }
 
 
         binding.startimagename.setText(startimagename);
@@ -113,8 +120,9 @@ public class DistanceCalculationActivity extends BaseActivity {
 
 
         checkAndRequestPermissions();
-        runthread();
-        runthread1();
+        fetchLastLocation();
+        // getCurrentLocation();
+        // runthread();
         observers();
         imageviewclick();
         imageviewendclick();
@@ -130,13 +138,12 @@ public class DistanceCalculationActivity extends BaseActivity {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+//                try {
+//                   // Thread.sleep(1000);
+//                } catch (InterruptedException e) {
+//                    e.printStackTrace();
+//                }
 
-                Toast.makeText(mActivity, "Cameraaa thread", Toast.LENGTH_SHORT).show();
 
                 if (ActivityCompat.checkSelfPermission(DistanceCalculationActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(DistanceCalculationActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
                     requestforMediaPermission();
@@ -240,8 +247,8 @@ public class DistanceCalculationActivity extends BaseActivity {
                     final View customLayout = getLayoutInflater().inflate(R.layout.custom_kyc_layout_new, null);
                     builder.setView(customLayout);
                     ZoomageView image = customLayout.findViewById(R.id.imageView);
-                    Picasso.get().invalidate("https://online.manappuram.com/TrackerAPI/images/" + imagenameofpic);
-                    Picasso.get().load(("https://online.manappuram.com/TrackerAPI/images/") + imagenameofpic).into(image);
+                    Picasso.get().invalidate("https://uatonpay.manappuram.com/TrackerAPI/images/" + imagenameofpic);
+                    Picasso.get().load(("https://uatonpay.manappuram.com/TrackerAPI/images/") + imagenameofpic).into(image);
 
                     builder.setPositiveButton("CANCEL", (dialog, which) -> {
                         dialog.dismiss();
@@ -281,7 +288,7 @@ public class DistanceCalculationActivity extends BaseActivity {
                         .setPositiveButton("Turn on", (paramDialogInterface, paramInt) ->
                                 mActivity.startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS))).show();
             } else {
-
+                showProgress();
                 getCurrentLocation();
 
                 //Toast.makeText(MapsActivity.this, "latitude = " + mCurrentLocation.getLatitude() + "longtitude = " + mCurrentLocation.getLongitude(), Toast.LENGTH_SHORT).show();
@@ -319,6 +326,15 @@ public class DistanceCalculationActivity extends BaseActivity {
                                 endlocationlat = String.valueOf(endlatitude);
                                 endlocationlog = String.valueOf(endlongitude);
 
+                                if (endlocationlat.equals("") || endlocationlog.equals("")) {
+                                    hideProgress();
+                                    Toast.makeText(mActivity, "Not Getting Location", Toast.LENGTH_SHORT).show();
+                                } else {
+                                    hideProgress();
+                                    runthread1();
+                                }
+
+
                                 double firstlat = Double.parseDouble(startlatitude);
                                 double firstlog = Double.parseDouble(startlongitude);
 
@@ -332,10 +348,6 @@ public class DistanceCalculationActivity extends BaseActivity {
 //                                    }
 //                                };
 //                                handler.postDelayed(runnable, 100);
-
-
-                                Log.i("locationnnend", "<==" + endlocationlat);
-                                Log.i("locationnnend", "<==" + endlocationlog);
 
 
                                 try {
