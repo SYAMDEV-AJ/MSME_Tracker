@@ -3,6 +3,7 @@ package com.manappuram.msmetracker.network;
 import com.manappuram.msmetracker.dashboard.modelclass.ActivitylistResponse;
 import com.manappuram.msmetracker.dashboard.modelclass.ImageViewResponse;
 import com.manappuram.msmetracker.dashboard.modelclass.StartServiceResponse;
+import com.manappuram.msmetracker.login.model.ActivityCheckResponse;
 import com.manappuram.msmetracker.login.model.LoginResponse;
 
 import retrofit2.Call;
@@ -41,6 +42,10 @@ public interface APIInterface {
     @FormUrlEncoded
     Call<ImageViewResponse> photo_view(@Field("p_data") String p_data,
                                        @Field("flag") String image);
+
+    @POST("MSME_live_activity")
+    @FormUrlEncoded
+    Call<ActivityCheckResponse> MSME_live_activity(@Field("p_data") String p_data);
 
 
 }

@@ -2,6 +2,7 @@ package com.manappuram.msmetracker.dashboard.view;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.ActivityManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -40,6 +41,7 @@ import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 
 import com.google.android.gms.location.LocationCallback;
@@ -61,6 +63,9 @@ import com.manappuram.msmetracker.dashboard.modelclass.ActivitylistResponse;
 import com.manappuram.msmetracker.dashboard.modelclass.ImageViewResponse;
 import com.manappuram.msmetracker.dashboard.modelclass.StartServiceResponse;
 import com.manappuram.msmetracker.databinding.ActivityDashboardBinding;
+import com.manappuram.msmetracker.login.model.ActivityCheckResponse;
+import com.manappuram.msmetracker.receiver.Restarter;
+import com.manappuram.msmetracker.receiver.YourService;
 import com.manappuram.msmetracker.utility.Utility;
 import com.manappuram.msmetracker.viewmodel.LoginViewmodel;
 import com.squareup.picasso.Picasso;
@@ -83,7 +88,7 @@ public class DashboardActivity extends BaseActivity {
     ActivityDashboardBinding binding;
     LoginViewmodel viewmodel;
     AdapterSpinner adapter;
-    String activityid = "", activityname = "", currentlatitiudestring = "", currentlongitudestring = "";
+    String activityid = "", activityname = "", currentlatitiudestring = "", currentlongitudestring = "", activitynamefrom = "";
     String remarks = "";
     String imageid = "";
     String imagename = "";
@@ -96,6 +101,9 @@ public class DashboardActivity extends BaseActivity {
 
     List<ActivitylistResponse.get_activity_list_data> spinnerlist = new ArrayList<>();
 
+    ArrayList<String> spinnerlistone = new ArrayList<>();
+    List<ActivitylistResponse.get_activity_list_data> spinnerdata;
+
     AlertDialog dialog;
 
     String[] perms = {
@@ -107,6 +115,9 @@ public class DashboardActivity extends BaseActivity {
 
     private static final int REQUEST_CAPTURE_IMAGE = 1;
 
+    Intent mServiceIntent;
+    private YourService mYourService;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -114,14 +125,23 @@ public class DashboardActivity extends BaseActivity {
         binding = DataBindingUtil.setContentView(this, R.layout.activity_dashboard);
         viewmodel = ViewModelProviders.of(this).get(LoginViewmodel.class);
         mActivity = this;
+        activitynamefrom = (getIntent().getStringExtra("activityname")) != null ? getIntent().getStringExtra("activityname") : "";
+        Log.i("SpinnerListDataNF", "<==" + activityname);
+//        mYourService = new YourService();
+//        mServiceIntent = new Intent(this, mYourService.getClass());
+//        if (!isMyServiceRunning(mYourService.getClass())) {
+//            startService(mServiceIntent);
+//        }
+//
 
+        //  activityadapterspinner();
+        pullToRefresh();
         checkAndRequestPermissions();
         fetchLastLocation();
         getCurrentLocation();
         startbtnclick();
         stopbtnClick();
         startbtnenablecheck();
-        activityadapterspinner();
         observers();
         RecyclerviewData();
         imageviewclick();
@@ -151,11 +171,50 @@ public class DashboardActivity extends BaseActivity {
 
     }
 
+    private void pullToRefresh() {
+        binding.refresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                activityadapterspinner();
+                binding.activityselection.setEnabled(true);
+                binding.stopbtn.setVisibility(View.GONE);
+                binding.startbtnenable.setVisibility(View.VISIBLE);
+                binding.remarks.setText("");
+            }
+        });
+    }
+
+    private void datatolist() {
+        if (spinnerlist != null) {
+            if (spinnerlist.size() > 0) {
+                Log.i("SpinnerListDataS", "<==" + spinnerlist.size());
+                Log.i("SpinnerListDataN", "<==" + activitynamefrom);
+                for (ActivitylistResponse.get_activity_list_data tt : spinnerlist) {
+                    if (tt.getActivity_id().equals(activitynamefrom)) {
+                        Log.i("SpinnerListDataL", "<==" + tt.getActivity_id());
+                        binding.spinnevalue.setText(tt.getActivity_name());
+                    }
+                }
+            }
+        }
+    }
+
+    private boolean isMyServiceRunning(Class<?> serviceClass) {
+        ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+            if (serviceClass.getName().equals(service.service.getClassName())) {
+                Log.i("Service status", "Running");
+                return true;
+            }
+        }
+        Log.i("Service status", "Not running");
+        return false;
+    }
+
     private void imageviewclick() {
         binding.viewimagebtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 Toast.makeText(mActivity, "clicked", Toast.LENGTH_SHORT).show();
                 String imageview = Utility.encodecusid(sessionId + "$" + imageid);
                 String encrypted = imageview.replaceAll("\\s", "");
@@ -169,26 +228,17 @@ public class DashboardActivity extends BaseActivity {
     }
 
     private void stopbtnClick() {
-
         binding.stopbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 if (binding.startimagename.getText().toString().equals("")) {
                     Toast.makeText(mActivity, "Please Upload Starting Image", Toast.LENGTH_SHORT).show();
                 } else if (binding.remarks.getText().toString().equals("")) {
                     Toast.makeText(mActivity, "Please Enter Remarks", Toast.LENGTH_SHORT).show();
-
                 } else {
-
-
                     showAlertDialog(mActivity, (dialog, i) -> {
-
                     });
-
-
                 }
-
             }
         });
     }
@@ -196,13 +246,25 @@ public class DashboardActivity extends BaseActivity {
 
     private void observers() {
 
+
         viewmodel.getActivitylistResponseMutableLiveData().observe(this, new Observer<ActivitylistResponse>() {
             @Override
             public void onChanged(ActivitylistResponse activitylistResponse) {
                 spinnerlist.clear();
+                binding.refresh.setRefreshing(false);
+                spinnerdata = activitylistResponse.getGet_activity_list_data();
+
                 if (activitylistResponse.getStatus().equals("111")) {
                     spinnerlist.addAll(activitylistResponse.getGet_activity_list_data());
+//                    if (activityname.equals("none")) {
                     adapter.notifyDataSetChanged();
+//                    } else {
+//                        Toast.makeText(mActivity, "Please Complete the Unfinished task", Toast.LENGTH_SHORT).show();
+//                        binding.startbtnenable.setVisibility(View.GONE);
+//                        binding.stopbtn.setVisibility(View.VISIBLE);
+//                        binding.activityselection.setEnabled(false);
+//                        datatolist();
+//                    }
 
                 } else {
                     Toast.makeText(mActivity, activitylistResponse.getResult(), Toast.LENGTH_SHORT).show();
@@ -215,16 +277,13 @@ public class DashboardActivity extends BaseActivity {
             public void onChanged(StartServiceResponse startServiceResponse) {
                 hideProgress();
                 if (startServiceResponse.getStatus().equals("111")) {
-
                     binding.remarks.setText("");
                     binding.activityselection.setEnabled(false);
                     binding.stopbtn.setVisibility(View.VISIBLE);
                     binding.startbtnenable.setVisibility(View.GONE);
-
                     imageid = startServiceResponse.getResult();
                     imagename = startServiceResponse.getName();
                     binding.startimagename.setText(imagename);
-
                 } else {
                     Toast.makeText(mActivity, startServiceResponse.getResult(), Toast.LENGTH_SHORT).show();
                     binding.stopbtn.setVisibility(View.GONE);
@@ -244,16 +303,14 @@ public class DashboardActivity extends BaseActivity {
                     final View customLayout = getLayoutInflater().inflate(R.layout.custom_kyc_layout_new, null);
                     builder.setView(customLayout);
                     ZoomageView image = customLayout.findViewById(R.id.imageView);
-                    Picasso.get().invalidate("https://uatonpay.manappuram.com/TrackerAPI/images/" + imagenameofpic);
-                    Picasso.get().load(("https://uatonpay.manappuram.com/TrackerAPI/images/") + imagenameofpic).into(image);
+                    Picasso.get().invalidate("https://online.manappuram.com/TrackerAPI/images/" + imagenameofpic);
+                    Picasso.get().load(("https://online.manappuram.com/TrackerAPI/images/") + imagenameofpic).into(image);
 
                     builder.setPositiveButton("CANCEL", (dialog, which) -> {
                         dialog.dismiss();
                     });
                     dialog = builder.create();
                     dialog.show();
-
-
                 } else {
                     Toast.makeText(mActivity, imageViewResponse.getResult(), Toast.LENGTH_SHORT).show();
                 }
@@ -267,14 +324,12 @@ public class DashboardActivity extends BaseActivity {
         String data = Utility.encodecusid(sessionId + "$" + "0");
         String encrypted = data.replaceAll("\\s", "");
         viewmodel.Get_activity_list(encrypted);
-
     }
 
     private void startbtnenablecheck() {
         binding.remarks.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
             }
 
             @Override
@@ -666,4 +721,20 @@ public class DashboardActivity extends BaseActivity {
     }
 
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        activityadapterspinner();
+    }
+
+    //    @Override
+//    protected void onDestroy() {
+//        super.onDestroy();
+//
+//        Intent broadcastIntent = new Intent();
+//        broadcastIntent.setAction("restartservice");
+//        broadcastIntent.setClass(this, Restarter.class);
+//        this.sendBroadcast(broadcastIntent);
+//        super.onDestroy();
+//    }
 }

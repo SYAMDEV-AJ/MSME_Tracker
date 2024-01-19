@@ -6,6 +6,7 @@ import com.manappuram.msmetracker.base.Event;
 import com.manappuram.msmetracker.dashboard.modelclass.ActivitylistResponse;
 import com.manappuram.msmetracker.dashboard.modelclass.ImageViewResponse;
 import com.manappuram.msmetracker.dashboard.modelclass.StartServiceResponse;
+import com.manappuram.msmetracker.login.model.ActivityCheckResponse;
 import com.manappuram.msmetracker.login.model.LoginResponse;
 import com.manappuram.msmetracker.network.retrofit.ResponseListener;
 import com.manappuram.msmetracker.network.retrofit.RetrofitClient;
@@ -126,6 +127,32 @@ public class LoginRepository extends BaseRepository {
         new RetrofitRequest<>(call, new ResponseListener<ImageViewResponse>() {
             @Override
             public void onResponse(ImageViewResponse response, Headers headers) {
+                if (null != successResponse) {
+                    successResponse.onResponse(response);
+                }
+            }
+
+            @Override
+            public void onError(int status, BaseResponse errors) {
+                errorsMutable.postValue(new Event<>(errors));
+
+            }
+
+
+            @Override
+            public void onFailure(Throwable throwable) {
+                failMessageMutable.postValue(new Event<>(throwable.getMessage()));
+            }
+
+        }).enqueue();
+    }
+
+    public void MSME_live_activity(String p_data, SuccessResponse successResponse) {
+
+        Call<ActivityCheckResponse> call = RetrofitClient.getAPIInterface().MSME_live_activity(p_data);
+        new RetrofitRequest<>(call, new ResponseListener<ActivityCheckResponse>() {
+            @Override
+            public void onResponse(ActivityCheckResponse response, Headers headers) {
                 if (null != successResponse) {
                     successResponse.onResponse(response);
                 }

@@ -1,5 +1,8 @@
 package com.manappuram.msmetracker.login.view;
 
+import android.content.ClipData;
+import android.content.ClipboardManager;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.provider.Settings;
@@ -17,11 +20,14 @@ import com.manappuram.msmetracker.R;
 import com.manappuram.msmetracker.base.BaseActivity;
 import com.manappuram.msmetracker.dashboard.view.DashboardActivity;
 import com.manappuram.msmetracker.databinding.ActivityLoginBinding;
+import com.manappuram.msmetracker.login.model.ActivityCheckResponse;
 import com.manappuram.msmetracker.login.model.LoginResponse;
 import com.manappuram.msmetracker.network.ConnectionLiveData;
 import com.manappuram.msmetracker.utility.Connectivity;
 import com.manappuram.msmetracker.utility.Utility;
 import com.manappuram.msmetracker.viewmodel.LoginViewmodel;
+
+import java.util.Arrays;
 
 public class LoginActivity extends BaseActivity {
 
@@ -42,25 +48,26 @@ public class LoginActivity extends BaseActivity {
         Login();
         loginobserver();
 
-//        binding.loginBtn.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Intent intent = new Intent(LoginActivity.this, DashboardActivity.class);
-//                startActivity(intent);
-//
-//            }
-//        });
+        binding.deviceidcopy.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String deviceId = Settings.Secure.getString(mActivity.getContentResolver(), Settings.Secure.ANDROID_ID);
+                ClipboardManager clipboard = (ClipboardManager) mActivity.getSystemService(Context.CLIPBOARD_SERVICE);
+                ClipData clip = ClipData.newPlainText("deviceId", deviceId);
+                clipboard.setPrimaryClip(clip);
+                Toast.makeText(mActivity, "Copied", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     private void loginobserver() {
+
 
         viewmodel.getLoginResponseMutableLiveData().observe(LoginActivity.this, new Observer<LoginResponse>() {
             @Override
             public void onChanged(LoginResponse loginResponse) {
                 hideProgress();
                 if (loginResponse.getStatus().equals("111")) {
-
-
                     editor.putString("empCode", loginResponse.getEmpDetails().getEmpCode());
                     editor.putString("designation", loginResponse.getEmpDetails().getDesignation());
                     editor.putString("postId", loginResponse.getEmpDetails().getPostId());
@@ -76,14 +83,22 @@ public class LoginActivity extends BaseActivity {
                     editor.putBoolean("login", false);
                     String logindate = Utility.getTodayDate();
                     editor.putString("logindate", logindate);
-
                     editor.apply();
 
-                    Intent intent = new Intent(mActivity, DashboardActivity.class);
-                    startActivity(intent);
 
-                    Toast.makeText(mActivity, loginResponse.getResult(), Toast.LENGTH_SHORT).show();
+                    String data = Utility.encodecusid(loginResponse.getEmpDetails().getSessionId() + ":" + loginResponse.getEmpDetails().getEmpCode() + "$" + loginResponse.getEmpDetails().getEmpCode());
+                    String encripted = data.replaceAll("\\s", "");
 
+                    Log.i("livedata", encripted);
+
+                    if (loginResponse.getEmpDetails().getDeptId().equals("617") && !loginResponse.getEmpDetails().getBranchId().equals("0")) {
+                        showProgress();
+                        viewmodel.MSME_live_activity(encripted);
+                        Toast.makeText(mActivity, loginResponse.getResult(), Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(mActivity, "You are Not Authorized to this Application", Toast.LENGTH_SHORT).show();
+
+                    }
                 } else {
                     Toast.makeText(mActivity, loginResponse.getResult(), Toast.LENGTH_SHORT).show();
 
@@ -91,6 +106,25 @@ public class LoginActivity extends BaseActivity {
             }
         });
 
+        viewmodel.getActivityCheckResponseMutableLiveData().observe(this, new Observer<ActivityCheckResponse>() {
+            @Override
+            public void onChanged(ActivityCheckResponse activityCheckResponse) {
+                hideProgress();
+                if (activityCheckResponse.getStatus().equals("111")) {
+                    String[] data = activityCheckResponse.getResult().split("~");
+                    String value = data[1];
+                    Intent intent = new Intent(mActivity, DashboardActivity.class);
+                    intent.putExtra("activityname", value);
+                    startActivity(intent);
+                } else {
+                    Intent intent = new Intent(mActivity, DashboardActivity.class);
+                    intent.putExtra("activityname", "none");
+                    startActivity(intent);
+
+                }
+
+            }
+        });
     }
 
     private void Login() {
@@ -100,33 +134,34 @@ public class LoginActivity extends BaseActivity {
             public void onClick(View view) {
 
 
-//                if (binding.employeeid.getText().toString().equals("") & binding.password.getText().toString().equals("") & branchid.equals("")) {
-//                    Toast.makeText(mActivity, "Please Enter Valid Credentials", Toast.LENGTH_SHORT).show();
-//                } else {
-                if (flag.equals("1")) {
-                    String deviceId = Settings.Secure.getString(LoginActivity.this.getContentResolver(), Settings.Secure.ANDROID_ID);
+                if (binding.employeeid.getText().toString().equals("") & binding.password.getText().toString().equals("")) {
+                    Toast.makeText(mActivity, "Please Enter Valid Credentials", Toast.LENGTH_SHORT).show();
+                } else {
+                    if (flag.equals("1")) {
+                        String deviceId = Settings.Secure.getString(LoginActivity.this.getContentResolver(), Settings.Secure.ANDROID_ID);
 
-////                    String empcode = binding.employeeid.getText().toString();
-//                    String password = Utility.encodecusid(binding.password.getText().toString());
-//                    String spaceremoved = password.replaceAll("\\s", "");
-//                    Log.i("dddd", spaceremoved);
+                        String empcode = binding.employeeid.getText().toString();
+                        String password = Utility.encodecusid(binding.password.getText().toString());
+                        String spaceremoved = password.replaceAll("\\s", "");
+                        Log.i("dddd", spaceremoved);
+                        showProgress();
+//                        viewmodel.userLogin("68327", "wqv/NG39+Z6pAzqGwpsjlw==", "", deviceId);
+                        viewmodel.userLogin(empcode, spaceremoved, "", deviceId);
 
-                    showProgress();
-                    viewmodel.userLogin("68327", "wqv/NG39+Z6pAzqGwpsjlw==", "", deviceId);
+
+                    } else if (flag.equals("2")) {
+                        Utility.showSnackbar(binding.getRoot(), "No Internet Connection");
 
 
-                } else if (flag.equals("2")) {
-                    Utility.showSnackbar(binding.getRoot(), "No Internet Connection");
-
+                    }
 
                 }
+
 
             }
 
 
         });
-
-
     }
 
 

@@ -3,7 +3,6 @@ package com.manappuram.msmetracker.dashboard.view;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -17,15 +16,9 @@ import android.os.Handler;
 import android.os.Looper;
 import android.provider.MediaStore;
 import android.provider.Settings;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.Base64;
 import android.util.Log;
 import android.view.View;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
-import android.view.animation.DecelerateInterpolator;
-import android.view.animation.RotateAnimation;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResult;
@@ -36,8 +29,8 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.core.app.ActivityCompat;
 import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
-import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
@@ -51,11 +44,8 @@ import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 import com.manappuram.msmetracker.R;
 import com.manappuram.msmetracker.base.BaseActivity;
-import com.manappuram.msmetracker.dashboard.adapter.AdapterSpinner;
-import com.manappuram.msmetracker.dashboard.modelclass.ActivitylistResponse;
 import com.manappuram.msmetracker.dashboard.modelclass.ImageViewResponse;
 import com.manappuram.msmetracker.dashboard.modelclass.StartServiceResponse;
-import com.manappuram.msmetracker.databinding.ActivityDashboardBinding;
 import com.manappuram.msmetracker.databinding.ActivityDistanceCalculationBinding;
 import com.manappuram.msmetracker.utility.Utility;
 import com.manappuram.msmetracker.viewmodel.LoginViewmodel;
@@ -65,7 +55,6 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -77,6 +66,7 @@ public class DistanceCalculationActivity extends BaseActivity {
 
     ActivityDistanceCalculationBinding binding;
     LoginViewmodel viewmodel;
+    Thread t = null;
 
 
     String[] perms = {
@@ -89,8 +79,8 @@ public class DistanceCalculationActivity extends BaseActivity {
     String activityname = "";
     String startlatitude = "";
     String startlongitude = "";
-    String endremark = "", startimagename = "";
-    String endlocationlat = "", endlocationlog = "", startimageid = "", endimageid = "";
+    String endremark = "", startimagename = "", profileimagevalue = "";
+    String endlocationlat = "", endlocationlog = "", startimageid = "", endimageid = "", endimagename = "", finalDist = "";
 
     private static final int REQUEST_CAPTURE_IMAGE = 1;
 
@@ -121,30 +111,65 @@ public class DistanceCalculationActivity extends BaseActivity {
         binding.remarks.setEnabled(false);
         binding.titleempname.setText(name);
 
-        fetchLastLocation();
-        getCurrentLocation();
-        checkAndRequestPermissions();
 
-        Handler handler = new Handler();
-        Runnable runnable = new Runnable() {
+        checkAndRequestPermissions();
+        runthread();
+        runthread1();
+        observers();
+        imageviewclick();
+        imageviewendclick();
+    }
+
+//    @Override
+//    protected void onStart() {
+//        super.onStart();
+//
+//    }
+
+    private void runthread1() {
+        runOnUiThread(new Runnable() {
             @Override
             public void run() {
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
+                Toast.makeText(mActivity, "Cameraaa thread", Toast.LENGTH_SHORT).show();
+
                 if (ActivityCompat.checkSelfPermission(DistanceCalculationActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(DistanceCalculationActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
                     requestforMediaPermission();
                 } else {
                     ChooseTypeBottomsheet();
                 }
 
+
             }
-        };
-        Toast.makeText(mActivity, "Please Wait for a Second", Toast.LENGTH_SHORT).show();
+        });
+    }
 
-        handler.postDelayed(runnable, 2000);
+    private void runthread() {
+        t = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+
+                        fetchLastLocation();
+                        getCurrentLocation();
+
+                        Toast.makeText(mActivity, "Location thread", Toast.LENGTH_SHORT).show();
 
 
-        observers();
-        imageviewclick();
-        imageviewendclick();
+                    }
+                });
+            }
+        });
+        t.start();
+        t.setPriority(Thread.MAX_PRIORITY);
+
     }
 
     private void imageviewclick() {
@@ -189,7 +214,11 @@ public class DistanceCalculationActivity extends BaseActivity {
             public void onChanged(StartServiceResponse startServiceResponse) {
                 hideProgress();
                 if (startServiceResponse.getStatus().equals("111")) {
-                    endimageid = startServiceResponse.getName();
+
+                    endimageid = startServiceResponse.getResult();
+                    endimagename = startServiceResponse.getName();
+                    binding.endimagename.setText(endimagename);
+
 
                     Toast.makeText(mActivity, "Successfully Uploaded", Toast.LENGTH_SHORT).show();
 
@@ -211,8 +240,8 @@ public class DistanceCalculationActivity extends BaseActivity {
                     final View customLayout = getLayoutInflater().inflate(R.layout.custom_kyc_layout_new, null);
                     builder.setView(customLayout);
                     ZoomageView image = customLayout.findViewById(R.id.imageView);
-                    Picasso.get().invalidate("https://uatonpay.manappuram.com/TrackerAPI/images/" + imagenameofpic);
-                    Picasso.get().load(("https://uatonpay.manappuram.com/TrackerAPI/images/") + imagenameofpic).into(image);
+                    Picasso.get().invalidate("https://online.manappuram.com/TrackerAPI/images/" + imagenameofpic);
+                    Picasso.get().load(("https://online.manappuram.com/TrackerAPI/images/") + imagenameofpic).into(image);
 
                     builder.setPositiveButton("CANCEL", (dialog, which) -> {
                         dialog.dismiss();
@@ -278,65 +307,73 @@ public class DistanceCalculationActivity extends BaseActivity {
                         super.onLocationResult(locationResult);
                         LocationServices.getFusedLocationProviderClient(mActivity).
                                 removeLocationUpdates(this);
+                        try {
 
-                        if (locationResult != null && locationResult.getLocations().size() > 0) {
-
-
-                            int lastLocationIndex = locationResult.getLocations().size() - 1;
-                            double endlatitude = locationResult.getLocations().get(lastLocationIndex).getLatitude();
-                            double endlongitude = locationResult.getLocations().get(lastLocationIndex).getLongitude();
-
-                            endlocationlat = String.valueOf(endlatitude);
-                            endlocationlog = String.valueOf(endlongitude);
-
-                            double firstlat = Double.parseDouble(startlatitude);
-                            double firstlog = Double.parseDouble(startlongitude);
-
-                            handler = new Handler();
-                            runnable = new Runnable() {
-                                @Override
-                                public void run() {
-                                    distance(firstlat, firstlog, endlatitude, endlongitude);
-
-                                }
-                            };
-                            Toast.makeText(mActivity, "Distance is Calculating", Toast.LENGTH_SHORT).show();
-                            handler.postDelayed(runnable, 100);
+                            if (locationResult != null && locationResult.getLocations().size() > 0) {
 
 
-                            Log.i("locationnnend", "<==" + endlocationlat);
-                            Log.i("locationnnend", "<==" + endlocationlog);
+                                int lastLocationIndex = locationResult.getLocations().size() - 1;
+                                double endlatitude = locationResult.getLocations().get(lastLocationIndex).getLatitude();
+                                double endlongitude = locationResult.getLocations().get(lastLocationIndex).getLongitude();
+
+                                endlocationlat = String.valueOf(endlatitude);
+                                endlocationlog = String.valueOf(endlongitude);
+
+                                double firstlat = Double.parseDouble(startlatitude);
+                                double firstlog = Double.parseDouble(startlongitude);
+
+//                                handler = new Handler();
+//                                runnable = new Runnable() {
+//                                    @Override
+//                                    public void run() {
+//                                        distance(firstlat, firstlog, endlatitude, endlongitude);
+//
+//
+//                                    }
+//                                };
+//                                handler.postDelayed(runnable, 100);
 
 
-                            try {
-                                Geocoder geocoder;
-                                List<Address> addresses;
-                                geocoder = new Geocoder(mActivity, Locale.getDefault());
-                                addresses = geocoder.getFromLocation(endlatitude, endlongitude, 1);
-                                String address = addresses.get(0).getAddressLine(0); // If any additional address line present than only, check with max available address lines by getMaxAddressLineIndex()
-                                String currentCity = addresses.get(0).getLocality();
+                                Log.i("locationnnend", "<==" + endlocationlat);
+                                Log.i("locationnnend", "<==" + endlocationlog);
+
+
+                                try {
+                                    Geocoder geocoder;
+                                    List<Address> addresses;
+                                    geocoder = new Geocoder(mActivity, Locale.getDefault());
+                                    addresses = geocoder.getFromLocation(endlatitude, endlongitude, 1);
+                                    String address = addresses.get(0).getAddressLine(0); // If any additional address line present than only, check with max available address lines by getMaxAddressLineIndex()
+                                    String currentCity = addresses.get(0).getLocality();
 //                                binding.location.setText(address);
-                                if (currentCity == null) {
-                                    String[] location_name = address.split(",");
-                                    String loc_name1 = location_name[1];
-                                    String loc_name2 = location_name[2];
-                                    Log.i("locationnn_loc_name", loc_name2);
-                                    currentCity = loc_name2;
+                                    if (currentCity == null) {
+                                        String[] location_name = address.split(",");
+                                        String loc_name1 = location_name[1];
+                                        String loc_name2 = location_name[2];
+                                        Log.i("locationnn_loc_name", loc_name2);
+                                        currentCity = loc_name2;
 
 
+                                    }
+                                    String state = addresses.get(0).getAdminArea();
+                                    String country = addresses.get(0).getCountryName();
+                                    String postalCode = addresses.get(0).getPostalCode();
+                                    String knownName = addresses.get(0).getFeatureName();
+
+
+                                } catch (IOException e) {
+                                    e.printStackTrace();
                                 }
-                                String state = addresses.get(0).getAdminArea();
-                                String country = addresses.get(0).getCountryName();
-                                String postalCode = addresses.get(0).getPostalCode();
-                                String knownName = addresses.get(0).getFeatureName();
 
 
-                            } catch (IOException e) {
-                                e.printStackTrace();
                             }
 
 
+                        } catch (Exception e) {
+                            return;
+
                         }
+
 
                     }
                 }, Looper.getMainLooper());
@@ -415,26 +452,47 @@ public class DistanceCalculationActivity extends BaseActivity {
         filesize = (long) (imageInByte.length / 1024.0);//KB
 
         String filename = Utility.getFileName(DistanceCalculationActivity.this, businesspicUri);
-        binding.endimagename.setText(filename);
+//        binding.endimagename.setText(filename);
         binding.imageuploadlayout.setVisibility(View.VISIBLE);
 
-        if (filesize > 2048) {
-            originalBitmap = resize(originalBitmap, originalBitmap.getWidth() / 2, originalBitmap.getHeight() / 6);
+        if (filesize > 3072) {
+/*
+            originalBitmap = resize(originalBitmap, originalBitmap.getWidth() / 2, originalBitmap.getHeight() / 2);
+*/
             bytes = new ByteArrayOutputStream();
-            originalBitmap.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
+            originalBitmap.compress(Bitmap.CompressFormat.PNG, 100, bytes);
             originalBitmap = BitmapFactory.decodeStream(new ByteArrayInputStream(bytes.toByteArray()));
             imageInByte = bytes.toByteArray();
-            filesize = (long) (imageInByte.length / 1024.0);//KB
+            filesize = (long) (imageInByte.length / 2048.0);//KB
 
         } else {
             Log.e("TAG", "UploadMedia: " + filesize);
         }
-        String profileimagevalue = Base64.encodeToString(imageInByte, Base64.DEFAULT);
-        String data = Utility.encodecusid(sessionId + "$" + activityid + "~" + endremark + "~" + endlocationlat + "~" + endlocationlog + "~" + "5");
-        String enrypted = data.replaceAll("\\s", "");
-        Log.i("enddara", enrypted);
-        showProgress();
-        viewmodel.MSME_end_activity(enrypted, profileimagevalue);
+        Toast.makeText(mActivity, "Distance is Calculating Please Wait a Moment...", Toast.LENGTH_SHORT).show();
+
+        profileimagevalue = Base64.encodeToString(imageInByte, Base64.DEFAULT);
+        handler = new Handler();
+        runnable = new Runnable() {
+            @Override
+            public void run() {
+                distance(Double.parseDouble(startlatitude), Double.parseDouble(startlongitude), Double.parseDouble(endlocationlat), Double.parseDouble(endlocationlog));
+
+
+            }
+        };
+        handler.postDelayed(runnable, 100);
+
+//        if (profileimagevalue.equals("") && endlocationlat.equals("") && endlocationlog.equals("")) {
+//
+//            getCurrentLocation();
+//
+//        } else {
+//            String data = Utility.encodecusid(sessionId + "$" + activityid + "~" + endremark + "~" + endlocationlat + "~" + endlocationlog + "~" + finalDist);
+//            String enrypted = data.replaceAll("\\s", "");
+//            Log.i("enddistance", enrypted);
+//            showProgress();
+//            viewmodel.MSME_end_activity(enrypted, profileimagevalue);
+//        }
 
 
     }
@@ -530,8 +588,22 @@ public class DistanceCalculationActivity extends BaseActivity {
         int dist1 = (int) dist;
         //dist = dist * 60 * 1.60934;
 
-        String finalDist = String.valueOf(dist1);
+        finalDist = String.valueOf(dist1);
+
+
         binding.totaldistance.setText(finalDist + " KM");
+
+        if (profileimagevalue.equals("")) {
+
+        } else {
+            String data = Utility.encodecusid(sessionId + "$" + activityid + "~" + endremark + "~" + lat2 + "~" + lon2 + "~" + finalDist);
+            String enrypted = data.replaceAll("\\s", "");
+            Log.i("enddistance", enrypted);
+            showProgress();
+            viewmodel.MSME_end_activity(enrypted, profileimagevalue);
+        }
+
+
         Log.i("ditancecalculation", String.valueOf(dist));
         return (dist);
     }

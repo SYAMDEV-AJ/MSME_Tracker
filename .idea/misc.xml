@@ -5,7 +5,11 @@
       <map>
         <entry key="..\:/GITHUB/MSMETRACKERMANAPPURAM/app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.172" />
         <entry key="..\:/GITHUB/MSMETRACKERMANAPPURAM/app/src/main/res/drawable/bg_bottom_sheet_dialog_fragment.xml" value="0.172" />
+        <entry key="..\:/GITHUB/MSMETRACKERMANAPPURAM/app/src/main/res/drawable/ic_ess_log_copy_icon.xml" value="0.172" />
         <entry key="..\:/GITHUB/MSMETRACKERMANAPPURAM/app/src/main/res/layout/activity_dashboard.xml" value="0.1796875" />
+        <entry key="..\:/GITHUB/MSMETRACKERMANAPPURAM/app/src/main/res/layout/activity_distance_calculation.xml" value="0.1796875" />
+        <entry key="..\:/GITHUB/MSMETRACKERMANAPPURAM/app/src/main/res/layout/activity_login.xml" value="0.1796875" />
+        <entry key="..\:/GITHUB/MSMETRACKERMANAPPURAM/app/src/main/res/layout/custom_kyc_layout_new.xml" value="0.1796875" />
         <entry key="..\:/GITHUB/MSMETRACKERMANAPPURAM/app/src/main/res/layout/list_spinner_item_activity.xml" value="0.1796875" />
         <entry key="..\:/GITHUB/MSMETRACKERMANAPPURAM/app/src/main/res/layout/market_image_upload_popup.xml" value="0.1796875" />
         <entry key="..\:/GITHUB/MSMETracker/app/src/main/res/drawable/bg_custom_progress_bar.xml" value="0.188" />

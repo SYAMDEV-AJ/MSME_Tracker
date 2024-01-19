@@ -9,6 +9,7 @@ import com.manappuram.msmetracker.base.BaseRepository;
 import com.manappuram.msmetracker.dashboard.modelclass.ActivitylistResponse;
 import com.manappuram.msmetracker.dashboard.modelclass.ImageViewResponse;
 import com.manappuram.msmetracker.dashboard.modelclass.StartServiceResponse;
+import com.manappuram.msmetracker.login.model.ActivityCheckResponse;
 import com.manappuram.msmetracker.login.model.LoginResponse;
 import com.manappuram.msmetracker.repository.LoginRepository;
 
@@ -25,6 +26,7 @@ public class LoginViewmodel extends ViewModel {
     public MutableLiveData<StartServiceResponse> startServiceResponseMutableLiveData = new MutableLiveData<>();
     public MutableLiveData<StartServiceResponse> endServiceResponseMutableLiveData = new MutableLiveData<>();
     public MutableLiveData<ImageViewResponse> imageViewResponseMutableLiveData = new MutableLiveData<>();
+    public MutableLiveData<ActivityCheckResponse> activityCheckResponseMutableLiveData = new MutableLiveData<>();
 
 
     public void userLogin(String empCode, String pwd, String tocken, String deviceid) {
@@ -57,6 +59,12 @@ public class LoginViewmodel extends ViewModel {
         });
     }
 
+    public void MSME_live_activity(String p_data) {
+        getLoginRepository().MSME_live_activity(p_data, (BaseRepository.SuccessResponse<ActivityCheckResponse>) activityCheckResponse -> {
+            activityCheckResponseMutableLiveData.setValue(activityCheckResponse);
+        });
+    }
+
 
     public MutableLiveData<LoginResponse> getLoginResponseMutableLiveData() {
         return loginResponseMutableLiveData;
@@ -76,6 +84,10 @@ public class LoginViewmodel extends ViewModel {
 
     public MutableLiveData<ImageViewResponse> getImageViewResponseMutableLiveData() {
         return imageViewResponseMutableLiveData;
+    }
+
+    public MutableLiveData<ActivityCheckResponse> getActivityCheckResponseMutableLiveData() {
+        return activityCheckResponseMutableLiveData;
     }
 
 

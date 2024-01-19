@@ -99,7 +99,7 @@
                             android:fontFamily="@font/montserrat_regular"
                             android:hint="Enter Your Password"
                             android:inputType="textPassword"
-                            android:maxLength="14"
+                            android:maxLength="16"
                             android:maxLines="1"
                             android:padding="10dp"
                             android:password="true"
@@ -115,6 +115,18 @@
                     </LinearLayout>
 
                 </LinearLayout>
+
+                <TextView
+                    android:id="@+id/deviceidcopy"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center|right"
+                    android:layout_marginHorizontal="18dp"
+                    android:drawableEnd="@drawable/ic_ess_log_copy_icon"
+                    android:drawablePadding="8dp"
+                    android:fontFamily="@font/montserrat_medium"
+                    android:text="Device ID"
+                    android:textSize="14sp" />
 
                 <TextView
                     android:id="@+id/login_btn"
