@@ -36,11 +36,11 @@ public final class RetrofitRequest<T> {
             @Override
             public void onResponse(@NonNull Call<T> call, @NonNull Response<T> response) {
                 try {
-                    if (response.isSuccessful() ) {
+                    if (response.isSuccessful()) {
                         // if (response.isSuccessful()) {
 //                        updateSessionRequest((BaseResponse) response.body());
                         responseListener.onResponse(response.body(), response.headers());
-                    } else if (response.code() == 502 || response.code() == 500 || ((BaseResponse) response.body()).getStatus() == null || ((BaseResponse) response.body()).getResult() == null) {
+                    } else if (response.code() == 502 || response.code() == 504 || response.code() == 500 || ((BaseResponse) response.body()).getStatus() == null || ((BaseResponse) response.body()).getResult() == null) {
                         BaseResponse res = new BaseResponse("400", "Something Went Wrong!");
                         responseListener.onError(400, res);
                     } else if (response.code() == 666 || response.code() == 999 || response.code() == 555 || response.code() == 444) {
