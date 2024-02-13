@@ -3,6 +3,7 @@ package com.manappuram.msmetracker.dashboard.view;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -26,6 +27,7 @@ import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.widget.AlertDialogLayout;
 import androidx.core.app.ActivityCompat;
 import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.Observer;
@@ -80,6 +82,7 @@ public class DistanceCalculationActivity extends BaseActivity {
     String startlatitude = "";
     String startlongitude = "";
     String halfimagename = "";
+    String unfinishedtask = "";
     String endremark = "", startimagename = "", profileimagevalue = "", activitynamefrom = "";
     String endlocationlat = "", endlocationlog = "", startimageid = "", endimageid = "", endimagename = "", finalDist = "";
 
@@ -88,6 +91,7 @@ public class DistanceCalculationActivity extends BaseActivity {
     Handler handler;
     Runnable runnable;
     AlertDialog dialog;
+    AlertDialog.Builder builder;
 
 
     @Override
@@ -99,14 +103,22 @@ public class DistanceCalculationActivity extends BaseActivity {
 
         activityid = getIntent().getStringExtra("activityid");
         activityname = getIntent().getStringExtra("activityname");
-        startlatitude = getIntent().getStringExtra("startlatitude");
-        startlongitude = getIntent().getStringExtra("startlongitude");
         endremark = getIntent().getStringExtra("endremark");
         startimagename = getIntent().getStringExtra("startimagename");
         startimageid = getIntent().getStringExtra("startimageid");
         activitynamefrom = getIntent().getStringExtra("activitynamefrom");
         halfimagename = (getIntent().getStringExtra("halfimagename")) != null ? getIntent().getStringExtra("halfimagename") : "";
-
+        unfinishedtask = (getIntent().getStringExtra("unfinishedtask")) != null ? getIntent().getStringExtra("unfinishedtask") : "";
+        if (unfinishedtask.contains("Activity is not completed")) {
+            String[] value = unfinishedtask.split("~");
+            if (value.length > 1) {
+                startlatitude = value[3];
+                startlongitude = value[4];
+            }
+        } else {
+            startlatitude = getIntent().getStringExtra("startlatitude");
+            startlongitude = getIntent().getStringExtra("startlongitude");
+        }
 
         if (activitynamefrom.equals("none")) {
             binding.startimagelayout.setVisibility(View.VISIBLE);
@@ -226,17 +238,11 @@ public class DistanceCalculationActivity extends BaseActivity {
             public void onChanged(StartServiceResponse startServiceResponse) {
                 hideProgress();
                 if (startServiceResponse.getStatus().equals("111")) {
-
                     endimageid = startServiceResponse.getResult();
                     endimagename = startServiceResponse.getName();
                     binding.endimagename.setText(endimagename);
-
-
                     Toast.makeText(mActivity, "Successfully Uploaded", Toast.LENGTH_SHORT).show();
-                    Intent intent = new Intent(mActivity, DashboardActivity.class);
-                    intent.putExtra("activityname", "none");
-                    startActivity(intent);
-                    finish();
+
 
                 } else {
                     Toast.makeText(mActivity, startServiceResponse.getResult(), Toast.LENGTH_SHORT).show();
@@ -385,16 +391,10 @@ public class DistanceCalculationActivity extends BaseActivity {
                                 } catch (IOException e) {
                                     e.printStackTrace();
                                 }
-
-
                             }
-
-
                         } catch (Exception e) {
                             return;
-
                         }
-
 
                     }
                 }, Looper.getMainLooper());
@@ -432,9 +432,7 @@ public class DistanceCalculationActivity extends BaseActivity {
         Intent camera_intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         proofPhotoUpload.launch(camera_intent);
 
-
     }
-
 
     ActivityResultLauncher<Intent> proofPhotoUpload = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
@@ -503,18 +501,6 @@ public class DistanceCalculationActivity extends BaseActivity {
         };
         handler.postDelayed(runnable, 100);
 
-//        if (profileimagevalue.equals("") && endlocationlat.equals("") && endlocationlog.equals("")) {
-//
-//            getCurrentLocation();
-//
-//        } else {
-//            String data = Utility.encodecusid(sessionId + "$" + activityid + "~" + endremark + "~" + endlocationlat + "~" + endlocationlog + "~" + finalDist);
-//            String enrypted = data.replaceAll("\\s", "");
-//            Log.i("enddistance", enrypted);
-//            showProgress();
-//            viewmodel.MSME_end_activity(enrypted, profileimagevalue);
-//        }
-
 
     }
 
@@ -562,7 +548,6 @@ public class DistanceCalculationActivity extends BaseActivity {
                     public void onPermissionsChecked(MultiplePermissionsReport report) {
                         if (report.areAllPermissionsGranted()) {
                             fetchLastLocation();
-
                         } else if (report.isAnyPermissionPermanentlyDenied()) {
 
                         }
@@ -656,5 +641,36 @@ public class DistanceCalculationActivity extends BaseActivity {
 
 //        fetchLastLocation();
 //        getCurrentLocation();
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+
+        builder = new AlertDialog.Builder(mActivity);
+        builder.setMessage("Go To Dashboard?");
+        builder.setCancelable(false);
+
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                Intent intent = new Intent(mActivity, DashboardActivity.class);
+                intent.putExtra("activityname", "none");
+                startActivity(intent);
+                finish();
+                dialog.dismiss();
+            }
+        });
+
+        builder.setNegativeButton("", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+
+
+            }
+
+        });
+        dialog = builder.create();
+        dialog.show();
     }
 }

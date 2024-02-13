@@ -89,7 +89,6 @@ public class LoginActivity extends BaseActivity {
                     if (loginResponse.getEmpDetails().getDeptId().equals("617") && !loginResponse.getEmpDetails().getBranchId().equals("0")) {
                         showProgress();
                         viewmodel.MSME_live_activity(encripted);
-                        Toast.makeText(mActivity, loginResponse.getResult(), Toast.LENGTH_SHORT).show();
                     } else {
                         Toast.makeText(mActivity, "You are Not Authorized to this Application", Toast.LENGTH_SHORT).show();
 
@@ -106,17 +105,20 @@ public class LoginActivity extends BaseActivity {
             public void onChanged(ActivityCheckResponse activityCheckResponse) {
                 hideProgress();
                 if (activityCheckResponse.getStatus().equals("111")) {
+                    String unfinishedtask = activityCheckResponse.getResult();
                     String[] data = activityCheckResponse.getResult().split("~");
                     String value = data[1];
                     String halfimagename = data[2];
                     Intent intent = new Intent(mActivity, DashboardActivity.class);
                     intent.putExtra("activityname", value);
                     intent.putExtra("halfimagename", halfimagename);
+                    intent.putExtra("unfinishedtask", unfinishedtask);
                     startActivity(intent);
                 } else {
                     Intent intent = new Intent(mActivity, DashboardActivity.class);
                     intent.putExtra("activityname", "none");
                     intent.putExtra("halfimagename", "none");
+                    intent.putExtra("unfinishedtask", "none");
                     startActivity(intent);
 
                 }
@@ -143,8 +145,8 @@ public class LoginActivity extends BaseActivity {
                     String spaceremoved = password.replaceAll("\\s", "");
                     Log.i("dddd", spaceremoved);
                     showProgress();
-                    //viewmodel.userLogin("407068", "wqv/NG39+Z6pAzqGwpsjlw==", "", deviceId);
-                    viewmodel.userLogin(empcode, spaceremoved, "", deviceId);
+                    viewmodel.userLogin("407068", "wqv/NG39+Z6pAzqGwpsjlw==", "", deviceId);
+                    // viewmodel.userLogin(empcode, spaceremoved, "", deviceId);
 
 
                 } else if (flag.equals("2")) {

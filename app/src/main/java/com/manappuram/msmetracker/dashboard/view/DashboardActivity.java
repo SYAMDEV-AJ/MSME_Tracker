@@ -93,6 +93,7 @@ public class DashboardActivity extends BaseActivity {
     String imageid = "";
     String imagename = "";
     String halfimagename = "";
+    String unfinishedtask = "";
     double currentLatitude;
     double currentLongitude;
 
@@ -128,20 +129,19 @@ public class DashboardActivity extends BaseActivity {
         mActivity = this;
         activitynamefrom = (getIntent().getStringExtra("activityname")) != null ? getIntent().getStringExtra("activityname") : "";
         halfimagename = (getIntent().getStringExtra("halfimagename")) != null ? getIntent().getStringExtra("halfimagename") : "";
-
-        Log.i("SpinnerListDataNF", "<==" + activityname);
-//        mYourService = new YourService();
+        unfinishedtask = (getIntent().getStringExtra("unfinishedtask")) != null ? getIntent().getStringExtra("unfinishedtask") : "";
+        if (unfinishedtask.contains("none")) {
+            fetchLastLocation();
+            getCurrentLocation();
+        }
 //        mServiceIntent = new Intent(this, mYourService.getClass());
 //        if (!isMyServiceRunning(mYourService.getClass())) {
 //            startService(mServiceIntent);
 //        }
-//
 
-        //  activityadapterspinner();
         pullToRefresh();
         checkAndRequestPermissions();
-        fetchLastLocation();
-        getCurrentLocation();
+
         startbtnclick();
         stopbtnClick();
         startbtnenablecheck();
@@ -693,7 +693,6 @@ public class DashboardActivity extends BaseActivity {
         builder.setPositiveButton("Are you Sure Want to Stop?", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-
                 Intent intent = new Intent(mActivity, DistanceCalculationActivity.class);
                 intent.putExtra("activityid", activityid);
                 intent.putExtra("activityname", activityname);
@@ -704,6 +703,7 @@ public class DashboardActivity extends BaseActivity {
                 intent.putExtra("endremark", binding.remarks.getText().toString());
                 intent.putExtra("activitynamefrom", activitynamefrom);
                 intent.putExtra("halfimagename", halfimagename);
+                intent.putExtra("unfinishedtask", unfinishedtask);
                 startActivity(intent);
 
 
