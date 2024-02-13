@@ -33,7 +33,6 @@ public class LoginActivity extends BaseActivity {
 
     ActivityLoginBinding binding;
     LoginViewmodel viewmodel;
-
     String flag = "";
 
     @Override
@@ -42,7 +41,6 @@ public class LoginActivity extends BaseActivity {
         binding = DataBindingUtil.setContentView(this, R.layout.activity_login);
         viewmodel = ViewModelProviders.of(this).get(LoginViewmodel.class);
         mActivity = this;
-
         ShowHidePass();
         checkInternetConnectivity();
         Login();
@@ -85,11 +83,8 @@ public class LoginActivity extends BaseActivity {
                     editor.putString("logindate", logindate);
                     editor.apply();
 
-
                     String data = Utility.encodecusid(loginResponse.getEmpDetails().getSessionId() + ":" + loginResponse.getEmpDetails().getEmpCode() + "$" + loginResponse.getEmpDetails().getEmpCode());
                     String encripted = data.replaceAll("\\s", "");
-
-                    Log.i("livedata", encripted);
 
                     if (loginResponse.getEmpDetails().getDeptId().equals("617") && !loginResponse.getEmpDetails().getBranchId().equals("0")) {
                         showProgress();
@@ -113,12 +108,15 @@ public class LoginActivity extends BaseActivity {
                 if (activityCheckResponse.getStatus().equals("111")) {
                     String[] data = activityCheckResponse.getResult().split("~");
                     String value = data[1];
+                    String halfimagename = data[2];
                     Intent intent = new Intent(mActivity, DashboardActivity.class);
                     intent.putExtra("activityname", value);
+                    intent.putExtra("halfimagename", halfimagename);
                     startActivity(intent);
                 } else {
                     Intent intent = new Intent(mActivity, DashboardActivity.class);
                     intent.putExtra("activityname", "none");
+                    intent.putExtra("halfimagename", "none");
                     startActivity(intent);
 
                 }
@@ -134,31 +132,31 @@ public class LoginActivity extends BaseActivity {
             public void onClick(View view) {
 
 
-                if (binding.employeeid.getText().toString().equals("") & binding.password.getText().toString().equals("")) {
-                    Toast.makeText(mActivity, "Please Enter Valid Credentials", Toast.LENGTH_SHORT).show();
-                } else {
-                    if (flag.equals("1")) {
-                        String deviceId = Settings.Secure.getString(LoginActivity.this.getContentResolver(), Settings.Secure.ANDROID_ID);
+//                if (binding.employeeid.getText().toString().equals("") & binding.password.getText().toString().equals("")) {
+//                    Toast.makeText(mActivity, "Please Enter Valid Credentials", Toast.LENGTH_SHORT).show();
+//                } else {
+                if (flag.equals("1")) {
+                    String deviceId = Settings.Secure.getString(LoginActivity.this.getContentResolver(), Settings.Secure.ANDROID_ID);
 
-                        String empcode = binding.employeeid.getText().toString();
-                        String password = Utility.encodecusid(binding.password.getText().toString());
-                        String spaceremoved = password.replaceAll("\\s", "");
-                        Log.i("dddd", spaceremoved);
-                        showProgress();
-//                        viewmodel.userLogin("68327", "wqv/NG39+Z6pAzqGwpsjlw==", "", deviceId);
-                        viewmodel.userLogin(empcode, spaceremoved, "", deviceId);
-
-
-                    } else if (flag.equals("2")) {
-                        Utility.showSnackbar(binding.getRoot(), "No Internet Connection");
+                    String empcode = binding.employeeid.getText().toString();
+                    String password = Utility.encodecusid(binding.password.getText().toString());
+                    String spaceremoved = password.replaceAll("\\s", "");
+                    Log.i("dddd", spaceremoved);
+                    showProgress();
+                    //viewmodel.userLogin("407068", "wqv/NG39+Z6pAzqGwpsjlw==", "", deviceId);
+                    viewmodel.userLogin(empcode, spaceremoved, "", deviceId);
 
 
-                    }
+                } else if (flag.equals("2")) {
+                    Utility.showSnackbar(binding.getRoot(), "No Internet Connection");
+
 
                 }
 
-
             }
+
+
+            //   }
 
 
         });
@@ -169,9 +167,7 @@ public class LoginActivity extends BaseActivity {
         binding.showpassword.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
                 int inputtype = binding.password.getInputType();
-
                 if (binding.password.getInputType() != (InputType.TYPE_CLASS_TEXT + InputType.TYPE_TEXT_VARIATION_PASSWORD)) {
                     binding.showpassword.setBackground(getResources().getDrawable(R.drawable.ic_showhide_password));
                     binding.password.setTransformationMethod(PasswordTransformationMethod.getInstance());
@@ -189,9 +185,7 @@ public class LoginActivity extends BaseActivity {
 
     private void checkInternetConnectivity() {
         if (Connectivity.isConnected(this)) {
-
             flag = "1";
-
         } else {
             flag = "2";
             Utility.showSnackbar(binding.getRoot(), "No Internet Connection");
@@ -204,10 +198,7 @@ public class LoginActivity extends BaseActivity {
         connectionLiveData.observe(this, connectionModel -> {
             if (connectionModel.getIsConnected()) {
                 Utility.showSnackbar(binding.getRoot(), "Connected");
-
                 flag = "1";
-
-
             } else {
                 flag = "2";
                 Utility.showSnackbar(binding.getRoot(), "No Internet Connection");

@@ -92,6 +92,7 @@ public class DashboardActivity extends BaseActivity {
     String remarks = "";
     String imageid = "";
     String imagename = "";
+    String halfimagename = "";
     double currentLatitude;
     double currentLongitude;
 
@@ -126,6 +127,7 @@ public class DashboardActivity extends BaseActivity {
         viewmodel = ViewModelProviders.of(this).get(LoginViewmodel.class);
         mActivity = this;
         activitynamefrom = (getIntent().getStringExtra("activityname")) != null ? getIntent().getStringExtra("activityname") : "";
+        halfimagename = (getIntent().getStringExtra("halfimagename")) != null ? getIntent().getStringExtra("halfimagename") : "";
 
         Log.i("SpinnerListDataNF", "<==" + activityname);
 //        mYourService = new YourService();
@@ -701,6 +703,7 @@ public class DashboardActivity extends BaseActivity {
                 intent.putExtra("startimageid", imageid);
                 intent.putExtra("endremark", binding.remarks.getText().toString());
                 intent.putExtra("activitynamefrom", activitynamefrom);
+                intent.putExtra("halfimagename", halfimagename);
                 startActivity(intent);
 
 

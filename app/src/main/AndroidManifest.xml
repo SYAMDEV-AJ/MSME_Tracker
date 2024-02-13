@@ -53,8 +53,12 @@
         <activity
             android:name=".login.view.LoginActivity"
             android:exported="true" />
-        <activity android:name=".dashboard.view.DashboardActivity" />
-        <activity android:name=".dashboard.view.DistanceCalculationActivity" />
+        <activity
+            android:name=".dashboard.view.DashboardActivity"
+            android:exported="true" />
+        <activity
+            android:name=".dashboard.view.DistanceCalculationActivity"
+            android:exported="true" />
 
         <service
             android:name=".receiver.YourService"

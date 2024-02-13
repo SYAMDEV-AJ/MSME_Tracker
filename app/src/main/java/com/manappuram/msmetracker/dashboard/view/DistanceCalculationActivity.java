@@ -79,6 +79,7 @@ public class DistanceCalculationActivity extends BaseActivity {
     String activityname = "";
     String startlatitude = "";
     String startlongitude = "";
+    String halfimagename = "";
     String endremark = "", startimagename = "", profileimagevalue = "", activitynamefrom = "";
     String endlocationlat = "", endlocationlog = "", startimageid = "", endimageid = "", endimagename = "", finalDist = "";
 
@@ -104,9 +105,12 @@ public class DistanceCalculationActivity extends BaseActivity {
         startimagename = getIntent().getStringExtra("startimagename");
         startimageid = getIntent().getStringExtra("startimageid");
         activitynamefrom = getIntent().getStringExtra("activitynamefrom");
+        halfimagename = (getIntent().getStringExtra("halfimagename")) != null ? getIntent().getStringExtra("halfimagename") : "";
+
 
         if (activitynamefrom.equals("none")) {
             binding.startimagelayout.setVisibility(View.VISIBLE);
+            halfimagename = "none";
 
         } else {
             binding.startimagelayout.setVisibility(View.GONE);
@@ -229,6 +233,10 @@ public class DistanceCalculationActivity extends BaseActivity {
 
 
                     Toast.makeText(mActivity, "Successfully Uploaded", Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(mActivity, DashboardActivity.class);
+                    intent.putExtra("activityname", "none");
+                    startActivity(intent);
+                    finish();
 
                 } else {
                     Toast.makeText(mActivity, startServiceResponse.getResult(), Toast.LENGTH_SHORT).show();
@@ -606,14 +614,27 @@ public class DistanceCalculationActivity extends BaseActivity {
 
         binding.totaldistance.setText(finalDist + " KM");
 
-        if (profileimagevalue.equals("")) {
-
+        if (halfimagename.equals("none")) {
+            if (profileimagevalue.equals("")) {
+                Toast.makeText(mActivity, "Please Upload Image", Toast.LENGTH_SHORT).show();
+            } else {
+                String data = Utility.encodecusid(sessionId + "$" + startimageid + "~" + endremark + "~" + lat2 + "~" + lon2 + "~" + finalDist);
+                String enrypted = data.replaceAll("\\s", "");
+                Log.i("enddistance", enrypted);
+                showProgress();
+                viewmodel.MSME_end_activity(enrypted, profileimagevalue);
+            }
         } else {
-            String data = Utility.encodecusid(sessionId + "$" + activityid + "~" + endremark + "~" + lat2 + "~" + lon2 + "~" + finalDist);
-            String enrypted = data.replaceAll("\\s", "");
-            Log.i("enddistance", enrypted);
-            showProgress();
-            viewmodel.MSME_end_activity(enrypted, profileimagevalue);
+            if (profileimagevalue.equals("")) {
+                Toast.makeText(mActivity, "Please Upload Image", Toast.LENGTH_SHORT).show();
+            } else {
+                String data = Utility.encodecusid(sessionId + "$" + halfimagename + "~" + endremark + "~" + lat2 + "~" + lon2 + "~" + finalDist);
+                String enrypted = data.replaceAll("\\s", "");
+                Log.i("enddistance", enrypted);
+                showProgress();
+                viewmodel.MSME_end_activity(enrypted, profileimagevalue);
+            }
+
         }
 
 
