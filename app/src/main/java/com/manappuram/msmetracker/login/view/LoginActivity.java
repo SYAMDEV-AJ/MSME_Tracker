@@ -156,7 +156,7 @@ public class LoginActivity extends BaseActivity {
                     Log.i("dddd", spaceremoved);
                     showProgress();
                     viewmodel.userLogin("407068", "wqv/NG39+Z6pAzqGwpsjlw==", "", deviceId);
-                    //viewmodel.userLogin(empcode, spaceremoved, "", deviceId);
+                    //  viewmodel.userLogin(empcode, spaceremoved, "", deviceId);
 
 
                 } else if (flag.equals("2")) {
