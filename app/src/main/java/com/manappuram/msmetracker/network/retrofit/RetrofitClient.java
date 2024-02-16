@@ -25,17 +25,15 @@ import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
-import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class RetrofitClient {
 
-     public static String BASE_URL = "https://uatonpay.manappuram.com/TrackerAPI/MSME_EmployeeTrack.asmx/";
-   // public static String BASE_URL = "https://online.manappuram.com/TrackerAPI/MSME_EmployeeTrack.asmx/"; //production
+    public static String BASE_URL = "https://uatonpay.manappuram.com/TrackerAPI/MSME_EmployeeTrack.asmx/";
+    // public static String BASE_URL = "https://online.manappuram.com/TrackerAPI/MSME_EmployeeTrack.asmx/"; //production
     private static RetrofitClient sInstance;
     private Retrofit retrofit;
     OkHttpClient okHttpClient = UnsafeOkHttpClient.getUnsafeOkHttpClient();
-
 
     public static void create() {
         if (sInstance == null) {

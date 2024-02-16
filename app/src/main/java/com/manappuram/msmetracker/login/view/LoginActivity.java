@@ -5,6 +5,7 @@ import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.provider.Settings;
 import android.text.InputType;
 import android.text.method.PasswordTransformationMethod;
@@ -109,11 +110,23 @@ public class LoginActivity extends BaseActivity {
                     String[] data = activityCheckResponse.getResult().split("~");
                     String value = data[1];
                     String halfimagename = data[2];
-                    Intent intent = new Intent(mActivity, DashboardActivity.class);
-                    intent.putExtra("activityname", value);
-                    intent.putExtra("halfimagename", halfimagename);
-                    intent.putExtra("unfinishedtask", unfinishedtask);
-                    startActivity(intent);
+                    editor.putString("startlatitude", data[3]);
+                    editor.putString("startlogitude", data[4]);
+                    editor.apply();
+
+                    Handler handler = new Handler();
+                    Runnable runnable = new Runnable() {
+                        @Override
+                        public void run() {
+                            Intent intent = new Intent(mActivity, DashboardActivity.class);
+                            intent.putExtra("activityname", value);
+                            intent.putExtra("halfimagename", halfimagename);
+                            intent.putExtra("unfinishedtask", unfinishedtask);
+                            startActivity(intent);
+                        }
+                    };
+                    handler.postDelayed(runnable, 100);
+
                 } else {
                     Intent intent = new Intent(mActivity, DashboardActivity.class);
                     intent.putExtra("activityname", "none");
@@ -132,21 +145,18 @@ public class LoginActivity extends BaseActivity {
         binding.loginBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-
 //                if (binding.employeeid.getText().toString().equals("") & binding.password.getText().toString().equals("")) {
 //                    Toast.makeText(mActivity, "Please Enter Valid Credentials", Toast.LENGTH_SHORT).show();
 //                } else {
                 if (flag.equals("1")) {
                     String deviceId = Settings.Secure.getString(LoginActivity.this.getContentResolver(), Settings.Secure.ANDROID_ID);
-
                     String empcode = binding.employeeid.getText().toString();
                     String password = Utility.encodecusid(binding.password.getText().toString());
                     String spaceremoved = password.replaceAll("\\s", "");
                     Log.i("dddd", spaceremoved);
                     showProgress();
                     viewmodel.userLogin("407068", "wqv/NG39+Z6pAzqGwpsjlw==", "", deviceId);
-                    // viewmodel.userLogin(empcode, spaceremoved, "", deviceId);
+                    //viewmodel.userLogin(empcode, spaceremoved, "", deviceId);
 
 
                 } else if (flag.equals("2")) {
@@ -155,10 +165,10 @@ public class LoginActivity extends BaseActivity {
 
                 }
 
+                //}
+
+
             }
-
-
-            //   }
 
 
         });

@@ -11,6 +11,9 @@ import com.manappuram.msmetracker.login.model.LoginResponse;
 import com.manappuram.msmetracker.network.retrofit.ResponseListener;
 import com.manappuram.msmetracker.network.retrofit.RetrofitClient;
 import com.manappuram.msmetracker.network.retrofit.RetrofitRequest;
+import com.manappuram.msmetracker.reports.modelclass.ReportActivityListReponse;
+import com.manappuram.msmetracker.reports.modelclass.ReportTotalCountResponse;
+import com.manappuram.msmetracker.reports.modelclass.StateListReponse;
 
 import okhttp3.Headers;
 import retrofit2.Call;
@@ -148,7 +151,6 @@ public class LoginRepository extends BaseRepository {
     }
 
     public void MSME_live_activity(String p_data, SuccessResponse successResponse) {
-
         Call<ActivityCheckResponse> call = RetrofitClient.getAPIInterface().MSME_live_activity(p_data);
         new RetrofitRequest<>(call, new ResponseListener<ActivityCheckResponse>() {
             @Override
@@ -172,6 +174,82 @@ public class LoginRepository extends BaseRepository {
 
         }).enqueue();
     }
+
+    public void Get_activity_listdrop(String p_data, SuccessResponse successResponse) {
+        Call<ReportActivityListReponse> call = RetrofitClient.getAPIInterface().Get_activity_listdrop(p_data);
+        new RetrofitRequest<>(call, new ResponseListener<ReportActivityListReponse>() {
+            @Override
+            public void onResponse(ReportActivityListReponse response, Headers headers) {
+                if (null != successResponse) {
+                    successResponse.onResponse(response);
+                }
+            }
+
+            @Override
+            public void onError(int status, BaseResponse errors) {
+                errorsMutable.postValue(new Event<>(errors));
+
+            }
+
+
+            @Override
+            public void onFailure(Throwable throwable) {
+                failMessageMutable.postValue(new Event<>(throwable.getMessage()));
+            }
+
+        }).enqueue();
+    }
+
+    public void gettotalcount_totaltraveldistance(String p_data, SuccessResponse successResponse) {
+        Call<ReportTotalCountResponse> call = RetrofitClient.getAPIInterface().gettotalcount_totaltraveldistance(p_data);
+        new RetrofitRequest<>(call, new ResponseListener<ReportTotalCountResponse>() {
+            @Override
+            public void onResponse(ReportTotalCountResponse response, Headers headers) {
+                if (null != successResponse) {
+                    successResponse.onResponse(response);
+                }
+            }
+
+            @Override
+            public void onError(int status, BaseResponse errors) {
+                errorsMutable.postValue(new Event<>(errors));
+
+            }
+
+
+            @Override
+            public void onFailure(Throwable throwable) {
+                failMessageMutable.postValue(new Event<>(throwable.getMessage()));
+            }
+
+        }).enqueue();
+    }
+
+    public void Get_All_state(String p_data, SuccessResponse successResponse) {
+        Call<StateListReponse> call = RetrofitClient.getAPIInterface().Get_All_state(p_data);
+        new RetrofitRequest<>(call, new ResponseListener<StateListReponse>() {
+            @Override
+            public void onResponse(StateListReponse response, Headers headers) {
+                if (null != successResponse) {
+                    successResponse.onResponse(response);
+                }
+            }
+
+            @Override
+            public void onError(int status, BaseResponse errors) {
+                errorsMutable.postValue(new Event<>(errors));
+
+            }
+
+
+            @Override
+            public void onFailure(Throwable throwable) {
+                failMessageMutable.postValue(new Event<>(throwable.getMessage()));
+            }
+
+        }).enqueue();
+    }
+
 
 
 }

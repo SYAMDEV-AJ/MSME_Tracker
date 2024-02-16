@@ -13,6 +13,7 @@ import android.location.Address;
 import android.location.Geocoder;
 import android.location.LocationManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Looper;
@@ -35,8 +36,11 @@ import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
@@ -55,7 +59,6 @@ import com.karumi.dexter.MultiplePermissionsReport;
 import com.karumi.dexter.PermissionToken;
 import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
-import com.manappuram.msmetracker.BuildConfig;
 import com.manappuram.msmetracker.R;
 import com.manappuram.msmetracker.base.BaseActivity;
 import com.manappuram.msmetracker.dashboard.adapter.AdapterSpinner;
@@ -96,26 +99,22 @@ public class DashboardActivity extends BaseActivity {
     String unfinishedtask = "";
     double currentLatitude;
     double currentLongitude;
-
     AlertDialog.Builder builder;
     AlertDialog alertDialog;
-
-
     List<ActivitylistResponse.get_activity_list_data> spinnerlist = new ArrayList<>();
-
     ArrayList<String> spinnerlistone = new ArrayList<>();
     List<ActivitylistResponse.get_activity_list_data> spinnerdata;
-
     AlertDialog dialog;
-
     String[] perms = {
             Manifest.permission.CAMERA,
             Manifest.permission.WRITE_EXTERNAL_STORAGE,
             Manifest.permission.ACCESS_FINE_LOCATION,
-            Manifest.permission.ACCESS_COARSE_LOCATION
+            Manifest.permission.ACCESS_COARSE_LOCATION,
+            Manifest.permission.READ_EXTERNAL_STORAGE
     };
-
+    private static final int CAMERA_PERMISSION_REQUEST_CODE = 100;
     private static final int REQUEST_CAPTURE_IMAGE = 1;
+
 
     Intent mServiceIntent;
     private YourService mYourService;
@@ -141,7 +140,6 @@ public class DashboardActivity extends BaseActivity {
 
         pullToRefresh();
         checkAndRequestPermissions();
-
         startbtnclick();
         stopbtnClick();
         startbtnenablecheck();
@@ -151,6 +149,7 @@ public class DashboardActivity extends BaseActivity {
 
 
         binding.titleempname.setText(name);
+        binding.pulltorefresh.setVisibility(View.VISIBLE);
         binding.activityselection.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -171,6 +170,7 @@ public class DashboardActivity extends BaseActivity {
 
     }
 
+
     private void pullToRefresh() {
         binding.refresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -187,15 +187,11 @@ public class DashboardActivity extends BaseActivity {
     private void datatolist() {
         if (spinnerlist != null) {
             if (spinnerlist.size() > 0) {
-                Log.i("SpinnerListDataS", "<==" + spinnerlist.size());
-                Log.i("SpinnerListDataN", "<==" + activitynamefrom);
                 for (ActivitylistResponse.get_activity_list_data tt : spinnerlist) {
                     if (tt.getActivity_id().equals(activitynamefrom)) {
-                        Log.i("SpinnerListDataL", "<==" + tt.getActivity_id());
                         binding.spinnevalue.setText(tt.getActivity_name());
                         activityid = activitynamefrom;
                         activityname = tt.getActivity_name();
-
                     }
                 }
             }
@@ -248,8 +244,6 @@ public class DashboardActivity extends BaseActivity {
 
 
     private void observers() {
-
-
         viewmodel.getActivitylistResponseMutableLiveData().observe(this, new Observer<ActivitylistResponse>() {
             @Override
             public void onChanged(ActivitylistResponse activitylistResponse) {
@@ -268,7 +262,6 @@ public class DashboardActivity extends BaseActivity {
                         binding.activityselection.setEnabled(false);
                         datatolist();
                     }
-
                 } else {
                     Toast.makeText(mActivity, activitylistResponse.getResult(), Toast.LENGTH_SHORT).show();
                 }
@@ -284,6 +277,7 @@ public class DashboardActivity extends BaseActivity {
                     binding.activityselection.setEnabled(false);
                     binding.stopbtn.setVisibility(View.VISIBLE);
                     binding.startbtnenable.setVisibility(View.GONE);
+                    binding.pulltorefresh.setVisibility(View.GONE);
                     imageid = startServiceResponse.getResult();
                     imagename = startServiceResponse.getName();
                     binding.startimagename.setText(imagename);
@@ -301,14 +295,12 @@ public class DashboardActivity extends BaseActivity {
                 hideProgress();
                 if (imageViewResponse.getStatus().equals("111")) {
                     String imagenameofpic = imageViewResponse.getImage();
-
                     AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
                     final View customLayout = getLayoutInflater().inflate(R.layout.custom_kyc_layout_new, null);
                     builder.setView(customLayout);
                     ZoomageView image = customLayout.findViewById(R.id.imageView);
                     Picasso.get().invalidate("https://online.manappuram.com/TrackerAPI/images/" + imagenameofpic);
                     Picasso.get().load(("https://online.manappuram.com/TrackerAPI/images/") + imagenameofpic).into(image);
-
                     builder.setPositiveButton("CANCEL", (dialog, which) -> {
                         dialog.dismiss();
                     });
@@ -361,22 +353,38 @@ public class DashboardActivity extends BaseActivity {
 
                 if (binding.spinnevalue.getText().toString().contains("Select the Activity")) {
                     Toast.makeText(mActivity, "Please Select an Activity", Toast.LENGTH_SHORT).show();
-
                 } else {
                     remarks = binding.remarks.getText().toString();
 
-
-                    if (ActivityCompat.checkSelfPermission(DashboardActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(DashboardActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                        requestforMediaPermission();
-
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+                        //14 code
+                        camerpermissionforupsidedowncake();
+                    } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                        //13 code
+                        camerpermissionforupsidedowncake();
                     } else {
-
-                        ChooseTypeBottomsheet();
+                        if (ActivityCompat.checkSelfPermission(DashboardActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(DashboardActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                            requestforMediaPermission();
+                        } else {
+                            ChooseTypeBottomsheet();
+                        }
                     }
                 }
 
             }
         });
+    }
+
+    private void camerpermissionforupsidedowncake() {
+        // Check if the camera permission is granted
+        if (ContextCompat.checkSelfPermission(DashboardActivity.this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+            // Request the permission
+            ActivityCompat.requestPermissions(DashboardActivity.this, new String[]{Manifest.permission.CAMERA}, CAMERA_PERMISSION_REQUEST_CODE);
+        } else {
+            // Permission already granted, proceed with camera operations
+            ChooseTypeBottomsheet();
+        }
+
     }
 
 
@@ -388,14 +396,12 @@ public class DashboardActivity extends BaseActivity {
 
                 activityid = id;
                 activityname = name;
-
                 RotateAnimation rotateAnimation = new RotateAnimation(180.0f, 0.0f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
                 rotateAnimation.setInterpolator(new DecelerateInterpolator());
                 rotateAnimation.setRepeatCount(0);
                 rotateAnimation.setDuration(300);
                 rotateAnimation.setFillAfter(true);
                 binding.arrow.startAnimation(rotateAnimation);
-
                 binding.chatrecyclerlayout.setVisibility(View.GONE);
                 binding.linelayout.setVisibility(View.GONE);
                 binding.spinnevalue.setText(name);
@@ -463,6 +469,10 @@ public class DashboardActivity extends BaseActivity {
 
                             currentlatitiudestring = String.valueOf(currentLatitude);
                             currentlongitudestring = String.valueOf(currentLongitude);
+
+                            editor.putString("startlatitude", currentlatitiudestring);
+                            editor.putString("startlogitude", currentlongitudestring);
+                            editor.apply();
 
 
                             Log.i("locationnn", "<==" + currentLatitude);
@@ -533,7 +543,6 @@ public class DashboardActivity extends BaseActivity {
     private void ChooseTypeBottomsheet() {
         Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
         intent.addCategory(Intent.CATEGORY_OPENABLE);
-
         Intent camera_intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         proofPhotoUpload.launch(camera_intent);
 
@@ -696,14 +705,14 @@ public class DashboardActivity extends BaseActivity {
                 Intent intent = new Intent(mActivity, DistanceCalculationActivity.class);
                 intent.putExtra("activityid", activityid);
                 intent.putExtra("activityname", activityname);
-                intent.putExtra("startlatitude", currentlatitiudestring);
-                intent.putExtra("startlongitude", currentlongitudestring);
+//                intent.putExtra("startlatitude", currentlatitiudestring);
+//                intent.putExtra("startlongitude", currentlongitudestring);
                 intent.putExtra("startimagename", imagename);
                 intent.putExtra("startimageid", imageid);
                 intent.putExtra("endremark", binding.remarks.getText().toString());
                 intent.putExtra("activitynamefrom", activitynamefrom);
                 intent.putExtra("halfimagename", halfimagename);
-                intent.putExtra("unfinishedtask", unfinishedtask);
+//                intent.putExtra("unfinishedtask", unfinishedtask);
                 startActivity(intent);
 
 
@@ -749,4 +758,19 @@ public class DashboardActivity extends BaseActivity {
 //        this.sendBroadcast(broadcastIntent);
 //        super.onDestroy();
 //    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == CAMERA_PERMISSION_REQUEST_CODE) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // Permission granted, proceed with camera operations
+                ChooseTypeBottomsheet();
+            } else {
+                Toast.makeText(mActivity, "Please Enable Permission to access Camera", Toast.LENGTH_SHORT).show();
+                // Permission denied, handle accordingly (e.g., show a message or disable camera functionality)
+            }
+        }
+    }
+
 }

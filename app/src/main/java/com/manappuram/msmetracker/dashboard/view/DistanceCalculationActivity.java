@@ -12,6 +12,7 @@ import android.location.Address;
 import android.location.Geocoder;
 import android.location.LocationManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -26,9 +27,12 @@ import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.AlertDialogLayout;
 import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
@@ -49,6 +53,7 @@ import com.manappuram.msmetracker.base.BaseActivity;
 import com.manappuram.msmetracker.dashboard.modelclass.ImageViewResponse;
 import com.manappuram.msmetracker.dashboard.modelclass.StartServiceResponse;
 import com.manappuram.msmetracker.databinding.ActivityDistanceCalculationBinding;
+import com.manappuram.msmetracker.map.map.MapViewActivity;
 import com.manappuram.msmetracker.utility.Utility;
 import com.manappuram.msmetracker.viewmodel.LoginViewmodel;
 import com.squareup.picasso.Picasso;
@@ -87,6 +92,7 @@ public class DistanceCalculationActivity extends BaseActivity {
     String endlocationlat = "", endlocationlog = "", startimageid = "", endimageid = "", endimagename = "", finalDist = "";
 
     private static final int REQUEST_CAPTURE_IMAGE = 1;
+    private static final int CAMERA_PERMISSION_REQUEST_CODE = 100;
 
     Handler handler;
     Runnable runnable;
@@ -108,17 +114,17 @@ public class DistanceCalculationActivity extends BaseActivity {
         startimageid = getIntent().getStringExtra("startimageid");
         activitynamefrom = getIntent().getStringExtra("activitynamefrom");
         halfimagename = (getIntent().getStringExtra("halfimagename")) != null ? getIntent().getStringExtra("halfimagename") : "";
-        unfinishedtask = (getIntent().getStringExtra("unfinishedtask")) != null ? getIntent().getStringExtra("unfinishedtask") : "";
-        if (unfinishedtask.contains("Activity is not completed")) {
-            String[] value = unfinishedtask.split("~");
-            if (value.length > 1) {
-                startlatitude = value[3];
-                startlongitude = value[4];
-            }
-        } else {
-            startlatitude = getIntent().getStringExtra("startlatitude");
-            startlongitude = getIntent().getStringExtra("startlongitude");
-        }
+//        unfinishedtask = (getIntent().getStringExtra("unfinishedtask")) != null ? getIntent().getStringExtra("unfinishedtask") : "";
+//        if (unfinishedtask.contains("Activity is not completed")) {
+//            String[] value = unfinishedtask.split("~");
+//            if (value.length > 1) {
+//                startlatitude = value[3];
+//                startlongitude = value[4];
+//            }
+//        } else {
+//            startlatitude = getIntent().getStringExtra("startlatitude");
+//            startlongitude = getIntent().getStringExtra("startlongitude");
+//        }
 
         if (activitynamefrom.equals("none")) {
             binding.startimagelayout.setVisibility(View.VISIBLE);
@@ -127,7 +133,6 @@ public class DistanceCalculationActivity extends BaseActivity {
         } else {
             binding.startimagelayout.setVisibility(View.GONE);
         }
-
 
         binding.startimagename.setText(startimagename);
         binding.spinnevalue.setText(activityname);
@@ -143,7 +148,10 @@ public class DistanceCalculationActivity extends BaseActivity {
         observers();
         imageviewclick();
         imageviewendclick();
+        mapdistance();
+
     }
+
 
 //    @Override
 //    protected void onStart() {
@@ -160,12 +168,20 @@ public class DistanceCalculationActivity extends BaseActivity {
 //                } catch (InterruptedException e) {
 //                    e.printStackTrace();
 //                }
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+                    //14 code
+                    camerpermissionforupsidedowncake();
+                } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    //13 code
+                    camerpermissionforupsidedowncake();
 
-
-                if (ActivityCompat.checkSelfPermission(DistanceCalculationActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(DistanceCalculationActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                    requestforMediaPermission();
                 } else {
-                    ChooseTypeBottomsheet();
+                    if (ActivityCompat.checkSelfPermission(DistanceCalculationActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(DistanceCalculationActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                        requestforMediaPermission();
+                    } else {
+                        ChooseTypeBottomsheet();
+                    }
+
                 }
 
 
@@ -241,6 +257,7 @@ public class DistanceCalculationActivity extends BaseActivity {
                     endimageid = startServiceResponse.getResult();
                     endimagename = startServiceResponse.getName();
                     binding.endimagename.setText(endimagename);
+                    binding.click.setVisibility(View.VISIBLE);
                     Toast.makeText(mActivity, "Successfully Uploaded", Toast.LENGTH_SHORT).show();
 
 
@@ -428,7 +445,6 @@ public class DistanceCalculationActivity extends BaseActivity {
     private void ChooseTypeBottomsheet() {
         Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
         intent.addCategory(Intent.CATEGORY_OPENABLE);
-
         Intent camera_intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         proofPhotoUpload.launch(camera_intent);
 
@@ -494,14 +510,10 @@ public class DistanceCalculationActivity extends BaseActivity {
         runnable = new Runnable() {
             @Override
             public void run() {
-                distance(Double.parseDouble(startlatitude), Double.parseDouble(startlongitude), Double.parseDouble(endlocationlat), Double.parseDouble(endlocationlog));
-
-
+                distance(Double.parseDouble(startlatitudedata), Double.parseDouble(startlogitudedata), Double.parseDouble(endlocationlat), Double.parseDouble(endlocationlog));
             }
         };
         handler.postDelayed(runnable, 100);
-
-
     }
 
     private static Bitmap resize(Bitmap image, int maxWidth, int maxHeight) {
@@ -635,18 +647,34 @@ public class DistanceCalculationActivity extends BaseActivity {
         return (rad * 180.0 / Math.PI);
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
+    private void camerpermissionforupsidedowncake() {
+        // Check if the camera permission is granted
+        if (ContextCompat.checkSelfPermission(DistanceCalculationActivity.this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+            // Request the permission
+            ActivityCompat.requestPermissions(DistanceCalculationActivity.this, new String[]{Manifest.permission.CAMERA}, CAMERA_PERMISSION_REQUEST_CODE);
+        } else {
+            // Permission already granted, proceed with camera operations
+            ChooseTypeBottomsheet();
+        }
 
-//        fetchLastLocation();
-//        getCurrentLocation();
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == CAMERA_PERMISSION_REQUEST_CODE) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // Permission granted, proceed with camera operations
+                ChooseTypeBottomsheet();
+            } else {
+                Toast.makeText(mActivity, "Please Enable Permission to access Camera", Toast.LENGTH_SHORT).show();
+                // Permission denied, handle accordingly (e.g., show a message or disable camera functionality)
+            }
+        }
     }
 
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
-
         builder = new AlertDialog.Builder(mActivity);
         builder.setMessage("Go To Dashboard?");
         builder.setCancelable(false);
@@ -656,21 +684,36 @@ public class DistanceCalculationActivity extends BaseActivity {
             public void onClick(DialogInterface dialogInterface, int i) {
                 Intent intent = new Intent(mActivity, DashboardActivity.class);
                 intent.putExtra("activityname", "none");
+                intent.putExtra("unfinishedtask", "none");
                 startActivity(intent);
                 finish();
                 dialog.dismiss();
             }
         });
 
-        builder.setNegativeButton("", new DialogInterface.OnClickListener() {
+        builder.setNegativeButton("cancel", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-
+                dialog.dismiss();
 
             }
 
         });
         dialog = builder.create();
         dialog.show();
+    }
+
+    private void mapdistance() {
+        binding.click.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Intent intent = new Intent(mActivity, MapViewActivity.class);
+                intent.putExtra("three", endlocationlat);
+                intent.putExtra("four", endlocationlog);
+                startActivity(intent);
+
+            }
+        });
     }
 }

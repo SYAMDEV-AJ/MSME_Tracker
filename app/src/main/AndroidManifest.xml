@@ -9,6 +9,10 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
+    <uses-permission android:name="android.permission.READ_MEDIA_VISUAL_USER_SELECTED" />
+    <uses-permission android:name="android.permission.CAMERA" />
+
     <uses-permission
         android:name="android.permission.WRITE_EXTERNAL_STORAGE"
         tools:ignore="ScopedStorage" />
@@ -59,6 +63,9 @@
         <activity
             android:name=".dashboard.view.DistanceCalculationActivity"
             android:exported="true" />
+        <activity android:name=".dashboard.view.DashboardNewActivity" />
+        <activity android:name=".reports.view.ReportDashboardActivity" />
+        <activity android:name=".map.map.MapViewActivity" />
 
         <service
             android:name=".receiver.YourService"

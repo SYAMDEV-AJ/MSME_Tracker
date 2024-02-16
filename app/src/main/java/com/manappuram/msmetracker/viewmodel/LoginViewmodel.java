@@ -1,7 +1,5 @@
 package com.manappuram.msmetracker.viewmodel;
 
-import android.media.Image;
-
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
@@ -11,7 +9,12 @@ import com.manappuram.msmetracker.dashboard.modelclass.ImageViewResponse;
 import com.manappuram.msmetracker.dashboard.modelclass.StartServiceResponse;
 import com.manappuram.msmetracker.login.model.ActivityCheckResponse;
 import com.manappuram.msmetracker.login.model.LoginResponse;
+import com.manappuram.msmetracker.reports.modelclass.ReportActivityListReponse;
+import com.manappuram.msmetracker.reports.modelclass.ReportTotalCountResponse;
+import com.manappuram.msmetracker.reports.modelclass.StateListReponse;
 import com.manappuram.msmetracker.repository.LoginRepository;
+
+import java.util.concurrent.locks.StampedLock;
 
 public class LoginViewmodel extends ViewModel {
 
@@ -27,6 +30,9 @@ public class LoginViewmodel extends ViewModel {
     public MutableLiveData<StartServiceResponse> endServiceResponseMutableLiveData = new MutableLiveData<>();
     public MutableLiveData<ImageViewResponse> imageViewResponseMutableLiveData = new MutableLiveData<>();
     public MutableLiveData<ActivityCheckResponse> activityCheckResponseMutableLiveData = new MutableLiveData<>();
+    public MutableLiveData<ReportActivityListReponse> reportActivityListReponseMutableLiveData = new MutableLiveData<>();
+    public MutableLiveData<ReportTotalCountResponse> reportTotalCountMutableLiveData = new MutableLiveData<>();
+    public MutableLiveData<StateListReponse> stateListReponseMutableLiveData = new MutableLiveData<>();
 
 
     public void userLogin(String empCode, String pwd, String tocken, String deviceid) {
@@ -65,6 +71,24 @@ public class LoginViewmodel extends ViewModel {
         });
     }
 
+    public void Get_activity_listdrop(String p_data) {
+        getLoginRepository().Get_activity_listdrop(p_data, (BaseRepository.SuccessResponse<ReportActivityListReponse>) reportActivityListReponse -> {
+            reportActivityListReponseMutableLiveData.setValue(reportActivityListReponse);
+        });
+    }
+
+    public void gettotalcount_totaltraveldistance(String p_data) {
+        getLoginRepository().gettotalcount_totaltraveldistance(p_data, (BaseRepository.SuccessResponse<ReportTotalCountResponse>) reportTotalCount -> {
+            reportTotalCountMutableLiveData.setValue(reportTotalCount);
+        });
+    }
+
+    public void Get_All_state(String p_data) {
+        getLoginRepository().Get_All_state(p_data, (BaseRepository.SuccessResponse<StateListReponse>) stateListReponse -> {
+            stateListReponseMutableLiveData.setValue(stateListReponse);
+        });
+    }
+
 
     public MutableLiveData<LoginResponse> getLoginResponseMutableLiveData() {
         return loginResponseMutableLiveData;
@@ -90,5 +114,16 @@ public class LoginViewmodel extends ViewModel {
         return activityCheckResponseMutableLiveData;
     }
 
+    public MutableLiveData<ReportActivityListReponse> getReportActivityListReponseMutableLiveData() {
+        return reportActivityListReponseMutableLiveData;
+    }
+
+    public MutableLiveData<ReportTotalCountResponse> getReportTotalCountMutableLiveData() {
+        return reportTotalCountMutableLiveData;
+    }
+
+    public MutableLiveData<StateListReponse> getStateListReponseMutableLiveData() {
+        return stateListReponseMutableLiveData;
+    }
 
 }

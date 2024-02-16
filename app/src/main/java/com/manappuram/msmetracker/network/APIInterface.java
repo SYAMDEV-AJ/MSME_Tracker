@@ -5,15 +5,14 @@ import com.manappuram.msmetracker.dashboard.modelclass.ImageViewResponse;
 import com.manappuram.msmetracker.dashboard.modelclass.StartServiceResponse;
 import com.manappuram.msmetracker.login.model.ActivityCheckResponse;
 import com.manappuram.msmetracker.login.model.LoginResponse;
+import com.manappuram.msmetracker.reports.modelclass.ReportActivityListReponse;
+import com.manappuram.msmetracker.reports.modelclass.ReportTotalCountResponse;
+import com.manappuram.msmetracker.reports.modelclass.StateListReponse;
 
 import retrofit2.Call;
-import retrofit2.http.Body;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
-import retrofit2.http.GET;
-import retrofit2.http.Headers;
 import retrofit2.http.POST;
-import retrofit2.http.Query;
 
 public interface APIInterface {
 
@@ -47,6 +46,18 @@ public interface APIInterface {
     @FormUrlEncoded
     Call<ActivityCheckResponse> MSME_live_activity(@Field("p_data") String p_data);
 
+    //report
+    @POST("MSME_live_activity")
+    @FormUrlEncoded
+    Call<ReportActivityListReponse> Get_activity_listdrop(@Field("p_data") String p_data);
+
+    @POST("gettotalcount_totaltraveldistance")
+    @FormUrlEncoded
+    Call<ReportTotalCountResponse> gettotalcount_totaltraveldistance(@Field("p_data") String p_data);
+
+    @POST("Get_All_state")
+    @FormUrlEncoded
+    Call<StateListReponse> Get_All_state(@Field("p_data") String p_data);
 
 }
 

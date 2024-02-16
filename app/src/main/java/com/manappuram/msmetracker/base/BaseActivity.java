@@ -32,6 +32,8 @@ public class BaseActivity extends AppCompatActivity {
     public String areaId = "";
     public String regionId = "";
     public String zoneId = "";
+    public String startlatitudedata = "";
+    public String startlogitudedata = "";
     private CustomLoader customLoader;
 
 
@@ -56,6 +58,8 @@ public class BaseActivity extends AppCompatActivity {
         designation = sharedPreferences.getString("designation", "");
         deptName = sharedPreferences.getString("deptName", "");
         branch = sharedPreferences.getString("branch", "");
+        startlatitudedata = sharedPreferences.getString("startlatitude", "");
+        startlogitudedata = sharedPreferences.getString("startlogitude", "");
 
 
     }
