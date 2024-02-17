@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "927113954481",
+    "project_id": "msmetracker",
+    "storage_bucket": "msmetracker.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:927113954481:android:0610aca1e0f151561a0e90",
+        "android_client_info": {
+          "package_name": "com.manappuram.msmetracker"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCn5BpGPBD8s151RbADGmfMSqPMiEAlKKM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:927113954481:android:a42ce85e38f6857c1a0e90",
+        "android_client_info": {
+          "package_name": "com.manappuram.msmetracker.debug"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCn5BpGPBD8s151RbADGmfMSqPMiEAlKKM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
