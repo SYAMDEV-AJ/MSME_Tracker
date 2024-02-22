@@ -74,22 +74,14 @@ public class DistanceCalculationActivity extends BaseActivity {
     ActivityDistanceCalculationBinding binding;
     LoginViewmodel viewmodel;
     Thread t = null;
-
-
     String[] perms = {
             Manifest.permission.CAMERA,
             Manifest.permission.WRITE_EXTERNAL_STORAGE,
             Manifest.permission.ACCESS_FINE_LOCATION,
             Manifest.permission.ACCESS_COARSE_LOCATION
     };
-    String activityid = "";
-    String activityname = "";
-    String startlatitude = "";
-    String startlongitude = "";
-    String halfimagename = "";
-    String unfinishedtask = "";
-    String endremark = "", startimagename = "", profileimagevalue = "", activitynamefrom = "";
-    String endlocationlat = "", endlocationlog = "", startimageid = "", endimageid = "", endimagename = "", finalDist = "";
+    String endremark = "", startimagename = "", profileimagevalue = "", activitynamefrom = "", halfimagename = "", startlongitude = "", startlatitude = "";
+    String endlocationlat = "", endlocationlog = "", startimageid = "", endimageid = "", endimagename = "", finalDist = "", activityname = "", activityid = "";
 
     private static final int REQUEST_CAPTURE_IMAGE = 1;
     private static final int CAMERA_PERMISSION_REQUEST_CODE = 100;
@@ -114,17 +106,6 @@ public class DistanceCalculationActivity extends BaseActivity {
         startimageid = getIntent().getStringExtra("startimageid");
         activitynamefrom = getIntent().getStringExtra("activitynamefrom");
         halfimagename = (getIntent().getStringExtra("halfimagename")) != null ? getIntent().getStringExtra("halfimagename") : "";
-//        unfinishedtask = (getIntent().getStringExtra("unfinishedtask")) != null ? getIntent().getStringExtra("unfinishedtask") : "";
-//        if (unfinishedtask.contains("Activity is not completed")) {
-//            String[] value = unfinishedtask.split("~");
-//            if (value.length > 1) {
-//                startlatitude = value[3];
-//                startlongitude = value[4];
-//            }
-//        } else {
-//            startlatitude = getIntent().getStringExtra("startlatitude");
-//            startlongitude = getIntent().getStringExtra("startlongitude");
-//        }
 
         if (activitynamefrom.equals("none")) {
             binding.startimagelayout.setVisibility(View.VISIBLE);
@@ -133,31 +114,19 @@ public class DistanceCalculationActivity extends BaseActivity {
         } else {
             binding.startimagelayout.setVisibility(View.GONE);
         }
-
         binding.startimagename.setText(startimagename);
         binding.spinnevalue.setText(activityname);
         binding.remarks.setText(endremark);
         binding.remarks.setEnabled(false);
         binding.titleempname.setText(name);
-
-
         checkAndRequestPermissions();
         fetchLastLocation();
-        // getCurrentLocation();
-        // runthread();
         observers();
         imageviewclick();
         imageviewendclick();
         mapdistance();
 
     }
-
-
-//    @Override
-//    protected void onStart() {
-//        super.onStart();
-//
-//    }
 
     private void runthread1() {
         runOnUiThread(new Runnable() {
@@ -188,29 +157,29 @@ public class DistanceCalculationActivity extends BaseActivity {
             }
         });
     }
-
-    private void runthread() {
-        t = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-
-                        fetchLastLocation();
-                        getCurrentLocation();
-
-                        Toast.makeText(mActivity, "Location thread", Toast.LENGTH_SHORT).show();
-
-
-                    }
-                });
-            }
-        });
-        t.start();
-        t.setPriority(Thread.MAX_PRIORITY);
-
-    }
+//
+//    private void runthread() {
+//        t = new Thread(new Runnable() {
+//            @Override
+//            public void run() {
+//                runOnUiThread(new Runnable() {
+//                    @Override
+//                    public void run() {
+//
+//                        fetchLastLocation();
+//                        getCurrentLocation();
+//
+//                        Toast.makeText(mActivity, "Location thread", Toast.LENGTH_SHORT).show();
+//
+//
+//                    }
+//                });
+//            }
+//        });
+//        t.start();
+//        t.setPriority(Thread.MAX_PRIORITY);
+//
+//    }
 
     private void imageviewclick() {
         binding.viewimagebtn.setOnClickListener(new View.OnClickListener() {
@@ -323,7 +292,6 @@ public class DistanceCalculationActivity extends BaseActivity {
                 showProgress();
                 getCurrentLocation();
 
-                //Toast.makeText(MapsActivity.this, "latitude = " + mCurrentLocation.getLatitude() + "longtitude = " + mCurrentLocation.getLongitude(), Toast.LENGTH_SHORT).show();
             }
         }
 
@@ -366,22 +334,6 @@ public class DistanceCalculationActivity extends BaseActivity {
                                     runthread1();
                                 }
 
-
-                                double firstlat = Double.parseDouble(startlatitude);
-                                double firstlog = Double.parseDouble(startlongitude);
-
-//                                handler = new Handler();
-//                                runnable = new Runnable() {
-//                                    @Override
-//                                    public void run() {
-//                                        distance(firstlat, firstlog, endlatitude, endlongitude);
-//
-//
-//                                    }
-//                                };
-//                                handler.postDelayed(runnable, 100);
-
-
                                 try {
                                     Geocoder geocoder;
                                     List<Address> addresses;
@@ -399,10 +351,6 @@ public class DistanceCalculationActivity extends BaseActivity {
 
 
                                     }
-                                    String state = addresses.get(0).getAdminArea();
-                                    String country = addresses.get(0).getCountryName();
-                                    String postalCode = addresses.get(0).getPostalCode();
-                                    String knownName = addresses.get(0).getFeatureName();
 
 
                                 } catch (IOException e) {
@@ -516,26 +464,6 @@ public class DistanceCalculationActivity extends BaseActivity {
         handler.postDelayed(runnable, 100);
     }
 
-    private static Bitmap resize(Bitmap image, int maxWidth, int maxHeight) {
-        if (maxHeight > 0 && maxWidth > 0) {
-            int width = image.getWidth();
-            int height = image.getHeight();
-            float ratioBitmap = (float) width / (float) height;
-            float ratioMax = (float) maxWidth / (float) maxHeight;
-
-            int finalWidth = maxWidth;
-            int finalHeight = maxHeight;
-            if (ratioMax > ratioBitmap) {
-                finalWidth = (int) ((float) maxHeight * ratioBitmap);
-            } else {
-                finalHeight = (int) ((float) maxWidth / ratioBitmap);
-            }
-            image = Bitmap.createScaledBitmap(image, finalWidth, finalHeight, true);
-            return image;
-        } else {
-            return image;
-        }
-    }
 
     public Uri getImageUri(Context inContext, Bitmap inImage) {
         ByteArrayOutputStream bytes = new ByteArrayOutputStream();
@@ -547,7 +475,6 @@ public class DistanceCalculationActivity extends BaseActivity {
             path = MediaStore.Images.Media.insertImage(inContext.getContentResolver(), inImage, "IMG_" + currentTime, null);
 
         } catch (Exception e) {
-            Log.e("Media", String.valueOf(e));
         }
         return Uri.parse(path);
     }
@@ -574,24 +501,19 @@ public class DistanceCalculationActivity extends BaseActivity {
     }
 
     private boolean checkAndRequestPermissions() {
-
         if (EasyPermissions.hasPermissions(mActivity, perms)) {
             return true;
         } else {
             requestPerms();
             return false;
         }
-
     }
 
     private void requestPerms() {
-
         EasyPermissions.requestPermissions(new pub.devrel.easypermissions.PermissionRequest.Builder(this, REQUEST_CAPTURE_IMAGE, perms)
                 .setRationale("Camera and Location access required for this app")
                 .build());
-
     }
-
 
     private double distance(double lat1, double lon1, double lat2, double lon2) {
         double theta = lon1 - lon2;
@@ -633,9 +555,6 @@ public class DistanceCalculationActivity extends BaseActivity {
             }
 
         }
-
-
-        Log.i("ditancecalculation", String.valueOf(dist));
         return (dist);
     }
 

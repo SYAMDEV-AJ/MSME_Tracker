@@ -13,6 +13,7 @@ public class BaseRepository {
         void onResponse(T t);
     }
 
+
     public BaseRepository() {
         errorsMutable = new MutableLiveData<>();
         failMessageMutable = new MutableLiveData<>();

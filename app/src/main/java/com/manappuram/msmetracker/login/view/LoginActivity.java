@@ -19,9 +19,8 @@ import androidx.lifecycle.ViewModelProviders;
 
 import com.manappuram.msmetracker.R;
 import com.manappuram.msmetracker.base.BaseActivity;
-import com.manappuram.msmetracker.dashboard.view.DashboardActivity;
+import com.manappuram.msmetracker.dashboard.view.DashboardNewActivity;
 import com.manappuram.msmetracker.databinding.ActivityLoginBinding;
-import com.manappuram.msmetracker.login.model.ActivityCheckResponse;
 import com.manappuram.msmetracker.login.model.LoginResponse;
 import com.manappuram.msmetracker.network.ConnectionLiveData;
 import com.manappuram.msmetracker.utility.Connectivity;
@@ -84,16 +83,12 @@ public class LoginActivity extends BaseActivity {
                     editor.putString("logindate", logindate);
                     editor.apply();
 
-                    String data = Utility.encodecusid(loginResponse.getEmpDetails().getSessionId() + ":" + loginResponse.getEmpDetails().getEmpCode() + "$" + loginResponse.getEmpDetails().getEmpCode());
-                    String encripted = data.replaceAll("\\s", "");
-
-                    if (loginResponse.getEmpDetails().getDeptId().equals("617") && !loginResponse.getEmpDetails().getBranchId().equals("0")) {
-                        showProgress();
-                        viewmodel.MSME_live_activity(encripted);
-                    } else {
-                        Toast.makeText(mActivity, "You are Not Authorized to this Application", Toast.LENGTH_SHORT).show();
-
-                    }
+//                    if (loginResponse.getEmpDetails().getDeptId().equals("617") && !loginResponse.getEmpDetails().getBranchId().equals("0")) {
+                    Intent intent = new Intent(mActivity, DashboardNewActivity.class);
+                    startActivity(intent);
+//                    } else {
+//                        Toast.makeText(mActivity, "You are Not Authorized to this Application", Toast.LENGTH_SHORT).show();
+//                    }
                 } else {
                     Toast.makeText(mActivity, loginResponse.getResult(), Toast.LENGTH_SHORT).show();
 
@@ -101,43 +96,6 @@ public class LoginActivity extends BaseActivity {
             }
         });
 
-        viewmodel.getActivityCheckResponseMutableLiveData().observe(this, new Observer<ActivityCheckResponse>() {
-            @Override
-            public void onChanged(ActivityCheckResponse activityCheckResponse) {
-                hideProgress();
-                if (activityCheckResponse.getStatus().equals("111")) {
-                    String unfinishedtask = activityCheckResponse.getResult();
-                    String[] data = activityCheckResponse.getResult().split("~");
-                    String value = data[1];
-                    String halfimagename = data[2];
-                    editor.putString("startlatitude", data[3]);
-                    editor.putString("startlogitude", data[4]);
-                    editor.apply();
-
-                    Handler handler = new Handler();
-                    Runnable runnable = new Runnable() {
-                        @Override
-                        public void run() {
-                            Intent intent = new Intent(mActivity, DashboardActivity.class);
-                            intent.putExtra("activityname", value);
-                            intent.putExtra("halfimagename", halfimagename);
-                            intent.putExtra("unfinishedtask", unfinishedtask);
-                            startActivity(intent);
-                        }
-                    };
-                    handler.postDelayed(runnable, 100);
-
-                } else {
-                    Intent intent = new Intent(mActivity, DashboardActivity.class);
-                    intent.putExtra("activityname", "none");
-                    intent.putExtra("halfimagename", "none");
-                    intent.putExtra("unfinishedtask", "none");
-                    startActivity(intent);
-
-                }
-
-            }
-        });
     }
 
     private void Login() {
@@ -145,27 +103,27 @@ public class LoginActivity extends BaseActivity {
         binding.loginBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                if (binding.employeeid.getText().toString().equals("") & binding.password.getText().toString().equals("")) {
-//                    Toast.makeText(mActivity, "Please Enter Valid Credentials", Toast.LENGTH_SHORT).show();
-//                } else {
-                if (flag.equals("1")) {
-                    String deviceId = Settings.Secure.getString(LoginActivity.this.getContentResolver(), Settings.Secure.ANDROID_ID);
-                    String empcode = binding.employeeid.getText().toString();
-                    String password = Utility.encodecusid(binding.password.getText().toString());
-                    String spaceremoved = password.replaceAll("\\s", "");
-                    Log.i("dddd", spaceremoved);
-                    showProgress();
-                    viewmodel.userLogin("407068", "wqv/NG39+Z6pAzqGwpsjlw==", "", deviceId);
-                    //  viewmodel.userLogin(empcode, spaceremoved, "", deviceId);
+                if (binding.employeeid.getText().toString().equals("") & binding.password.getText().toString().equals("")) {
+                    Toast.makeText(mActivity, "Please Enter Valid Credentials", Toast.LENGTH_SHORT).show();
+                } else {
+                    if (flag.equals("1")) {
+                        String deviceId = Settings.Secure.getString(LoginActivity.this.getContentResolver(), Settings.Secure.ANDROID_ID);
+                        String empcode = binding.employeeid.getText().toString();
+                        String password = Utility.encodecusid(binding.password.getText().toString());
+                        String spaceremoved = password.replaceAll("\\s", "");
+                        Log.i("dddd", spaceremoved);
+                        showProgress();
+                        //   viewmodel.userLogin("68807", "wqv/NG39+Z6pAzqGwpsjlw==", "", deviceId);
+                        viewmodel.userLogin(empcode, spaceremoved, "", deviceId);
 
 
-                } else if (flag.equals("2")) {
-                    Utility.showSnackbar(binding.getRoot(), "No Internet Connection");
+                    } else if (flag.equals("2")) {
+                        Utility.showSnackbar(binding.getRoot(), "No Internet Connection");
 
+
+                    }
 
                 }
-
-                //}
 
 
             }

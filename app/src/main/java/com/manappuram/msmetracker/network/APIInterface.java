@@ -5,6 +5,9 @@ import com.manappuram.msmetracker.dashboard.modelclass.ImageViewResponse;
 import com.manappuram.msmetracker.dashboard.modelclass.StartServiceResponse;
 import com.manappuram.msmetracker.login.model.ActivityCheckResponse;
 import com.manappuram.msmetracker.login.model.LoginResponse;
+import com.manappuram.msmetracker.reports.modelclass.BranchDetailsReponse;
+import com.manappuram.msmetracker.reports.modelclass.BranchListReponse;
+import com.manappuram.msmetracker.reports.modelclass.DepartmentWiseListReponse;
 import com.manappuram.msmetracker.reports.modelclass.ReportActivityListReponse;
 import com.manappuram.msmetracker.reports.modelclass.ReportTotalCountResponse;
 import com.manappuram.msmetracker.reports.modelclass.StateListReponse;
@@ -18,10 +21,7 @@ public interface APIInterface {
 
     @POST("MSME_EmpDetails_newdevicecheck")
     @FormUrlEncoded
-    Call<LoginResponse> Androidlogin(@Field("empCode") String empCode,
-                                     @Field("pwd") String pwd,
-                                     @Field("tocken") String tocken,
-                                     @Field("deviceid") String deviceid);
+    Call<LoginResponse> Androidlogin(@Field("empCode") String empCode, @Field("pwd") String pwd, @Field("tocken") String tocken, @Field("deviceid") String deviceid);
 
     @POST("Get_activity_list")
     @FormUrlEncoded
@@ -29,25 +29,22 @@ public interface APIInterface {
 
     @POST("MSME_start_activity")
     @FormUrlEncoded
-    Call<StartServiceResponse> MSME_start_activity(@Field("p_data") String p_data,
-                                                   @Field("image") String image);
+    Call<StartServiceResponse> MSME_start_activity(@Field("p_data") String p_data, @Field("image") String image);
 
     @POST("MSME_end_activity")
     @FormUrlEncoded
-    Call<StartServiceResponse> MSME_end_activity(@Field("p_data") String p_data,
-                                                 @Field("image") String image);
+    Call<StartServiceResponse> MSME_end_activity(@Field("p_data") String p_data, @Field("image") String image);
 
     @POST("photo_view")
     @FormUrlEncoded
-    Call<ImageViewResponse> photo_view(@Field("p_data") String p_data,
-                                       @Field("flag") String image);
+    Call<ImageViewResponse> photo_view(@Field("p_data") String p_data, @Field("flag") String image);
 
     @POST("MSME_live_activity")
     @FormUrlEncoded
     Call<ActivityCheckResponse> MSME_live_activity(@Field("p_data") String p_data);
 
     //report
-    @POST("MSME_live_activity")
+    @POST("Get_activity_listdrop")
     @FormUrlEncoded
     Call<ReportActivityListReponse> Get_activity_listdrop(@Field("p_data") String p_data);
 
@@ -55,9 +52,26 @@ public interface APIInterface {
     @FormUrlEncoded
     Call<ReportTotalCountResponse> gettotalcount_totaltraveldistance(@Field("p_data") String p_data);
 
+    @POST("getactivitytotalcount_totaltraveldistance")
+    @FormUrlEncoded
+    Call<ReportTotalCountResponse> getactivitytotalcount_totaltraveldistance(@Field("p_data") String p_data);
+
+
     @POST("Get_All_state")
     @FormUrlEncoded
     Call<StateListReponse> Get_All_state(@Field("p_data") String p_data);
+
+    @POST("Get_All_branch")
+    @FormUrlEncoded
+    Call<BranchListReponse> Get_All_branch(@Field("p_data") String p_data);
+
+    @POST("getdepartmentwise")
+    @FormUrlEncoded
+    Call<DepartmentWiseListReponse> getdepartmentwise(@Field("p_data") String p_data);
+
+    @POST("getmovementwise")
+    @FormUrlEncoded
+    Call<BranchDetailsReponse> getmovementwise(@Field("p_data") String p_data);
 
 }
 

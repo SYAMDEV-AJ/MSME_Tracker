@@ -11,6 +11,9 @@ import com.manappuram.msmetracker.login.model.LoginResponse;
 import com.manappuram.msmetracker.network.retrofit.ResponseListener;
 import com.manappuram.msmetracker.network.retrofit.RetrofitClient;
 import com.manappuram.msmetracker.network.retrofit.RetrofitRequest;
+import com.manappuram.msmetracker.reports.modelclass.BranchDetailsReponse;
+import com.manappuram.msmetracker.reports.modelclass.BranchListReponse;
+import com.manappuram.msmetracker.reports.modelclass.DepartmentWiseListReponse;
 import com.manappuram.msmetracker.reports.modelclass.ReportActivityListReponse;
 import com.manappuram.msmetracker.reports.modelclass.ReportTotalCountResponse;
 import com.manappuram.msmetracker.reports.modelclass.StateListReponse;
@@ -34,7 +37,6 @@ public class LoginRepository extends BaseRepository {
             @Override
             public void onError(int status, BaseResponse errors) {
                 errorsMutable.postValue(new Event<>(errors));
-
             }
 
 
@@ -225,6 +227,32 @@ public class LoginRepository extends BaseRepository {
         }).enqueue();
     }
 
+    public void getactivitytotalcount_totaltraveldistance(String p_data, SuccessResponse successResponse) {
+        Call<ReportTotalCountResponse> call = RetrofitClient.getAPIInterface().getactivitytotalcount_totaltraveldistance(p_data);
+        new RetrofitRequest<>(call, new ResponseListener<ReportTotalCountResponse>() {
+            @Override
+            public void onResponse(ReportTotalCountResponse response, Headers headers) {
+                if (null != successResponse) {
+                    successResponse.onResponse(response);
+                }
+            }
+
+            @Override
+            public void onError(int status, BaseResponse errors) {
+                errorsMutable.postValue(new Event<>(errors));
+
+            }
+
+
+            @Override
+            public void onFailure(Throwable throwable) {
+                failMessageMutable.postValue(new Event<>(throwable.getMessage()));
+            }
+
+        }).enqueue();
+    }
+
+
     public void Get_All_state(String p_data, SuccessResponse successResponse) {
         Call<StateListReponse> call = RetrofitClient.getAPIInterface().Get_All_state(p_data);
         new RetrofitRequest<>(call, new ResponseListener<StateListReponse>() {
@@ -250,6 +278,77 @@ public class LoginRepository extends BaseRepository {
         }).enqueue();
     }
 
+    public void Get_All_branch(String p_data, SuccessResponse successResponse) {
+        Call<BranchListReponse> call = RetrofitClient.getAPIInterface().Get_All_branch(p_data);
+        new RetrofitRequest<>(call, new ResponseListener<BranchListReponse>() {
+            @Override
+            public void onResponse(BranchListReponse response, Headers headers) {
+                if (null != successResponse) {
+                    successResponse.onResponse(response);
+                }
+            }
+
+            @Override
+            public void onError(int status, BaseResponse errors) {
+                errorsMutable.postValue(new Event<>(errors));
+
+            }
+
+            @Override
+            public void onFailure(Throwable throwable) {
+                failMessageMutable.postValue(new Event<>(throwable.getMessage()));
+            }
+
+        }).enqueue();
+    }
+
+    public void getdepartmentwise(String p_data, SuccessResponse successResponse) {
+        Call<DepartmentWiseListReponse> call = RetrofitClient.getAPIInterface().getdepartmentwise(p_data);
+        new RetrofitRequest<>(call, new ResponseListener<DepartmentWiseListReponse>() {
+            @Override
+            public void onResponse(DepartmentWiseListReponse response, Headers headers) {
+                if (null != successResponse) {
+                    successResponse.onResponse(response);
+                }
+            }
+
+            @Override
+            public void onError(int status, BaseResponse errors) {
+                errorsMutable.postValue(new Event<>(errors));
+
+            }
+
+            @Override
+            public void onFailure(Throwable throwable) {
+                failMessageMutable.postValue(new Event<>(throwable.getMessage()));
+            }
+
+        }).enqueue();
+    }
+
+    public void getmovementwise(String p_data, SuccessResponse successResponse) {
+        Call<BranchDetailsReponse> call = RetrofitClient.getAPIInterface().getmovementwise(p_data);
+        new RetrofitRequest<>(call, new ResponseListener<BranchDetailsReponse>() {
+            @Override
+            public void onResponse(BranchDetailsReponse response, Headers headers) {
+                if (null != successResponse) {
+                    successResponse.onResponse(response);
+                }
+            }
+
+            @Override
+            public void onError(int status, BaseResponse errors) {
+                errorsMutable.postValue(new Event<>(errors));
+
+            }
+
+            @Override
+            public void onFailure(Throwable throwable) {
+                failMessageMutable.postValue(new Event<>(throwable.getMessage()));
+            }
+
+        }).enqueue();
+    }
 
 
 }

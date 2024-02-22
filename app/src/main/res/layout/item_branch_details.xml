@@ -7,7 +7,8 @@
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="14dp"
+        android:layout_margin="6dp"
+        android:layout_marginVertical="4dp"
         app:cardBackgroundColor="@color/bg_color"
         app:cardCornerRadius="10dp"
         app:cardElevation="6dp">
@@ -25,22 +26,22 @@
                 android:padding="12dp">
 
                 <TextView
+                    android:id="@+id/empname"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:alpha=".4"
                     android:fontFamily="@font/montserrat_regular"
                     android:gravity="start"
-                    android:text="Syamdev a j"
                     android:textColor="@color/black"
                     android:textSize="14sp" />
 
                 <TextView
+                    android:id="@+id/empcode"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:alpha=".5"
                     android:fontFamily="@font/montserrat_regular"
                     android:gravity="center"
-                    android:text="empcode-msmebranchname"
                     android:textColor="@color/black"
                     android:textSize="14sp" />
 
@@ -57,13 +58,11 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="20dp"
-                android:gravity="center"
                 android:orientation="horizontal">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="22dp"
                     android:layout_weight="1"
                     android:orientation="vertical">
 
@@ -78,12 +77,12 @@
                         android:textSize="10sp" />
 
                     <TextView
+                        android:id="@+id/activitycount"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/montserrat_medium"
-                        android:text="235"
                         android:textColor="@color/textcolortwo"
-                        android:textSize="16sp" />
+                        android:textSize="14sp" />
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -97,12 +96,12 @@
                         android:textSize="10sp" />
 
                     <TextView
+                        android:id="@+id/statename"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/montserrat_medium"
-                        android:text="kerala"
                         android:textColor="@color/textcolortwo"
-                        android:textSize="16sp" />
+                        android:textSize="14sp" />
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -117,12 +116,12 @@
                         android:textSize="10sp" />
 
                     <TextView
+                        android:id="@+id/punchedbranchid"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/montserrat_medium"
-                        android:text="235"
                         android:textColor="@color/textcolortwo"
-                        android:textSize="16sp" />
+                        android:textSize="14sp" />
 
 
                 </LinearLayout>
@@ -146,12 +145,12 @@
                         android:textSize="10sp" />
 
                     <TextView
+                        android:id="@+id/tttravelkm"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/montserrat_medium"
-                        android:text="235"
                         android:textColor="@color/textcolortwo"
-                        android:textSize="16sp" />
+                        android:textSize="14sp" />
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -165,15 +164,15 @@
                         android:textSize="10sp" />
 
                     <TextView
+                        android:id="@+id/phonenumber"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:drawableEnd="@drawable/ic_call_icon"
-                        android:fontFamily="@font/montserrat_medium"
-                        android:text="9645997487"
-                        android:gravity="center"
                         android:drawablePadding="8dp"
+                        android:fontFamily="@font/montserrat_medium"
+                        android:gravity="center"
                         android:textColor="@color/textcolortwo"
-                        android:textSize="16sp" />
+                        android:textSize="14sp" />
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -187,12 +186,12 @@
                         android:textSize="10sp" />
 
                     <TextView
+                        android:id="@+id/punchedbranchname"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/montserrat_medium"
-                        android:text="235"
                         android:textColor="@color/textcolortwo"
-                        android:textSize="16sp" />
+                        android:textSize="14sp" />
 
                 </LinearLayout>
 

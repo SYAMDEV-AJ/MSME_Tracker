@@ -31,13 +31,15 @@
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
+                        android:layout_weight=".4"
                         android:orientation="vertical">
 
                         <TextView
+                            android:id="@+id/backbutton"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:drawableLeft="@drawable/ic_back_btn"
+                            android:drawablePadding="12dp"
                             android:fontFamily="@font/montserrat_regular"
                             android:gravity="center"
                             android:text="IT DEPARTMENT"
@@ -48,7 +50,7 @@
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
+                        android:layout_weight="1.6"
                         android:gravity="end">
 
                         <TextView
@@ -76,6 +78,7 @@
                     app:cardElevation="6dp">
 
                     <LinearLayout
+                        android:id="@+id/stateselection"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="vertical"
@@ -102,7 +105,7 @@
                                     android:layout_height="wrap_content"
                                     android:fontFamily="@font/montserrat_medium"
                                     android:gravity="start|center_vertical"
-                                    android:text="Select State"
+                                    android:text="Select"
                                     android:textColor="@color/textcolortwo" />
 
 
@@ -136,7 +139,7 @@
                         <LinearLayout
                             android:id="@+id/chatrecyclerlayout"
                             android:layout_width="match_parent"
-                            android:layout_height="200dp"
+                            android:layout_height="wrap_content"
                             android:orientation="vertical"
                             android:visibility="gone">
 
@@ -164,16 +167,17 @@
 
 
                     <EditText
-                        android:id="@+id/remarks"
+                        android:id="@+id/search"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:background="@null"
                         android:drawableEnd="@drawable/ic_search_icon"
                         android:drawablePadding="10dp"
                         android:drawableTint="#2A5B83"
+                        android:enabled="false"
                         android:fontFamily="@font/montserrat_regular"
                         android:hint="Search by employeecode..."
-                        android:inputType="text"
+                        android:inputType="number"
                         android:padding="10dp"
                         android:textColor="@color/black"
                         android:textSize="12sp" />
@@ -184,28 +188,20 @@
             </LinearLayout>
 
 
-            <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-                android:id="@+id/refresh"
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_marginHorizontal="16dp"
-                android:layout_marginTop="12dp">
+                android:layout_marginTop="12dp"
+                android:orientation="vertical">
 
-
-                <LinearLayout
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/branchdetialsrecycler"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical">
+                    tools:listitem="@layout/item_branch_details" />
 
-                    <androidx.recyclerview.widget.RecyclerView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        tools:listitem="@layout/item_branch_details" />
-
-                </LinearLayout>
-
-
-            </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+            </LinearLayout>
 
 
         </LinearLayout>

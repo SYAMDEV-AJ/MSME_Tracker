@@ -35,24 +35,24 @@
                         android:orientation="vertical">
 
                         <TextView
+                            android:id="@+id/statename"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="6dp"
                             android:alpha=".4"
                             android:fontFamily="@font/montserrat_regular"
                             android:gravity="center"
-                            android:text="State Name"
                             android:textColor="@color/black"
                             android:textSize="14sp" />
 
                         <TextView
+                            android:id="@+id/branchaname"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="6dp"
                             android:alpha=".4"
                             android:fontFamily="@font/montserrat_regular"
                             android:gravity="center"
-                            android:text="Branch Name"
                             android:textColor="@color/black"
                             android:textSize="14sp" />
                     </LinearLayout>
@@ -64,9 +64,11 @@
                         android:gravity="end">
 
                         <TextView
+                            android:id="@+id/changeclick"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:fontFamily="@font/montserrat_medium"
+                            android:padding="12dp"
                             android:text="Change"
                             android:textColor="@color/textcolortwo"
                             android:textSize="16sp" />
@@ -76,28 +78,21 @@
 
             </androidx.cardview.widget.CardView>
 
-            <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-                android:id="@+id/refresh"
+
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginHorizontal="16dp"
-                android:layout_marginTop="12dp">
+                android:layout_marginTop="24dp"
+                android:layout_marginHorizontal="12dp"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
 
-
-                <LinearLayout
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/deptrecyler"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical">
+                    tools:listitem="@layout/item_dept_details" />
 
-                    <androidx.recyclerview.widget.RecyclerView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        tools:listitem="@layout/item_dept_details" />
-
-                </LinearLayout>
-
-
-            </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+            </LinearLayout>
 
 
         </LinearLayout>

@@ -9,6 +9,9 @@ import com.manappuram.msmetracker.dashboard.modelclass.ImageViewResponse;
 import com.manappuram.msmetracker.dashboard.modelclass.StartServiceResponse;
 import com.manappuram.msmetracker.login.model.ActivityCheckResponse;
 import com.manappuram.msmetracker.login.model.LoginResponse;
+import com.manappuram.msmetracker.reports.modelclass.BranchDetailsReponse;
+import com.manappuram.msmetracker.reports.modelclass.BranchListReponse;
+import com.manappuram.msmetracker.reports.modelclass.DepartmentWiseListReponse;
 import com.manappuram.msmetracker.reports.modelclass.ReportActivityListReponse;
 import com.manappuram.msmetracker.reports.modelclass.ReportTotalCountResponse;
 import com.manappuram.msmetracker.reports.modelclass.StateListReponse;
@@ -18,7 +21,7 @@ import java.util.concurrent.locks.StampedLock;
 
 public class LoginViewmodel extends ViewModel {
 
-    LoginRepository loginRepository = new LoginRepository();
+    public LoginRepository loginRepository = new LoginRepository();
 
     public LoginRepository getLoginRepository() {
         return loginRepository;
@@ -33,6 +36,10 @@ public class LoginViewmodel extends ViewModel {
     public MutableLiveData<ReportActivityListReponse> reportActivityListReponseMutableLiveData = new MutableLiveData<>();
     public MutableLiveData<ReportTotalCountResponse> reportTotalCountMutableLiveData = new MutableLiveData<>();
     public MutableLiveData<StateListReponse> stateListReponseMutableLiveData = new MutableLiveData<>();
+    public MutableLiveData<BranchListReponse> branchListReponseMutableLiveData = new MutableLiveData<>();
+    public MutableLiveData<DepartmentWiseListReponse> departmentWiseListReponseMutableLiveData = new MutableLiveData<>();
+    public MutableLiveData<BranchDetailsReponse> branchDetailsReponseMutableLiveData = new MutableLiveData<>();
+    public MutableLiveData<String> errorMutableLiveData = new MutableLiveData<>();
 
 
     public void userLogin(String empCode, String pwd, String tocken, String deviceid) {
@@ -83,12 +90,36 @@ public class LoginViewmodel extends ViewModel {
         });
     }
 
+    public void getactivitytotalcount_totaltraveldistance(String p_data) {
+        getLoginRepository().getactivitytotalcount_totaltraveldistance(p_data, (BaseRepository.SuccessResponse<ReportTotalCountResponse>) reportTotalCount -> {
+            reportTotalCountMutableLiveData.setValue(reportTotalCount);
+        });
+    }
+
+
     public void Get_All_state(String p_data) {
         getLoginRepository().Get_All_state(p_data, (BaseRepository.SuccessResponse<StateListReponse>) stateListReponse -> {
             stateListReponseMutableLiveData.setValue(stateListReponse);
         });
     }
 
+    public void Get_All_branch(String p_data) {
+        getLoginRepository().Get_All_branch(p_data, (BaseRepository.SuccessResponse<BranchListReponse>) branchListReponse -> {
+            branchListReponseMutableLiveData.setValue(branchListReponse);
+        });
+    }
+
+    public void getdepartmentwise(String p_data) {
+        getLoginRepository().getdepartmentwise(p_data, (BaseRepository.SuccessResponse<DepartmentWiseListReponse>) departmentWiseListReponse -> {
+            departmentWiseListReponseMutableLiveData.setValue(departmentWiseListReponse);
+        });
+    }
+
+    public void getmovementwise(String p_data) {
+        getLoginRepository().getmovementwise(p_data, (BaseRepository.SuccessResponse<BranchDetailsReponse>) branchDetailsReponse -> {
+            branchDetailsReponseMutableLiveData.setValue(branchDetailsReponse);
+        });
+    }
 
     public MutableLiveData<LoginResponse> getLoginResponseMutableLiveData() {
         return loginResponseMutableLiveData;
@@ -125,5 +156,18 @@ public class LoginViewmodel extends ViewModel {
     public MutableLiveData<StateListReponse> getStateListReponseMutableLiveData() {
         return stateListReponseMutableLiveData;
     }
+
+    public MutableLiveData<BranchListReponse> getBranchListReponseMutableLiveData() {
+        return branchListReponseMutableLiveData;
+    }
+
+    public MutableLiveData<DepartmentWiseListReponse> getDepartmentWiseListReponseMutableLiveData() {
+        return departmentWiseListReponseMutableLiveData;
+    }
+
+    public MutableLiveData<BranchDetailsReponse> getBranchDetailsReponseMutableLiveData() {
+        return branchDetailsReponseMutableLiveData;
+    }
+
 
 }

@@ -9,7 +9,7 @@ import java.util.List;
 
 public class ReportActivityListReponse extends BaseResponse {
 
-    @SerializedName("")
+    @SerializedName("get_activity_list_data")
     @Expose
     public List<ReportActivityListReponse.get_activity_list_data> get_activity_list_data = null;
 

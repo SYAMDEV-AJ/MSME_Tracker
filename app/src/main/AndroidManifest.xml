@@ -12,6 +12,7 @@
     <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
     <uses-permission android:name="android.permission.READ_MEDIA_VISUAL_USER_SELECTED" />
     <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.CALL_PHONE" />
 
     <uses-permission
         android:name="android.permission.WRITE_EXTERNAL_STORAGE"
@@ -21,8 +22,12 @@
         android:name="android.hardware.camera"
         android:required="true" />
     <uses-feature android:name="android.hardware.camera.autofocus" />
+    <uses-feature
+        android:name="android.hardware.telephony"
+        android:required="false" />
 
     <application
+        android:name=".utility.MSMEApplication"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -30,7 +35,6 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:name=".utility.MSMEApplication"
         android:theme="@style/Theme.MSMETracker"
         tools:targetApi="31">
         <activity
@@ -66,6 +70,9 @@
         <activity android:name=".dashboard.view.DashboardNewActivity" />
         <activity android:name=".reports.view.ReportDashboardActivity" />
         <activity android:name=".map.map.MapViewActivity" />
+        <activity android:name=".reports.view.ReportDateSelectionActivity" />
+        <activity android:name=".reports.view.ReportDepartmentDtsActivity" />
+        <activity android:name=".reports.view.ReportBranchDtsActivity" />
 
         <service
             android:name=".receiver.YourService"

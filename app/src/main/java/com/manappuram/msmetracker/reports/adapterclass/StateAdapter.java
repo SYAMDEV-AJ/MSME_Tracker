@@ -13,41 +13,37 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.manappuram.msmetracker.R;
 import com.manappuram.msmetracker.databinding.ListSpinnerItemActivityBinding;
 import com.manappuram.msmetracker.reports.modelclass.ReportActivityListReponse;
+import com.manappuram.msmetracker.reports.modelclass.StateListReponse;
+import com.manappuram.msmetracker.reports.view.ReportDateSelectionActivity;
 
 import java.util.List;
 
-public class ActivityAdapter extends RecyclerView.Adapter<ActivityAdapter.ViewHolder> {
+public class StateAdapter extends RecyclerView.Adapter<StateAdapter.ViewHolder> {
     Context context;
-    public List<ReportActivityListReponse.get_activity_list_data> spinnerlist;
-    public Spinnerclick spinnerclick;
+    public List<StateListReponse.get_activity_list_data> statelist;
+    public ReportDateSelectionActivity.SpinnerOnclickListener listener;
 
-    public interface Spinnerclick {
 
-        void Spinnerrclick(String id, String name);
-
-    }
-
-    public ActivityAdapter(Context context, List<ReportActivityListReponse.get_activity_list_data> spinnerlist, Spinnerclick spinnerclick) {
+    public StateAdapter(Context context, List<StateListReponse.get_activity_list_data> statelist) {
         this.context = context;
-        this.spinnerlist = spinnerlist;
-        this.spinnerclick = spinnerclick;
+        this.statelist = statelist;
     }
 
 
     @NonNull
     @Override
-    public ActivityAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public StateAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         ListSpinnerItemActivityBinding binding = DataBindingUtil.inflate(LayoutInflater.from(parent.getContext()), R.layout.list_spinner_item_activity, parent, false);
         return new ViewHolder(binding);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ActivityAdapter.ViewHolder holder, @SuppressLint("RecyclerView") int position) {
-        holder.binding.itemname.setText(spinnerlist.get(position).getActivity_name());
+    public void onBindViewHolder(@NonNull StateAdapter.ViewHolder holder, @SuppressLint("RecyclerView") int position) {
+        holder.binding.itemname.setText(statelist.get(position).getStatename());
         holder.binding.itemclick.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                spinnerclick.Spinnerrclick(spinnerlist.get(position).getActivity_id(), spinnerlist.get(position).getActivity_name());
+                listener.onClick(statelist.get(position).getStateid(), statelist.get(position).getStatename());
             }
         });
 
@@ -55,8 +51,8 @@ public class ActivityAdapter extends RecyclerView.Adapter<ActivityAdapter.ViewHo
 
     @Override
     public int getItemCount() {
-        if (spinnerlist != null)
-            return spinnerlist.size();
+        if (statelist != null)
+            return statelist.size();
         else
             return 0;
     }
@@ -71,7 +67,7 @@ public class ActivityAdapter extends RecyclerView.Adapter<ActivityAdapter.ViewHo
         return super.getItemId(position);
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
+    public static class ViewHolder extends RecyclerView.ViewHolder {
         ListSpinnerItemActivityBinding binding;
 
         public ViewHolder(@NonNull ListSpinnerItemActivityBinding itemView) {

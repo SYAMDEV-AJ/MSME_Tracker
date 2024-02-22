@@ -14,18 +14,23 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
+import com.google.android.gms.maps.model.LatLng;
+import com.google.maps.android.SphericalUtil;
 import com.manappuram.msmetracker.R;
 import com.manappuram.msmetracker.base.BaseActivity;
+import com.manappuram.msmetracker.base.BaseResponse;
+import com.manappuram.msmetracker.base.Event;
 import com.manappuram.msmetracker.databinding.ActivityReportDashboardBinding;
 import com.manappuram.msmetracker.reports.adapterclass.ActivityAdapter;
 import com.manappuram.msmetracker.reports.modelclass.ReportActivityListReponse;
 import com.manappuram.msmetracker.reports.modelclass.ReportTotalCountResponse;
+import com.manappuram.msmetracker.utility.Utility;
 import com.manappuram.msmetracker.viewmodel.LoginViewmodel;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class ReportDashboardActivity extends BaseActivity implements ActivityAdapter.Spinnerclick {
+public class ReportDashboardActivity extends BaseActivity {
     ActivityReportDashboardBinding binding;
     LoginViewmodel viewmodel;
     ActivityAdapter adapter;
@@ -42,8 +47,7 @@ public class ReportDashboardActivity extends BaseActivity implements ActivityAda
         Activityspinner();
         recyclerdata();
         generateclick();
-
-
+        observer();
         binding.activityselection.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -64,19 +68,64 @@ public class ReportDashboardActivity extends BaseActivity implements ActivityAda
 
     }
 
-    private void generateclick() {
-        binding.generateclick.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(mActivity, ReportDateSelectionActivity.class);
-                startActivity(intent);
-            }
-        });
+    private double distance(double lat1, double lon1, double lat2, double lon2) {
+        double theta = lon1 - lon2;
+        double dist = Math.sin(deg2rad(lat1))
+                * Math.sin(deg2rad(lat2))
+                + Math.cos(deg2rad(lat1))
+                * Math.cos(deg2rad(lat2))
+                * Math.cos(deg2rad(theta));
+        dist = Math.acos(dist);
+        dist = rad2deg(dist);
+        // dist = Math.round(dist * 60 * 1.60934);
+        dist = dist * 60 * 1.60934;
+        // double dist1 = dist / 1000;
+        // int dist1 = (int) dist;
+        //dist = dist * 60 * 1.60934;
+
+        double decimalDegrees = dist;
+        String finalDist = String.valueOf(dist);
+        return (dist);
     }
 
-    private void Activityspinner() {
-        showProgress();
-        viewmodel.Get_activity_listdrop("");
+
+//    public double getDistanceBetweenLocations(double lat1, double lon1, double lat2, double lon2) {
+//        LatLng firstloc = new LatLng(lat1, lon1);
+//        LatLng secloc = new LatLng(lat2, lon2);
+//        double distance = SphericalUtil.computeDistanceBetween(firstloc, secloc);
+//        String data = String.valueOf(distance / 1000);
+//        String data1 = data;
+//        return distance;
+//    }
+
+    // Usage
+
+
+    private double deg2rad(double deg) {
+        return (deg * Math.PI / 180.0);
+    }
+
+    private double rad2deg(double rad) {
+        return (rad * 180.0 / Math.PI);
+    }
+
+    private void observer() {
+
+        viewmodel.getReportTotalCountMutableLiveData().observe(this, new Observer<ReportTotalCountResponse>() {
+            @Override
+            public void onChanged(ReportTotalCountResponse reportTotalCount) {
+                hideProgress();
+                if (reportTotalCount.getStatus().equals("111")) {
+
+                    binding.totalcount.setText(reportTotalCount.getTotalcount());
+                    binding.tttraveldistance.setText(reportTotalCount.getTotaltraveldistance());
+
+                } else {
+                    Toast.makeText(mActivity, reportTotalCount.getResult(), Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
         viewmodel.getReportActivityListReponseMutableLiveData().observe(this, new Observer<ReportActivityListReponse>() {
             @Override
             public void onChanged(ReportActivityListReponse reportActivityListReponse) {
@@ -89,45 +138,88 @@ public class ReportDashboardActivity extends BaseActivity implements ActivityAda
                 }
             }
         });
-    }
 
-    private void totalcount() {
-        viewmodel.gettotalcount_totaltraveldistance("");
-        viewmodel.reportTotalCountMutableLiveData.observe(this, new Observer<ReportTotalCountResponse>() {
+        viewmodel.loginRepository.getErrorsMutable().observe(this, new Observer<Event<BaseResponse>>() {
             @Override
-            public void onChanged(ReportTotalCountResponse reportTotalCount) {
-                if (reportTotalCount.getStatus().equals("111")) {
-                    binding.totalcount.setText(reportTotalCount.getTotalcount());
-                    binding.tttraveldistance.setText(reportTotalCount.getTotaltraveldistance());
+            public void onChanged(Event<BaseResponse> baseResponseEvent) {
+                if (baseResponseEvent != null) {
+                    hideProgress();
+                    Toast.makeText(mActivity, "Internal Server Occurred", Toast.LENGTH_SHORT).show();
 
-                } else {
-                    Toast.makeText(mActivity, reportTotalCount.getResult(), Toast.LENGTH_SHORT).show();
                 }
             }
         });
     }
 
 
-    private void recyclerdata() {
-        binding.reclceract.setLayoutManager(new LinearLayoutManager(this));
-        adapter = new ActivityAdapter(this, spinnerlist);
-        binding.reclceract.setAdapter(adapter);
+    private void Activityspinner() {
+        String data = Utility.encodecusid(sessionId + "$" + "0");
+        String encypted = data.replaceAll("\\s", "");
+        showProgress();
+        viewmodel.Get_activity_listdrop(encypted);
+
+
+    }
+
+    private void totalcountall(String id) {
+        String data = Utility.encodecusid(sessionId + "$" + id);
+        String enrypted = data.replaceAll("\\s", "");
+        showProgress();
+        viewmodel.gettotalcount_totaltraveldistance(enrypted);
+
+
+    }
+
+    private void totalcountactivity(String id) {
+        String data = Utility.encodecusid(sessionId + "$" + id);
+        String enrypted = data.replaceAll("\\s", "");
+        showProgress();
+        viewmodel.getactivitytotalcount_totaltraveldistance(enrypted);
+
+
     }
 
 
-    @Override
-    public void Spinnerclick(String id, String name) {
-        activityid = id;
-        activityname = name;
-        totalcount();
-        RotateAnimation rotateAnimation = new RotateAnimation(180.0f, 0.0f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
-        rotateAnimation.setInterpolator(new DecelerateInterpolator());
-        rotateAnimation.setRepeatCount(0);
-        rotateAnimation.setDuration(300);
-        rotateAnimation.setFillAfter(true);
-        binding.arrow.startAnimation(rotateAnimation);
-        binding.activityrecycler.setVisibility(View.GONE);
-        binding.linelayout.setVisibility(View.GONE);
-        binding.spinnevalue.setText(name);
+    private void recyclerdata() {
+        binding.reclceract.setLayoutManager(new LinearLayoutManager(this));
+        adapter = new ActivityAdapter(this, spinnerlist, new ActivityAdapter.Spinnerclick() {
+            @Override
+            public void Spinnerrclick(String id, String name) {
+                activityid = id;
+                activityname = name;
+                if (activityid.equals("0")) {
+                    totalcountall(id);
+                    binding.ttcount.setText("Total Daily Activity\n Count");
+                    binding.ttdistance.setText("Total Activity\n Travel KM");
+
+                } else {
+                    totalcountactivity(id);
+                    binding.ttcount.setText("Total Activity Count");
+                    binding.ttdistance.setText("Total Activity\n Travel KM");
+                }
+
+                RotateAnimation rotateAnimation = new RotateAnimation(180.0f, 0.0f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+                rotateAnimation.setInterpolator(new DecelerateInterpolator());
+                rotateAnimation.setRepeatCount(0);
+                rotateAnimation.setDuration(300);
+                rotateAnimation.setFillAfter(true);
+                binding.arrow.startAnimation(rotateAnimation);
+                binding.activityrecycler.setVisibility(View.GONE);
+                binding.linelayout.setVisibility(View.GONE);
+                binding.spinnevalue.setText(name);
+
+            }
+        });
+        binding.reclceract.setAdapter(adapter);
+    }
+
+    private void generateclick() {
+        binding.generateclick.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(mActivity, ReportDateSelectionActivity.class);
+                startActivity(intent);
+            }
+        });
     }
 }

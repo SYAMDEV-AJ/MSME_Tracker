@@ -91,12 +91,8 @@ public class DashboardActivity extends BaseActivity {
     ActivityDashboardBinding binding;
     LoginViewmodel viewmodel;
     AdapterSpinner adapter;
-    String activityid = "", activityname = "", currentlatitiudestring = "", currentlongitudestring = "", activitynamefrom = "", unfinishedactivity = "";
-    String remarks = "";
-    String imageid = "";
-    String imagename = "";
-    String halfimagename = "";
-    String unfinishedtask = "";
+    String activityid = "", activityname = "", currentlatitiudestring = "", currentlongitudestring = "", activitynamefrom = "";
+    String remarks = "", imageid = "", imagename = "", halfimagename = "", unfinishedtask = "";
     double currentLatitude;
     double currentLongitude;
     AlertDialog.Builder builder;
@@ -705,14 +701,11 @@ public class DashboardActivity extends BaseActivity {
                 Intent intent = new Intent(mActivity, DistanceCalculationActivity.class);
                 intent.putExtra("activityid", activityid);
                 intent.putExtra("activityname", activityname);
-//                intent.putExtra("startlatitude", currentlatitiudestring);
-//                intent.putExtra("startlongitude", currentlongitudestring);
                 intent.putExtra("startimagename", imagename);
                 intent.putExtra("startimageid", imageid);
                 intent.putExtra("endremark", binding.remarks.getText().toString());
                 intent.putExtra("activitynamefrom", activitynamefrom);
                 intent.putExtra("halfimagename", halfimagename);
-//                intent.putExtra("unfinishedtask", unfinishedtask);
                 startActivity(intent);
 
 
