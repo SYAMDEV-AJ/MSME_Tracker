@@ -50,6 +50,7 @@ public class ReportBranchDtsActivity extends BaseActivity {
     SimpleDateFormat date = new SimpleDateFormat("dd-MMM-yyyy", Locale.getDefault());
     String formattedDate = date.format(c);
 
+    String selectedbranchid = "", selecteddepartment = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,6 +58,8 @@ public class ReportBranchDtsActivity extends BaseActivity {
         binding = DataBindingUtil.setContentView(this, R.layout.activity_report_branch_details);
         viewmodel = ViewModelProviders.of(this).get(LoginViewmodel.class);
         mActivity = this;
+        selectedbranchid = getIntent().getStringExtra("selectedbranchid");
+        selecteddepartment = getIntent().getStringExtra("depatmentid");
 
 
         StatusSpinner();
@@ -118,13 +121,13 @@ public class ReportBranchDtsActivity extends BaseActivity {
             public void Spinnerrclick(String name) {
                 if (name.equals("Moved")) {
                     binding.search.setEnabled(true);
-                    String data = Utility.encodecusid(sessionId + "$" + "1" + "~" + formattedDate);
+                    String data = Utility.encodecusid(sessionId + "$" + "1" + "~" + formattedDate + "~" + selecteddepartment + "~" + selectedbranchid);
                     String encrypted = data.replaceAll("\\s", "");
                     showProgress();
                     viewmodel.getmovementwise(encrypted);
                 } else {
                     binding.search.setEnabled(true);
-                    String data = Utility.encodecusid(sessionId + "$" + "2" + "~" + formattedDate);
+                    String data = Utility.encodecusid(sessionId + "$" + "2" + "~" + formattedDate + "~" + selecteddepartment + "~" + selectedbranchid);
                     String encrypted = data.replaceAll("\\s", "");
                     showProgress();
                     viewmodel.getmovementwise(encrypted);

@@ -28,7 +28,6 @@ import java.util.List;
 public class ReportDepartmentDtsActivity extends BaseActivity {
     ActivityReportDeptDetailsBinding binding;
     LoginViewmodel viewmodel;
-
     List<DepartmentWiseListReponse.get_activity_list_data> departmentlist = new ArrayList<>();
     DepartmentAdapter adapter;
     String selectedbranchid = "", branchaname = "", statename = "";
@@ -62,7 +61,6 @@ public class ReportDepartmentDtsActivity extends BaseActivity {
     }
 
     private void departmentdatashow() {
-
         String data = Utility.encodecusid(sessionId + "$" + selectedbranchid);
         String encrypted = data.replaceAll("\\s", "");
         showProgress();
@@ -71,7 +69,6 @@ public class ReportDepartmentDtsActivity extends BaseActivity {
     }
 
     private void observer() {
-
         viewmodel.getDepartmentWiseListReponseMutableLiveData().observe(this, new Observer<DepartmentWiseListReponse>() {
             @Override
             public void onChanged(DepartmentWiseListReponse departmentWiseListReponse) {
@@ -92,12 +89,11 @@ public class ReportDepartmentDtsActivity extends BaseActivity {
         adapter = new DepartmentAdapter(this, departmentlist, new DepartmentAdapter.Spinnerclick() {
             @Override
             public void Spinnerrclick(String id) {
-
                 String deptid = id;
                 Intent intent = new Intent(mActivity, ReportBranchDtsActivity.class);
                 intent.putExtra("depatmentid", deptid);
+                intent.putExtra("selectedbranchid", selectedbranchid);
                 startActivity(intent);
-
             }
         });
         binding.deptrecyler.setAdapter(adapter);

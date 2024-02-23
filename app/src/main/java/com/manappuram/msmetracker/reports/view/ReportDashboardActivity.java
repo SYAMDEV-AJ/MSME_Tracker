@@ -14,8 +14,7 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
-import com.google.android.gms.maps.model.LatLng;
-import com.google.maps.android.SphericalUtil;
+
 import com.manappuram.msmetracker.R;
 import com.manappuram.msmetracker.base.BaseActivity;
 import com.manappuram.msmetracker.base.BaseResponse;
@@ -48,21 +47,10 @@ public class ReportDashboardActivity extends BaseActivity {
         recyclerdata();
         generateclick();
         observer();
-        binding.activityselection.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                binding.activityrecycler.setVisibility(View.VISIBLE);
-                binding.linelayout.setVisibility(View.VISIBLE);
-                Animation animation = AnimationUtils.loadAnimation(getBaseContext(), R.anim.slide_from_top);
-                animation.setStartOffset(0);
-                binding.activityrecycler.startAnimation(animation);
-                RotateAnimation rotateAnimation = new RotateAnimation(0.0f, 180.0f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
-                rotateAnimation.setInterpolator(new DecelerateInterpolator());
-                rotateAnimation.setRepeatCount(0);
-                rotateAnimation.setDuration(300);
-                rotateAnimation.setFillAfter(true);
-                binding.arrow.startAnimation(rotateAnimation);
-            }
+
+
+        binding.backbuttonclick.setOnClickListener(v -> {
+            mActivity.finish();
         });
 
 
@@ -133,6 +121,23 @@ public class ReportDashboardActivity extends BaseActivity {
                 spinnerlist.clear();
                 if (reportActivityListReponse.getStatus().equals("111")) {
                     spinnerlist.addAll(reportActivityListReponse.getGet_activity_list_data());
+
+                    binding.activityselection.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            binding.activityrecycler.setVisibility(View.VISIBLE);
+                            binding.linelayout.setVisibility(View.VISIBLE);
+                            Animation animation = AnimationUtils.loadAnimation(getBaseContext(), R.anim.slide_from_top);
+                            animation.setStartOffset(0);
+                            binding.activityrecycler.startAnimation(animation);
+                            RotateAnimation rotateAnimation = new RotateAnimation(0.0f, 180.0f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+                            rotateAnimation.setInterpolator(new DecelerateInterpolator());
+                            rotateAnimation.setRepeatCount(0);
+                            rotateAnimation.setDuration(300);
+                            rotateAnimation.setFillAfter(true);
+                            binding.arrow.startAnimation(rotateAnimation);
+                        }
+                    });
                 } else {
                     Toast.makeText(mActivity, reportActivityListReponse.getResult(), Toast.LENGTH_SHORT).show();
                 }
@@ -154,6 +159,7 @@ public class ReportDashboardActivity extends BaseActivity {
 
     private void Activityspinner() {
         String data = Utility.encodecusid(sessionId + "$" + "0");
+        assert data != null;
         String encypted = data.replaceAll("\\s", "");
         showProgress();
         viewmodel.Get_activity_listdrop(encypted);

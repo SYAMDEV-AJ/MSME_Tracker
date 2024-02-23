@@ -194,30 +194,22 @@ public class DistanceCalculationActivity extends BaseActivity {
                 viewmodel.photo_view(encrypted, "1");
             }
         });
-
-
     }
 
     private void imageviewendclick() {
         binding.endimageviewbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 Toast.makeText(mActivity, "clicked", Toast.LENGTH_SHORT).show();
                 String imageview = Utility.encodecusid(sessionId + "$" + endimageid);
                 String encrypted = imageview.replaceAll("\\s", "");
-
                 showProgress();
                 viewmodel.photo_view(encrypted, "2");
             }
         });
-
-
     }
 
-
     private void observers() {
-
         viewmodel.getEndServiceResponseMutableLiveData().observe(this, new Observer<StartServiceResponse>() {
             @Override
             public void onChanged(StartServiceResponse startServiceResponse) {
@@ -256,14 +248,11 @@ public class DistanceCalculationActivity extends BaseActivity {
                     });
                     dialog = builder.create();
                     dialog.show();
-
-
                 } else {
                     Toast.makeText(mActivity, imageViewResponse.getResult(), Toast.LENGTH_SHORT).show();
                 }
             }
         });
-
     }
 
 
@@ -277,10 +266,7 @@ public class DistanceCalculationActivity extends BaseActivity {
             requestforGpsPermission();
 
         } else {
-
-
             boolean gps_enabled = false;
-
             gps_enabled = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
             if (!gps_enabled) {
                 new android.app.AlertDialog.Builder(mActivity)
@@ -294,7 +280,6 @@ public class DistanceCalculationActivity extends BaseActivity {
 
             }
         }
-
     }
 
 
@@ -315,14 +300,10 @@ public class DistanceCalculationActivity extends BaseActivity {
                         LocationServices.getFusedLocationProviderClient(mActivity).
                                 removeLocationUpdates(this);
                         try {
-
                             if (locationResult != null && locationResult.getLocations().size() > 0) {
-
-
                                 int lastLocationIndex = locationResult.getLocations().size() - 1;
                                 double endlatitude = locationResult.getLocations().get(lastLocationIndex).getLatitude();
                                 double endlongitude = locationResult.getLocations().get(lastLocationIndex).getLongitude();
-
                                 endlocationlat = String.valueOf(endlatitude);
                                 endlocationlog = String.valueOf(endlongitude);
 
@@ -346,13 +327,9 @@ public class DistanceCalculationActivity extends BaseActivity {
                                         String[] location_name = address.split(",");
                                         String loc_name1 = location_name[1];
                                         String loc_name2 = location_name[2];
-                                        Log.i("locationnn_loc_name", loc_name2);
                                         currentCity = loc_name2;
 
-
                                     }
-
-
                                 } catch (IOException e) {
                                     e.printStackTrace();
                                 }
@@ -372,9 +349,7 @@ public class DistanceCalculationActivity extends BaseActivity {
                     @Override
                     public void onPermissionsChecked(MultiplePermissionsReport report) {
                         if (report.areAllPermissionsGranted()) {
-
                             ChooseTypeBottomsheet();
-
                         } else if (report.isAnyPermissionPermanentlyDenied()) {
 
                         }
@@ -382,9 +357,7 @@ public class DistanceCalculationActivity extends BaseActivity {
 
                     @Override
                     public void onPermissionRationaleShouldBeShown(List<PermissionRequest> permissions, PermissionToken token) {
-
                     }
-
                 }).onSameThread()
                 .check();
     }
@@ -412,10 +385,7 @@ public class DistanceCalculationActivity extends BaseActivity {
                         assert data != null;
                         Uri selectedFileUri = getImageUri(DistanceCalculationActivity.this.getApplicationContext(), photo);
                         UploadMedia(selectedFileUri);
-
-
                     }
-
                 }
             });
 
