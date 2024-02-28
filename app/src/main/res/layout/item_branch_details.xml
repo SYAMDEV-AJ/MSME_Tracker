@@ -172,7 +172,7 @@
                         android:fontFamily="@font/montserrat_medium"
                         android:gravity="center"
                         android:textColor="@color/textcolortwo"
-                        android:textSize="14sp" />
+                        android:textSize="12sp" />
 
                     <TextView
                         android:layout_width="wrap_content"

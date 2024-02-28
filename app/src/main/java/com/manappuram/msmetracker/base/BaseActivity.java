@@ -11,7 +11,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.manappuram.msmetracker.utility.CustomLoader;
 
-public class BaseActivity extends AppCompatActivity {
+public abstract class BaseActivity extends AppCompatActivity {
 
     public SharedPreferences sharedPreferences;
     public SharedPreferences.Editor editor;

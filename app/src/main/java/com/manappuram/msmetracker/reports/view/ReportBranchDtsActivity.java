@@ -12,7 +12,6 @@ import android.view.animation.DecelerateInterpolator;
 import android.view.animation.RotateAnimation;
 import android.widget.Toast;
 
-import androidx.core.view.GravityCompat;
 import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
@@ -66,6 +65,7 @@ public class ReportBranchDtsActivity extends BaseActivity {
         recylerdept();
         observer();
         search();
+        firstselection();
 
 
         binding.stateselection.setOnClickListener(new View.OnClickListener() {
@@ -93,6 +93,18 @@ public class ReportBranchDtsActivity extends BaseActivity {
         });
     }
 
+    private void firstselection() {
+
+        String data = Utility.encodecusid(sessionId + "$" + "1" + "~" + formattedDate + "~" + selecteddepartment + "~" + selectedbranchid);
+        String encrypted = data.replaceAll("\\s", "");
+        showProgress();
+        viewmodel.getmovementwise(encrypted);
+        StatusSpinnerList.clear();
+        StatusSpinnerList.add(new StatusmodelClass("Not Moved"));
+        statusAdapter.notifyDataSetChanged();
+
+    }
+
     private void observer() {
         viewmodel.getBranchDetailsReponseMutableLiveData().observe(this, new Observer<BranchDetailsReponse>() {
             @Override
@@ -110,29 +122,30 @@ public class ReportBranchDtsActivity extends BaseActivity {
     }
 
     private void StatusSpinner() {
-        StatusSpinnerList.clear();
-        StatusSpinnerList.add(new StatusmodelClass("Moved"));
-        StatusSpinnerList.add(new StatusmodelClass("Not Moved"));
-
         LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         binding.chatrecycler.setLayoutManager(layoutManager);
         statusAdapter = new StatusAdapter(mActivity, StatusSpinnerList, new StatusAdapter.Spinnerclick() {
             @Override
             public void Spinnerrclick(String name) {
                 if (name.equals("Moved")) {
+                    StatusSpinnerList.clear();
+                    StatusSpinnerList.add(new StatusmodelClass("Not Moved"));
+                    statusAdapter.notifyDataSetChanged();
                     binding.search.setEnabled(true);
                     String data = Utility.encodecusid(sessionId + "$" + "1" + "~" + formattedDate + "~" + selecteddepartment + "~" + selectedbranchid);
                     String encrypted = data.replaceAll("\\s", "");
                     showProgress();
                     viewmodel.getmovementwise(encrypted);
                 } else {
+                    StatusSpinnerList.clear();
+                    StatusSpinnerList.add(new StatusmodelClass("Moved"));
+                    statusAdapter.notifyDataSetChanged();
                     binding.search.setEnabled(true);
                     String data = Utility.encodecusid(sessionId + "$" + "2" + "~" + formattedDate + "~" + selecteddepartment + "~" + selectedbranchid);
                     String encrypted = data.replaceAll("\\s", "");
                     showProgress();
                     viewmodel.getmovementwise(encrypted);
                 }
-
                 RotateAnimation rotateAnimation = new RotateAnimation(180.0f, 0.0f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
                 rotateAnimation.setInterpolator(new DecelerateInterpolator());
                 rotateAnimation.setRepeatCount(0);
@@ -168,10 +181,7 @@ public class ReportBranchDtsActivity extends BaseActivity {
         binding.search.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-
             }
-
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 if (binding.search.getText().toString().length() > 0) {
@@ -192,15 +202,11 @@ public class ReportBranchDtsActivity extends BaseActivity {
     private void filter(String toString) {
         ArrayList<BranchDetailsReponse.get_activity_list_data> newList = new ArrayList<>();
         for (BranchDetailsReponse.get_activity_list_data data : branchlist) {
-
             if (data.getEmp_code().toLowerCase().contains(toString.toLowerCase())) {
                 newList.add(data);
             }
         }
-
         adapter.branchlist = newList;
         adapter.notifyDataSetChanged();
-
     }
-
 }

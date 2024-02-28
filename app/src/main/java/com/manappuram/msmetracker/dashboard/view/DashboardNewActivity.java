@@ -20,6 +20,7 @@ import com.manappuram.msmetracker.viewmodel.LoginViewmodel;
 public class DashboardNewActivity extends BaseActivity {
     ActivityDashboardnewBinding binding;
     LoginViewmodel viewmodel;
+    String reporthide = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,6 +28,16 @@ public class DashboardNewActivity extends BaseActivity {
         binding = DataBindingUtil.setContentView(this, R.layout.activity_dashboardnew);
         viewmodel = ViewModelProviders.of(this).get(LoginViewmodel.class);
         mActivity = this;
+        reporthide = getIntent().getStringExtra("reporthide");
+        assert reporthide != null;
+        if (reporthide.equals("reporthide")) {
+            binding.reportclick.setVisibility(View.GONE);
+            binding.activityclick.setVisibility(View.VISIBLE);
+
+        } else {
+            binding.reportclick.setVisibility(View.VISIBLE);
+            binding.activityclick.setVisibility(View.GONE);
+        }
 
         activityclick();
         reportclick();

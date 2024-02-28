@@ -83,12 +83,19 @@ public class LoginActivity extends BaseActivity {
                     editor.putString("logindate", logindate);
                     editor.apply();
 
-//                    if (loginResponse.getEmpDetails().getDeptId().equals("617") && !loginResponse.getEmpDetails().getBranchId().equals("0")) {
-                    Intent intent = new Intent(mActivity, DashboardNewActivity.class);
-                    startActivity(intent);
-//                    } else {
-//                        Toast.makeText(mActivity, "You are Not Authorized to this Application", Toast.LENGTH_SHORT).show();
-//                    }
+                    if (loginResponse.getEmpDetails().getDeptId().equals("617") && !loginResponse.getEmpDetails().getBranchId().equals("0")) {
+                        Intent intent = new Intent(mActivity, DashboardNewActivity.class);
+                        intent.putExtra("reporthide", "reporthide");
+                        startActivity(intent);
+                    } else if ((loginResponse.getEmpDetails().getDeptId().equals("617") && loginResponse.getEmpDetails().getBranchId().equals("0"))) {
+                        if (loginResponse.getEmpDetails().getPostId().equals("-454") || loginResponse.getEmpDetails().getPostId().equals("822") || loginResponse.getEmpDetails().getPostId().equals("-128") || loginResponse.getEmpDetails().getPostId().equals("-129")) {
+                            Intent intent = new Intent(mActivity, DashboardNewActivity.class);
+                            intent.putExtra("reporthide", "reportshow");
+                            startActivity(intent);
+                        }
+                    } else {
+                        Toast.makeText(mActivity, "You are Not Authorized to this Application", Toast.LENGTH_SHORT).show();
+                    }
                 } else {
                     Toast.makeText(mActivity, loginResponse.getResult(), Toast.LENGTH_SHORT).show();
 
@@ -99,35 +106,33 @@ public class LoginActivity extends BaseActivity {
     }
 
     private void Login() {
-
         binding.loginBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                if (binding.employeeid.getText().toString().equals("") & binding.password.getText().toString().equals("")) {
-//                    Toast.makeText(mActivity, "Please Enter Valid Credentials", Toast.LENGTH_SHORT).show();
-//                } else {
-                if (flag.equals("1")) {
-                    String deviceId = Settings.Secure.getString(LoginActivity.this.getContentResolver(), Settings.Secure.ANDROID_ID);
-                    String empcode = binding.employeeid.getText().toString();
-                    String password = Utility.encodecusid(binding.password.getText().toString());
-                    String spaceremoved = password.replaceAll("\\s", "");
-                    Log.i("dddd", spaceremoved);
-                    showProgress();
-                    viewmodel.userLogin("68807", "wqv/NG39+Z6pAzqGwpsjlw==", "", deviceId);
-                    // viewmodel.userLogin("407068", "wqv/NG39+Z6pAzqGwpsjlw==", "", deviceId);
-                    //viewmodel.userLogin(empcode, spaceremoved, "", deviceId);
+                if (binding.employeeid.getText().toString().equals("") & binding.password.getText().toString().equals("")) {
+                    Toast.makeText(mActivity, "Please Enter Valid Credentials", Toast.LENGTH_SHORT).show();
+                } else {
+                    if (flag.equals("1")) {
+                        String deviceId = Settings.Secure.getString(LoginActivity.this.getContentResolver(), Settings.Secure.ANDROID_ID);
+                        String empcode = binding.employeeid.getText().toString();
+                        String password = Utility.encodecusid(binding.password.getText().toString());
+                        String spaceremoved = password.replaceAll("\\s", "");
+                        showProgress();
+                        //viewmodel.userLogin("68807", "wqv/NG39+Z6pAzqGwpsjlw==", "", deviceId);
+                        //viewmodel.userLogin("407068", "wqv/NG39+Z6pAzqGwpsjlw==", "", deviceId);
+                        viewmodel.userLogin(empcode, spaceremoved, "", deviceId);
 
 
-                } else if (flag.equals("2")) {
-                    Utility.showSnackbar(binding.getRoot(), "No Internet Connection");
+                    } else if (flag.equals("2")) {
+                        Utility.showSnackbar(binding.getRoot(), "No Internet Connection");
 
+
+                    }
 
                 }
 
+
             }
-
-
-            //   }
 
 
         });

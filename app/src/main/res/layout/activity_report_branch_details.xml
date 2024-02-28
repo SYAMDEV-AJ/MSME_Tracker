@@ -105,7 +105,7 @@
                                     android:layout_height="wrap_content"
                                     android:fontFamily="@font/montserrat_medium"
                                     android:gravity="start|center_vertical"
-                                    android:text="Select"
+                                    android:text="Moved"
                                     android:textColor="@color/textcolortwo" />
 
 
@@ -174,15 +174,13 @@
                         android:drawableEnd="@drawable/ic_search_icon"
                         android:drawablePadding="10dp"
                         android:drawableTint="#2A5B83"
-                        android:enabled="false"
+                        android:enabled="true"
                         android:fontFamily="@font/montserrat_regular"
                         android:hint="Search by employeecode..."
-                        android:inputType="number"
+                        android:inputType="text"
                         android:padding="10dp"
                         android:textColor="@color/black"
                         android:textSize="12sp" />
-
-
                 </LinearLayout>
 
             </LinearLayout>

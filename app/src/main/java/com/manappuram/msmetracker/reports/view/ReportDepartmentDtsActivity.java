@@ -1,11 +1,10 @@
 package com.manappuram.msmetracker.reports.view;
 
+import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.view.animation.Animation;
-import android.view.animation.DecelerateInterpolator;
-import android.view.animation.RotateAnimation;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.databinding.DataBindingUtil;
@@ -16,13 +15,13 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import com.manappuram.msmetracker.R;
 import com.manappuram.msmetracker.base.BaseActivity;
 import com.manappuram.msmetracker.databinding.ActivityReportDeptDetailsBinding;
-import com.manappuram.msmetracker.reports.adapterclass.BranchAdapter;
 import com.manappuram.msmetracker.reports.adapterclass.DepartmentAdapter;
 import com.manappuram.msmetracker.reports.modelclass.DepartmentWiseListReponse;
 import com.manappuram.msmetracker.utility.Utility;
 import com.manappuram.msmetracker.viewmodel.LoginViewmodel;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 public class ReportDepartmentDtsActivity extends BaseActivity {
@@ -41,12 +40,50 @@ public class ReportDepartmentDtsActivity extends BaseActivity {
         selectedbranchid = getIntent().getStringExtra("branchidselected");
         branchaname = getIntent().getStringExtra("branchaname");
         statename = getIntent().getStringExtra("statename");
-        departmentdatashow();
+
         observer();
         recylerdept();
         changebtnclick();
+        btnClick();
         binding.statename.setText(statename);
         binding.branchaname.setText(branchaname);
+    }
+
+    private void btnClick() {
+
+        binding.selectDate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                showDateDialog(binding.selectDate);
+
+
+            }
+        });
+
+
+    }
+
+    private void showDateDialog(TextView date) {
+
+        final Calendar calendar = Calendar.getInstance();
+
+        DatePickerDialog.OnDateSetListener dateSetListener = (view, year, month, dayOfMonth) -> {
+            date.setText(Utility.getDate(dayOfMonth, month, year));
+
+            departmentdatashow(date);
+
+        };
+
+        int mYear = calendar.get(Calendar.YEAR);
+        int mMonth = calendar.get(Calendar.MONTH);
+        int mDay = calendar.get(Calendar.DAY_OF_MONTH);
+
+
+        DatePickerDialog dpDialog = new DatePickerDialog(this, dateSetListener, mYear, mMonth, mDay);
+        //dpDialog.getDatePicker().setMinDate(System.currentTimeMillis() - 1000);  // for disabling past dates
+        dpDialog.getDatePicker().setMaxDate(System.currentTimeMillis());  // for disabling future dates
+        dpDialog.show();
     }
 
     private void changebtnclick() {
@@ -60,8 +97,8 @@ public class ReportDepartmentDtsActivity extends BaseActivity {
         });
     }
 
-    private void departmentdatashow() {
-        String data = Utility.encodecusid(sessionId + "$" + selectedbranchid);
+    private void departmentdatashow(TextView date) {
+        String data = Utility.encodecusid(sessionId + "$" + selectedbranchid + "~" + date.getText().toString());
         String encrypted = data.replaceAll("\\s", "");
         showProgress();
         viewmodel.getdepartmentwise(encrypted);
