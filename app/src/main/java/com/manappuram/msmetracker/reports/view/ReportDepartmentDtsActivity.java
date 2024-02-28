@@ -29,7 +29,7 @@ public class ReportDepartmentDtsActivity extends BaseActivity {
     LoginViewmodel viewmodel;
     List<DepartmentWiseListReponse.get_activity_list_data> departmentlist = new ArrayList<>();
     DepartmentAdapter adapter;
-    String selectedbranchid = "", branchaname = "", statename = "";
+    String selectedbranchid = "", branchaname = "", statename = "", selecteddate = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,14 +54,9 @@ public class ReportDepartmentDtsActivity extends BaseActivity {
         binding.selectDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 showDateDialog(binding.selectDate);
-
-
             }
         });
-
-
     }
 
     private void showDateDialog(TextView date) {
@@ -70,9 +65,8 @@ public class ReportDepartmentDtsActivity extends BaseActivity {
 
         DatePickerDialog.OnDateSetListener dateSetListener = (view, year, month, dayOfMonth) -> {
             date.setText(Utility.getDate(dayOfMonth, month, year));
-
+            selecteddate = date.getText().toString();
             departmentdatashow(date);
-
         };
 
         int mYear = calendar.get(Calendar.YEAR);
@@ -130,6 +124,7 @@ public class ReportDepartmentDtsActivity extends BaseActivity {
                 Intent intent = new Intent(mActivity, ReportBranchDtsActivity.class);
                 intent.putExtra("depatmentid", deptid);
                 intent.putExtra("selectedbranchid", selectedbranchid);
+                intent.putExtra("selecteddate", selecteddate);
                 startActivity(intent);
             }
         });

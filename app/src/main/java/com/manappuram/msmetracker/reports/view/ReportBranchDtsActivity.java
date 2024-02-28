@@ -49,7 +49,7 @@ public class ReportBranchDtsActivity extends BaseActivity {
     SimpleDateFormat date = new SimpleDateFormat("dd-MMM-yyyy", Locale.getDefault());
     String formattedDate = date.format(c);
 
-    String selectedbranchid = "", selecteddepartment = "";
+    String selectedbranchid = "", selecteddepartment = "", selecteddate = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,6 +59,8 @@ public class ReportBranchDtsActivity extends BaseActivity {
         mActivity = this;
         selectedbranchid = getIntent().getStringExtra("selectedbranchid");
         selecteddepartment = getIntent().getStringExtra("depatmentid");
+        selecteddate = getIntent().getStringExtra("selecteddate");
+        selecteddate = getIntent().getStringExtra("selecteddate");
 
 
         StatusSpinner();
@@ -95,7 +97,7 @@ public class ReportBranchDtsActivity extends BaseActivity {
 
     private void firstselection() {
 
-        String data = Utility.encodecusid(sessionId + "$" + "1" + "~" + formattedDate + "~" + selecteddepartment + "~" + selectedbranchid);
+        String data = Utility.encodecusid(sessionId + "$" + "1" + "~" + selecteddate + "~" + selecteddepartment + "~" + selectedbranchid);
         String encrypted = data.replaceAll("\\s", "");
         showProgress();
         viewmodel.getmovementwise(encrypted);
@@ -132,7 +134,7 @@ public class ReportBranchDtsActivity extends BaseActivity {
                     StatusSpinnerList.add(new StatusmodelClass("Not Moved"));
                     statusAdapter.notifyDataSetChanged();
                     binding.search.setEnabled(true);
-                    String data = Utility.encodecusid(sessionId + "$" + "1" + "~" + formattedDate + "~" + selecteddepartment + "~" + selectedbranchid);
+                    String data = Utility.encodecusid(sessionId + "$" + "1" + "~" + selecteddate + "~" + selecteddepartment + "~" + selectedbranchid);
                     String encrypted = data.replaceAll("\\s", "");
                     showProgress();
                     viewmodel.getmovementwise(encrypted);
@@ -141,7 +143,7 @@ public class ReportBranchDtsActivity extends BaseActivity {
                     StatusSpinnerList.add(new StatusmodelClass("Moved"));
                     statusAdapter.notifyDataSetChanged();
                     binding.search.setEnabled(true);
-                    String data = Utility.encodecusid(sessionId + "$" + "2" + "~" + formattedDate + "~" + selecteddepartment + "~" + selectedbranchid);
+                    String data = Utility.encodecusid(sessionId + "$" + "2" + "~" + selecteddate + "~" + selecteddepartment + "~" + selectedbranchid);
                     String encrypted = data.replaceAll("\\s", "");
                     showProgress();
                     viewmodel.getmovementwise(encrypted);
@@ -182,6 +184,7 @@ public class ReportBranchDtsActivity extends BaseActivity {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
             }
+
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 if (binding.search.getText().toString().length() > 0) {
