@@ -61,15 +61,11 @@ public class ReportBranchDtsActivity extends BaseActivity {
         selecteddepartment = getIntent().getStringExtra("depatmentid");
         selecteddate = getIntent().getStringExtra("selecteddate");
         selecteddate = getIntent().getStringExtra("selecteddate");
-
-
         StatusSpinner();
         recylerdept();
         observer();
         search();
         firstselection();
-
-
         binding.stateselection.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
