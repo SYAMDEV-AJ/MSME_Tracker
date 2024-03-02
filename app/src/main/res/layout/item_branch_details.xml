@@ -105,7 +105,6 @@
 
                     <TextView
                         android:layout_width="wrap_content"
-
                         android:layout_height="wrap_content"
                         android:layout_marginTop="16dp"
                         android:layout_marginBottom="8dp"
@@ -117,6 +116,24 @@
 
                     <TextView
                         android:id="@+id/punchedbranchid"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/montserrat_medium"
+                        android:textColor="@color/textcolortwo"
+                        android:textSize="14sp" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:layout_marginBottom="8dp"
+                        android:alpha=".4"
+                        android:fontFamily="@font/montserrat_regular"
+                        android:text="Post Name"
+                        android:textColor="@color/black"
+                        android:textSize="10sp" />
+
+                    <TextView
+                        android:id="@+id/postname"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/montserrat_medium"

@@ -326,6 +326,31 @@ public class LoginRepository extends BaseRepository {
         }).enqueue();
     }
 
+    public void getdepartmentwiseall(String p_data, SuccessResponse successResponse) {
+        Call<DepartmentWiseListReponse> call = RetrofitClient.getAPIInterface().getdepartmentwiseall(p_data);
+        new RetrofitRequest<>(call, new ResponseListener<DepartmentWiseListReponse>() {
+            @Override
+            public void onResponse(DepartmentWiseListReponse response, Headers headers) {
+                if (null != successResponse) {
+                    successResponse.onResponse(response);
+                }
+            }
+
+            @Override
+            public void onError(int status, BaseResponse errors) {
+                errorsMutable.postValue(new Event<>(errors));
+
+            }
+
+            @Override
+            public void onFailure(Throwable throwable) {
+                failMessageMutable.postValue(new Event<>(throwable.getMessage()));
+            }
+
+        }).enqueue();
+    }
+
+
     public void getmovementwise(String p_data, SuccessResponse successResponse) {
         Call<BranchDetailsReponse> call = RetrofitClient.getAPIInterface().getmovementwise(p_data);
         new RetrofitRequest<>(call, new ResponseListener<BranchDetailsReponse>() {
@@ -349,6 +374,31 @@ public class LoginRepository extends BaseRepository {
 
         }).enqueue();
     }
+
+    public void getmovementwiseall(String p_data, SuccessResponse successResponse) {
+        Call<BranchDetailsReponse> call = RetrofitClient.getAPIInterface().getmovementwiseall(p_data);
+        new RetrofitRequest<>(call, new ResponseListener<BranchDetailsReponse>() {
+            @Override
+            public void onResponse(BranchDetailsReponse response, Headers headers) {
+                if (null != successResponse) {
+                    successResponse.onResponse(response);
+                }
+            }
+
+            @Override
+            public void onError(int status, BaseResponse errors) {
+                errorsMutable.postValue(new Event<>(errors));
+
+            }
+
+            @Override
+            public void onFailure(Throwable throwable) {
+                failMessageMutable.postValue(new Event<>(throwable.getMessage()));
+            }
+
+        }).enqueue();
+    }
+
 
 
 }

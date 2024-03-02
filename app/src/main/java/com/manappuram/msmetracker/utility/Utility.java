@@ -155,52 +155,6 @@ public class Utility {
     }
 
 
-    public static String getLangCode(int position) {
-        String langCode = null;
-
-        switch (position) {
-            case 0:
-                langCode = "EN";
-                break;
-            case 1:
-                langCode = "HI";
-                break;
-            case 2:
-                langCode = "MA";
-                break;
-            case 3:
-                langCode = "TA";
-                break;
-            case 4:
-                langCode = "KA";
-                break;
-            case 5:
-                langCode = "TE";
-                break;
-            case 6:
-                langCode = "MR";
-                break;
-            case 7:
-                langCode = "GU";
-                break;
-            case 8:
-                langCode = "OR";
-                break;
-            case 9:
-                langCode = "PU";
-                break;
-            case 10:
-                langCode = "BE";
-                break;
-            case 11:
-                langCode = "AS";
-                break;
-        }
-
-        return langCode;
-    }
-
-
     public static boolean isNull(String string) {
 
         if (string == null)
@@ -432,10 +386,6 @@ public class Utility {
     }
 
 
-
-
-
-
     public static String BitMapToStringphoto(Bitmap bitmap) {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
@@ -477,7 +427,6 @@ public class Utility {
 
         return bitmap;
     }
-
 
 
 }

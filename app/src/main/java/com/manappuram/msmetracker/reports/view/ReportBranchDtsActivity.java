@@ -44,11 +44,6 @@ public class ReportBranchDtsActivity extends BaseActivity {
     LoginViewmodel viewmodel;
     List<StatusmodelClass> StatusSpinnerList = new ArrayList<>();
     List<BranchDetailsReponse.get_activity_list_data> branchlist = new ArrayList<>();
-    Date c = Calendar.getInstance().getTime();
-
-    SimpleDateFormat date = new SimpleDateFormat("dd-MMM-yyyy", Locale.getDefault());
-    String formattedDate = date.format(c);
-
     String selectedbranchid = "", selecteddepartment = "", selecteddate = "";
 
     @Override
@@ -60,12 +55,16 @@ public class ReportBranchDtsActivity extends BaseActivity {
         selectedbranchid = getIntent().getStringExtra("selectedbranchid");
         selecteddepartment = getIntent().getStringExtra("depatmentid");
         selecteddate = getIntent().getStringExtra("selecteddate");
-        selecteddate = getIntent().getStringExtra("selecteddate");
         StatusSpinner();
         recylerdept();
         observer();
         search();
-        firstselection();
+        if (selectedbranchid.equals("0")) {
+            firstselectionall();
+        } else {
+            firstselection();
+        }
+
         binding.stateselection.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -92,7 +91,6 @@ public class ReportBranchDtsActivity extends BaseActivity {
     }
 
     private void firstselection() {
-
         String data = Utility.encodecusid(sessionId + "$" + "1" + "~" + selecteddate + "~" + selecteddepartment + "~" + selectedbranchid);
         String encrypted = data.replaceAll("\\s", "");
         showProgress();
@@ -101,6 +99,16 @@ public class ReportBranchDtsActivity extends BaseActivity {
         StatusSpinnerList.add(new StatusmodelClass("Not Moved"));
         statusAdapter.notifyDataSetChanged();
 
+    }
+
+    private void firstselectionall() {
+        String data = Utility.encodecusid(sessionId + "$" + "1" + "~" + selecteddate + "~" + selecteddepartment);
+        String encrypted = data.replaceAll("\\s", "");
+        showProgress();
+        viewmodel.getmovementwiseall(encrypted);
+        StatusSpinnerList.clear();
+        StatusSpinnerList.add(new StatusmodelClass("Not Moved"));
+        statusAdapter.notifyDataSetChanged();
     }
 
     private void observer() {
@@ -130,19 +138,37 @@ public class ReportBranchDtsActivity extends BaseActivity {
                     StatusSpinnerList.add(new StatusmodelClass("Not Moved"));
                     statusAdapter.notifyDataSetChanged();
                     binding.search.setEnabled(true);
-                    String data = Utility.encodecusid(sessionId + "$" + "1" + "~" + selecteddate + "~" + selecteddepartment + "~" + selectedbranchid);
-                    String encrypted = data.replaceAll("\\s", "");
-                    showProgress();
-                    viewmodel.getmovementwise(encrypted);
+                    if (selectedbranchid.equals("0")) {
+                        String data = Utility.encodecusid(sessionId + "$" + "1" + "~" + selecteddate + "~" + selecteddepartment);
+                        String encrypted = data.replaceAll("\\s", "");
+                        showProgress();
+                        viewmodel.getmovementwiseall(encrypted);
+                    } else {
+                        String data = Utility.encodecusid(sessionId + "$" + "1" + "~" + selecteddate + "~" + selecteddepartment + "~" + selectedbranchid);
+                        String encrypted = data.replaceAll("\\s", "");
+                        showProgress();
+                        viewmodel.getmovementwise(encrypted);
+                    }
+
+
                 } else {
                     StatusSpinnerList.clear();
                     StatusSpinnerList.add(new StatusmodelClass("Moved"));
                     statusAdapter.notifyDataSetChanged();
                     binding.search.setEnabled(true);
-                    String data = Utility.encodecusid(sessionId + "$" + "2" + "~" + selecteddate + "~" + selecteddepartment + "~" + selectedbranchid);
-                    String encrypted = data.replaceAll("\\s", "");
-                    showProgress();
-                    viewmodel.getmovementwise(encrypted);
+                    if (selectedbranchid.equals("0")) {
+                        String data = Utility.encodecusid(sessionId + "$" + "2" + "~" + selecteddate + "~" + selecteddepartment);
+                        String encrypted = data.replaceAll("\\s", "");
+                        showProgress();
+                        viewmodel.getmovementwiseall(encrypted);
+                    } else {
+                        String data = Utility.encodecusid(sessionId + "$" + "2" + "~" + selecteddate + "~" + selecteddepartment + "~" + selectedbranchid);
+                        String encrypted = data.replaceAll("\\s", "");
+                        showProgress();
+                        viewmodel.getmovementwise(encrypted);
+                    }
+
+
                 }
                 RotateAnimation rotateAnimation = new RotateAnimation(180.0f, 0.0f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
                 rotateAnimation.setInterpolator(new DecelerateInterpolator());

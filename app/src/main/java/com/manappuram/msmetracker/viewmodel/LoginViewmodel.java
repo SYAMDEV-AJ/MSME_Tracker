@@ -115,8 +115,20 @@ public class LoginViewmodel extends ViewModel {
         });
     }
 
+    public void getdepartmentwiseall(String p_data) {
+        getLoginRepository().getdepartmentwiseall(p_data, (BaseRepository.SuccessResponse<DepartmentWiseListReponse>) departmentWiseListReponse -> {
+            departmentWiseListReponseMutableLiveData.setValue(departmentWiseListReponse);
+        });
+    }
+
+
     public void getmovementwise(String p_data) {
         getLoginRepository().getmovementwise(p_data, (BaseRepository.SuccessResponse<BranchDetailsReponse>) branchDetailsReponse -> {
+            branchDetailsReponseMutableLiveData.setValue(branchDetailsReponse);
+        });
+    }
+    public void getmovementwiseall(String p_data) {
+        getLoginRepository().getmovementwiseall(p_data, (BaseRepository.SuccessResponse<BranchDetailsReponse>) branchDetailsReponse -> {
             branchDetailsReponseMutableLiveData.setValue(branchDetailsReponse);
         });
     }

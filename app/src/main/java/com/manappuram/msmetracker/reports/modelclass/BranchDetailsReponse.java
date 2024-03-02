@@ -42,6 +42,10 @@ public class BranchDetailsReponse extends BaseResponse {
         @Expose
         public String punched_branch;
 
+        @SerializedName("post_name")
+        @Expose
+        public String post_name;
+
         @SerializedName("punched_branchname")
         @Expose
         public String punched_branchname;
@@ -53,6 +57,14 @@ public class BranchDetailsReponse extends BaseResponse {
         @SerializedName("mobile_no")
         @Expose
         public String mobile_no;
+
+        public String getPost_name() {
+            return post_name;
+        }
+
+        public void setPost_name(String post_name) {
+            this.post_name = post_name;
+        }
 
         public String getNumber_of_activity() {
             return number_of_activity;

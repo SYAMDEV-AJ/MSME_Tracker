@@ -55,6 +55,7 @@ public class BranchDetailsAdapter extends RecyclerView.Adapter<BranchDetailsAdap
         holder.binding.phonenumber.setText(branchlist.get(position).getMobile_no());
         holder.binding.punchedbranchid.setText(branchlist.get(position).getPunched_branch());
         holder.binding.punchedbranchname.setText(branchlist.get(position).getPunched_branchname());
+        holder.binding.postname.setText(branchlist.get(position).getPost_name());
 
         holder.binding.phonenumber.setOnClickListener(new View.OnClickListener() {
             @Override

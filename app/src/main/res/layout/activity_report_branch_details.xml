@@ -42,7 +42,7 @@
                             android:drawablePadding="12dp"
                             android:fontFamily="@font/montserrat_regular"
                             android:gravity="center"
-                            android:text="IT DEPARTMENT"
+                            android:text="BRANCH DETAILS"
                             android:textColor="@color/black"
                             android:textSize="14sp" />
                     </LinearLayout>
@@ -177,7 +177,7 @@
                         android:enabled="true"
                         android:fontFamily="@font/montserrat_regular"
                         android:hint="Search by employeecode..."
-                        android:inputType="text"
+                        android:inputType="number"
                         android:padding="10dp"
                         android:textColor="@color/black"
                         android:textSize="12sp" />

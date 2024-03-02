@@ -69,9 +69,17 @@ public interface APIInterface {
     @FormUrlEncoded
     Call<DepartmentWiseListReponse> getdepartmentwise(@Field("p_data") String p_data);
 
+    @POST("getdepartmentwiseall")
+    @FormUrlEncoded
+    Call<DepartmentWiseListReponse> getdepartmentwiseall(@Field("p_data") String p_data);
+
     @POST("getmovementwise")
     @FormUrlEncoded
     Call<BranchDetailsReponse> getmovementwise(@Field("p_data") String p_data);
+
+    @POST("getmovementwiseall")
+    @FormUrlEncoded
+    Call<BranchDetailsReponse> getmovementwiseall(@Field("p_data") String p_data);
 
 }
 

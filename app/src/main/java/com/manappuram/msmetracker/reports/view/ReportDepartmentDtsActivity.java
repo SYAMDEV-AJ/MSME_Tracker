@@ -92,10 +92,18 @@ public class ReportDepartmentDtsActivity extends BaseActivity {
     }
 
     private void departmentdatashow(TextView date) {
-        String data = Utility.encodecusid(sessionId + "$" + selectedbranchid + "~" + date.getText().toString());
-        String encrypted = data.replaceAll("\\s", "");
-        showProgress();
-        viewmodel.getdepartmentwise(encrypted);
+
+        if (selectedbranchid.equals("0")) {
+            String data = Utility.encodecusid(sessionId + "$" + date.getText().toString());
+            String encrypted = data.replaceAll("\\s", "");
+            showProgress();
+            viewmodel.getdepartmentwiseall(encrypted);
+        } else {
+            String data = Utility.encodecusid(sessionId + "$" + selectedbranchid + "~" + date.getText().toString());
+            String encrypted = data.replaceAll("\\s", "");
+            showProgress();
+            viewmodel.getdepartmentwise(encrypted);
+        }
 
     }
 

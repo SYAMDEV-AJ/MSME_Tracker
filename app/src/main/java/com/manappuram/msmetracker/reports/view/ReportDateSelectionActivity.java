@@ -122,7 +122,10 @@ public class ReportDateSelectionActivity extends BaseActivity {
                 } else {
                     Toast.makeText(mActivity, branchListReponse.getResult(), Toast.LENGTH_SHORT).show();
                 }
+                binding.branchreclycer.invalidate();
+                branchAdapter.notifyDataSetChanged();
             }
+
         });
 
     }
