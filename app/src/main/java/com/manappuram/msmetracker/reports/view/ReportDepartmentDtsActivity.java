@@ -73,7 +73,6 @@ public class ReportDepartmentDtsActivity extends BaseActivity {
         int mMonth = calendar.get(Calendar.MONTH);
         int mDay = calendar.get(Calendar.DAY_OF_MONTH);
 
-
         DatePickerDialog dpDialog = new DatePickerDialog(this, dateSetListener, mYear, mMonth, mDay);
         //dpDialog.getDatePicker().setMinDate(System.currentTimeMillis() - 1000);  // for disabling past dates
         dpDialog.getDatePicker().setMaxDate(System.currentTimeMillis());  // for disabling future dates

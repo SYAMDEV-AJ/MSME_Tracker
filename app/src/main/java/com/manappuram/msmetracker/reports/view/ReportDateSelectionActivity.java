@@ -204,7 +204,6 @@ public class ReportDateSelectionActivity extends BaseActivity {
             public void onClick(View v) {
                 if (statename.equals("")) {
                     Toast.makeText(mActivity, "Please Select State id", Toast.LENGTH_SHORT).show();
-
                 } else if (branchidselected.equals("")) {
                     Toast.makeText(mActivity, "Please Select Branch id", Toast.LENGTH_SHORT).show();
                 } else {
