@@ -6,6 +6,10 @@ import com.manappuram.msmetracker.base.Event;
 import com.manappuram.msmetracker.dashboard.modelclass.ActivitylistResponse;
 import com.manappuram.msmetracker.dashboard.modelclass.ImageViewResponse;
 import com.manappuram.msmetracker.dashboard.modelclass.StartServiceResponse;
+import com.manappuram.msmetracker.deviceupdation.response.DeviceDeletionResponse;
+import com.manappuram.msmetracker.deviceupdation.response.DeviceRegistrationResponse;
+import com.manappuram.msmetracker.deviceupdation.response.DeviceUpdationResponse;
+import com.manappuram.msmetracker.deviceupdation.response.DeviceVerificationResponse;
 import com.manappuram.msmetracker.login.model.ActivityCheckResponse;
 import com.manappuram.msmetracker.login.model.LoginResponse;
 import com.manappuram.msmetracker.network.retrofit.ResponseListener;
@@ -399,6 +403,101 @@ public class LoginRepository extends BaseRepository {
         }).enqueue();
     }
 
+    public void Msme_Deviceid_Insertion(String p_data, SuccessResponse successResponse) {
+        Call<DeviceRegistrationResponse> call = RetrofitClient.getAPIInterface().Msme_Deviceid_Insertion(p_data);
+        new RetrofitRequest<>(call, new ResponseListener<DeviceRegistrationResponse>() {
+            @Override
+            public void onResponse(DeviceRegistrationResponse response, Headers headers) {
+                if (null != successResponse) {
+                    successResponse.onResponse(response);
+                }
+            }
+
+            @Override
+            public void onError(int status, BaseResponse errors) {
+                errorsMutable.postValue(new Event<>(errors));
+
+            }
+
+            @Override
+            public void onFailure(Throwable throwable) {
+                failMessageMutable.postValue(new Event<>(throwable.getMessage()));
+            }
+
+        }).enqueue();
+    }
+
+    public void deviceid_verify(String p_data, SuccessResponse successResponse) {
+        Call<DeviceVerificationResponse> call = RetrofitClient.getAPIInterface().deviceid_verify(p_data);
+        new RetrofitRequest<>(call, new ResponseListener<DeviceVerificationResponse>() {
+            @Override
+            public void onResponse(DeviceVerificationResponse response, Headers headers) {
+                if (null != successResponse) {
+                    successResponse.onResponse(response);
+                }
+            }
+
+            @Override
+            public void onError(int status, BaseResponse errors) {
+                errorsMutable.postValue(new Event<>(errors));
+
+            }
+
+            @Override
+            public void onFailure(Throwable throwable) {
+                failMessageMutable.postValue(new Event<>(throwable.getMessage()));
+            }
+
+        }).enqueue();
+    }
+
+    public void Msme_Deviceid_Updation(String p_data, SuccessResponse successResponse) {
+        Call<DeviceUpdationResponse> call = RetrofitClient.getAPIInterface().Msme_Deviceid_Updation(p_data);
+        new RetrofitRequest<>(call, new ResponseListener<DeviceUpdationResponse>() {
+            @Override
+            public void onResponse(DeviceUpdationResponse response, Headers headers) {
+                if (null != successResponse) {
+                    successResponse.onResponse(response);
+                }
+            }
+
+            @Override
+            public void onError(int status, BaseResponse errors) {
+                errorsMutable.postValue(new Event<>(errors));
+
+            }
+
+            @Override
+            public void onFailure(Throwable throwable) {
+                failMessageMutable.postValue(new Event<>(throwable.getMessage()));
+            }
+
+        }).enqueue();
+    }
+
+    public void Msme_Deviceid_delete(String p_data, SuccessResponse successResponse) {
+        Call<DeviceDeletionResponse> call = RetrofitClient.getAPIInterface().Msme_Deviceid_delete(p_data);
+        new RetrofitRequest<>(call, new ResponseListener<DeviceDeletionResponse>() {
+            @Override
+            public void onResponse(DeviceDeletionResponse response, Headers headers) {
+                if (null != successResponse) {
+                    successResponse.onResponse(response);
+                }
+            }
+
+            @Override
+            public void onError(int status, BaseResponse errors) {
+                errorsMutable.postValue(new Event<>(errors));
+
+            }
+
+            @Override
+            public void onFailure(Throwable throwable) {
+                failMessageMutable.postValue(new Event<>(throwable.getMessage()));
+            }
+
+        }).enqueue();
+    }
 
 
 }

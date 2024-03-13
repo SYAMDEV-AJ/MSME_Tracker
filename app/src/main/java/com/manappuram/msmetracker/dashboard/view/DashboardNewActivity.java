@@ -12,6 +12,7 @@ import androidx.lifecycle.ViewModelProviders;
 import com.manappuram.msmetracker.R;
 import com.manappuram.msmetracker.base.BaseActivity;
 import com.manappuram.msmetracker.databinding.ActivityDashboardnewBinding;
+import com.manappuram.msmetracker.deviceupdation.view.DeviceUpdationActivity;
 import com.manappuram.msmetracker.login.model.ActivityCheckResponse;
 import com.manappuram.msmetracker.reports.view.ReportDashboardActivity;
 import com.manappuram.msmetracker.utility.Utility;
@@ -41,9 +42,20 @@ public class DashboardNewActivity extends BaseActivity {
 
         activityclick();
         reportclick();
+        deviceupdationclick();
         observer();
         binding.titleempname.setText(name);
 
+    }
+
+    private void deviceupdationclick() {
+        binding.deviceupdation.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(mActivity, DeviceUpdationActivity.class);
+                startActivity(intent);
+            }
+        });
     }
 
     private void activityclick() {

@@ -7,6 +7,10 @@ import com.manappuram.msmetracker.base.BaseRepository;
 import com.manappuram.msmetracker.dashboard.modelclass.ActivitylistResponse;
 import com.manappuram.msmetracker.dashboard.modelclass.ImageViewResponse;
 import com.manappuram.msmetracker.dashboard.modelclass.StartServiceResponse;
+import com.manappuram.msmetracker.deviceupdation.response.DeviceDeletionResponse;
+import com.manappuram.msmetracker.deviceupdation.response.DeviceRegistrationResponse;
+import com.manappuram.msmetracker.deviceupdation.response.DeviceUpdationResponse;
+import com.manappuram.msmetracker.deviceupdation.response.DeviceVerificationResponse;
 import com.manappuram.msmetracker.login.model.ActivityCheckResponse;
 import com.manappuram.msmetracker.login.model.LoginResponse;
 import com.manappuram.msmetracker.reports.modelclass.BranchDetailsReponse;
@@ -39,6 +43,10 @@ public class LoginViewmodel extends ViewModel {
     public MutableLiveData<BranchListReponse> branchListReponseMutableLiveData = new MutableLiveData<>();
     public MutableLiveData<DepartmentWiseListReponse> departmentWiseListReponseMutableLiveData = new MutableLiveData<>();
     public MutableLiveData<BranchDetailsReponse> branchDetailsReponseMutableLiveData = new MutableLiveData<>();
+    public MutableLiveData<DeviceRegistrationResponse> deviceRegistrationResponseMutableLiveData = new MutableLiveData<>();
+    public MutableLiveData<DeviceVerificationResponse> deviceVerificationResponseMutableLiveData = new MutableLiveData<>();
+    public MutableLiveData<DeviceUpdationResponse> deviceUpdationResponseMutableLiveData = new MutableLiveData<>();
+    public MutableLiveData<DeviceDeletionResponse> deviceDeletionResponseMutableLiveData = new MutableLiveData<>();
     public MutableLiveData<String> errorMutableLiveData = new MutableLiveData<>();
 
 
@@ -127,9 +135,34 @@ public class LoginViewmodel extends ViewModel {
             branchDetailsReponseMutableLiveData.setValue(branchDetailsReponse);
         });
     }
+
     public void getmovementwiseall(String p_data) {
         getLoginRepository().getmovementwiseall(p_data, (BaseRepository.SuccessResponse<BranchDetailsReponse>) branchDetailsReponse -> {
             branchDetailsReponseMutableLiveData.setValue(branchDetailsReponse);
+        });
+    }
+
+    public void Msme_Deviceid_Insertion(String p_data) {
+        getLoginRepository().Msme_Deviceid_Insertion(p_data, (BaseRepository.SuccessResponse<DeviceRegistrationResponse>) deviceRegistrationResponse -> {
+            deviceRegistrationResponseMutableLiveData.setValue(deviceRegistrationResponse);
+        });
+    }
+
+    public void deviceid_verify(String p_data) {
+        getLoginRepository().deviceid_verify(p_data, (BaseRepository.SuccessResponse<DeviceVerificationResponse>) deviceVerificationResponse -> {
+            deviceVerificationResponseMutableLiveData.setValue(deviceVerificationResponse);
+        });
+    }
+
+    public void Msme_Deviceid_Updation(String p_data) {
+        getLoginRepository().Msme_Deviceid_Updation(p_data, (BaseRepository.SuccessResponse<DeviceUpdationResponse>) deviceUpdationResponse -> {
+            deviceUpdationResponseMutableLiveData.setValue(deviceUpdationResponse);
+        });
+    }
+
+    public void Msme_Deviceid_delete(String p_data) {
+        getLoginRepository().Msme_Deviceid_delete(p_data, (BaseRepository.SuccessResponse<DeviceDeletionResponse>) deviceDeletionResponse -> {
+            deviceDeletionResponseMutableLiveData.setValue(deviceDeletionResponse);
         });
     }
 
@@ -179,6 +212,22 @@ public class LoginViewmodel extends ViewModel {
 
     public MutableLiveData<BranchDetailsReponse> getBranchDetailsReponseMutableLiveData() {
         return branchDetailsReponseMutableLiveData;
+    }
+
+    public MutableLiveData<DeviceRegistrationResponse> getDeviceRegistrationResponseMutableLiveData() {
+        return deviceRegistrationResponseMutableLiveData;
+    }
+
+    public MutableLiveData<DeviceVerificationResponse> getDeviceVerificationResponseMutableLiveData() {
+        return deviceVerificationResponseMutableLiveData;
+    }
+
+    public MutableLiveData<DeviceUpdationResponse> getDeviceUpdationResponseMutableLiveData() {
+        return deviceUpdationResponseMutableLiveData;
+    }
+
+    public MutableLiveData<DeviceDeletionResponse> getDeviceDeletionResponseMutableLiveData() {
+        return deviceDeletionResponseMutableLiveData;
     }
 
 

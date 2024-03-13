@@ -73,6 +73,7 @@
         <activity android:name=".reports.view.ReportDateSelectionActivity" />
         <activity android:name=".reports.view.ReportDepartmentDtsActivity" />
         <activity android:name=".reports.view.ReportBranchDtsActivity" />
+        <activity android:name=".deviceupdation.view.DeviceUpdationActivity" />
 
         <service
             android:name=".receiver.YourService"

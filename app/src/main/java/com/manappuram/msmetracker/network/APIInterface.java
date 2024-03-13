@@ -3,6 +3,10 @@ package com.manappuram.msmetracker.network;
 import com.manappuram.msmetracker.dashboard.modelclass.ActivitylistResponse;
 import com.manappuram.msmetracker.dashboard.modelclass.ImageViewResponse;
 import com.manappuram.msmetracker.dashboard.modelclass.StartServiceResponse;
+import com.manappuram.msmetracker.deviceupdation.response.DeviceDeletionResponse;
+import com.manappuram.msmetracker.deviceupdation.response.DeviceRegistrationResponse;
+import com.manappuram.msmetracker.deviceupdation.response.DeviceUpdationResponse;
+import com.manappuram.msmetracker.deviceupdation.response.DeviceVerificationResponse;
 import com.manappuram.msmetracker.login.model.ActivityCheckResponse;
 import com.manappuram.msmetracker.login.model.LoginResponse;
 import com.manappuram.msmetracker.reports.modelclass.BranchDetailsReponse;
@@ -80,6 +84,22 @@ public interface APIInterface {
     @POST("getmovementwiseall")
     @FormUrlEncoded
     Call<BranchDetailsReponse> getmovementwiseall(@Field("p_data") String p_data);
+
+    @POST("Msme_Deviceid_Insertion")
+    @FormUrlEncoded
+    Call<DeviceRegistrationResponse> Msme_Deviceid_Insertion(@Field("p_data") String p_data);
+
+    @POST("deviceid_verify")
+    @FormUrlEncoded
+    Call<DeviceVerificationResponse> deviceid_verify(@Field("p_data") String p_data);
+
+    @POST("Msme_Deviceid_Updation")
+    @FormUrlEncoded
+    Call<DeviceUpdationResponse> Msme_Deviceid_Updation(@Field("p_data") String p_data);
+
+    @POST("Msme_Deviceid_delete")
+    @FormUrlEncoded
+    Call<DeviceDeletionResponse> Msme_Deviceid_delete(@Field("p_data") String p_data);
 
 }
 

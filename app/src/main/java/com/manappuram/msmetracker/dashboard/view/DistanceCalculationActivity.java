@@ -567,7 +567,6 @@ public class DistanceCalculationActivity extends BaseActivity {
         builder = new AlertDialog.Builder(mActivity);
         builder.setMessage("Go To Dashboard?");
         builder.setCancelable(false);
-
         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
