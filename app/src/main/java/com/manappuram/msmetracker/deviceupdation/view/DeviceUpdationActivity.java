@@ -14,7 +14,6 @@ import androidx.lifecycle.ViewModelProviders;
 
 import com.manappuram.msmetracker.R;
 import com.manappuram.msmetracker.base.BaseActivity;
-import com.manappuram.msmetracker.dashboard.view.DashboardActivity;
 import com.manappuram.msmetracker.databinding.ActivityDeviceUpdationBinding;
 import com.manappuram.msmetracker.deviceupdation.response.DeviceDeletionResponse;
 import com.manappuram.msmetracker.deviceupdation.response.DeviceRegistrationResponse;
@@ -36,7 +35,6 @@ public class DeviceUpdationActivity extends BaseActivity {
         binding = DataBindingUtil.setContentView(this, R.layout.activity_device_updation);
         viewmodel = ViewModelProviders.of(this).get(LoginViewmodel.class);
         mActivity = this;
-
         devicereglayoutclick();
         registerbtnclick();
         deviceverify();
@@ -51,7 +49,6 @@ public class DeviceUpdationActivity extends BaseActivity {
         });
     }
 
-
     private void observerdata() {
         viewmodel.getDeviceRegistrationResponseMutableLiveData().observe(this, new Observer<DeviceRegistrationResponse>() {
             @Override
@@ -65,9 +62,7 @@ public class DeviceUpdationActivity extends BaseActivity {
                     binding.devicereglayout.setVisibility(View.GONE);
                     binding.deviceidreg.setVisibility(View.VISIBLE);
                     showAlertDialog(deviceRegistrationResponse.getResult());
-
                 }
-
             }
         });
         viewmodel.getDeviceVerificationResponseMutableLiveData().observe(this, new Observer<DeviceVerificationResponse>() {
@@ -78,15 +73,14 @@ public class DeviceUpdationActivity extends BaseActivity {
                     binding.deviceverifylayout.setVisibility(View.GONE);
                     binding.deviceverify.setVisibility(View.VISIBLE);
                     binding.verifyDeviceid.setText(deviceVerificationResponse.getDeviceid());
-
+                    binding.verifyEnteredEmpcode.setText(deviceVerificationResponse.getEnter_by());
+                    binding.updatedDate.setText(deviceVerificationResponse.getLast_upt_dt());
                     showAlertDialog(deviceVerificationResponse.getResult());
                 } else {
                     showAlertDialog(deviceVerificationResponse.getResult());
                     binding.deviceverifylayout.setVisibility(View.GONE);
                     binding.deviceverify.setVisibility(View.VISIBLE);
-
                 }
-
             }
         });
         viewmodel.getDeviceUpdationResponseMutableLiveData().observe(this, new Observer<DeviceUpdationResponse>() {
