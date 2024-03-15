@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
@@ -11,6 +12,8 @@ import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
+import androidx.transition.AutoTransition;
+import androidx.transition.TransitionManager;
 
 import com.manappuram.msmetracker.R;
 import com.manappuram.msmetracker.base.BaseActivity;
@@ -58,9 +61,15 @@ public class DeviceUpdationActivity extends BaseActivity {
                     binding.devicereglayout.setVisibility(View.GONE);
                     binding.deviceidreg.setVisibility(View.VISIBLE);
                     showAlertDialog(deviceRegistrationResponse.getResult());
+                    binding.regEmpcode.setText("");
+                    binding.regDeviceid.setText("");
+                    binding.regEnteredEmpcode.setText("");
                 } else {
                     binding.devicereglayout.setVisibility(View.GONE);
                     binding.deviceidreg.setVisibility(View.VISIBLE);
+                    binding.regEmpcode.setText("");
+                    binding.regDeviceid.setText("");
+                    binding.regEnteredEmpcode.setText("");
                     showAlertDialog(deviceRegistrationResponse.getResult());
                 }
             }
@@ -70,12 +79,10 @@ public class DeviceUpdationActivity extends BaseActivity {
             public void onChanged(DeviceVerificationResponse deviceVerificationResponse) {
                 hideProgress();
                 if (deviceVerificationResponse.getStatus().equals("111")) {
-                    binding.deviceverifylayout.setVisibility(View.GONE);
-                    binding.deviceverify.setVisibility(View.VISIBLE);
                     binding.verifyDeviceid.setText(deviceVerificationResponse.getDeviceid());
                     binding.verifyEnteredEmpcode.setText(deviceVerificationResponse.getEnter_by());
                     binding.updatedDate.setText(deviceVerificationResponse.getLast_upt_dt());
-                    showAlertDialog(deviceVerificationResponse.getResult());
+
                 } else {
                     showAlertDialog(deviceVerificationResponse.getResult());
                     binding.deviceverifylayout.setVisibility(View.GONE);
@@ -91,6 +98,9 @@ public class DeviceUpdationActivity extends BaseActivity {
                     binding.deviceupdationlayout.setVisibility(View.GONE);
                     binding.deviceupdation.setVisibility(View.VISIBLE);
                     showAlertDialog(deviceUpdationResponse.getResult());
+                    binding.updationEmpcode.setText("");
+                    binding.updationDeviceid.setText("");
+                    binding.updationEnteredEmpcode.setText("");
                 } else {
                     showAlertDialog(deviceUpdationResponse.getResult());
                     binding.deviceupdationlayout.setVisibility(View.GONE);
@@ -107,6 +117,7 @@ public class DeviceUpdationActivity extends BaseActivity {
                     binding.devicedeletionlayout.setVisibility(View.GONE);
                     binding.devicedeletion.setVisibility(View.VISIBLE);
                     showAlertDialog(deviceDeletionResponse.getResult());
+                    binding.deletionEmpcode.setText("");
                 } else {
                     binding.devicedeletionlayout.setVisibility(View.GONE);
                     binding.devicedeletion.setVisibility(View.VISIBLE);
@@ -130,7 +141,7 @@ public class DeviceUpdationActivity extends BaseActivity {
                     Toast.makeText(mActivity, "Please Enter Entered Employee Code", Toast.LENGTH_SHORT).show();
                 } else {
                     String deviceid = binding.regDeviceid.getText().toString();
-                    String data = Utility.encodecusid(sessionId + "$" + deviceid + "~" + binding.regEmpcode.getText().toString() + "~" + binding.regEnteredEmpcode.getText().toString());
+                    String data = Utility.encodecusid(sessionId + "$" + binding.regEmpcode.getText().toString() + "~" + deviceid + "~" + binding.regEnteredEmpcode.getText().toString());
                     String encoded = data.replaceAll("\\s", "");
                     showProgress();
                     viewmodel.Msme_Deviceid_Insertion(encoded);
@@ -168,11 +179,12 @@ public class DeviceUpdationActivity extends BaseActivity {
                 } else if (binding.updationEnteredEmpcode.getText().toString().equals("")) {
                     Toast.makeText(mActivity, "Please Enter Entered Employee Code", Toast.LENGTH_SHORT).show();
                 } else {
-                    String deviceid = binding.regDeviceid.getText().toString();
-                    String data = Utility.encodecusid(sessionId + "$" + deviceid + "~" + binding.regEmpcode.getText().toString() + "~" + binding.regEnteredEmpcode.getText().toString());
+                    String deviceid = binding.updationDeviceid.getText().toString();
+                    String data = Utility.encodecusid(sessionId + "$" + deviceid + "~" + empCode + "~" + binding.updationEmpcode.getText().toString());
                     String encoded = data.replaceAll("\\s", "");
                     showProgress();
                     viewmodel.Msme_Deviceid_Updation(encoded);
+                    Log.i(encoded, "updation");
                 }
 
             }
@@ -202,6 +214,9 @@ public class DeviceUpdationActivity extends BaseActivity {
             public void onClick(View v) {
                 binding.devicereglayout.setVisibility(View.VISIBLE);
                 binding.deviceidreg.setVisibility(View.GONE);
+                binding.regEnteredEmpcode.setText(empCode);
+                binding.regEnteredEmpcode.setEnabled(false);
+
             }
         });
         binding.layoutclick.setOnClickListener(new View.OnClickListener() {
@@ -230,6 +245,8 @@ public class DeviceUpdationActivity extends BaseActivity {
             public void onClick(View v) {
                 binding.deviceupdationlayout.setVisibility(View.VISIBLE);
                 binding.deviceupdation.setVisibility(View.GONE);
+                binding.updationEnteredEmpcode.setText(empCode);
+                binding.updationEnteredEmpcode.setEnabled(false);
             }
         });
         binding.layoutclickupdation.setOnClickListener(new View.OnClickListener() {

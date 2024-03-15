@@ -59,8 +59,6 @@ public class LoginActivity extends BaseActivity {
     }
 
     private void loginobserver() {
-
-
         viewmodel.getLoginResponseMutableLiveData().observe(LoginActivity.this, new Observer<LoginResponse>() {
             @Override
             public void onChanged(LoginResponse loginResponse) {
@@ -92,6 +90,9 @@ public class LoginActivity extends BaseActivity {
                             Intent intent = new Intent(mActivity, DashboardNewActivity.class);
                             intent.putExtra("reporthide", "reportshow");
                             startActivity(intent);
+                        } else {
+                            Toast.makeText(mActivity, "You are Not Authorized to this Application", Toast.LENGTH_SHORT).show();
+
                         }
                     } else {
                         Toast.makeText(mActivity, "You are Not Authorized to this Application", Toast.LENGTH_SHORT).show();
@@ -109,22 +110,24 @@ public class LoginActivity extends BaseActivity {
         binding.loginBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                if (binding.employeeid.getText().toString().equals("") & binding.password.getText().toString().equals("")) {
-//                    Toast.makeText(mActivity, "Please Enter Valid Credentials", Toast.LENGTH_SHORT).show();
-//                } else {
+                if (binding.employeeid.getText().toString().equals("") & binding.password.getText().toString().equals("")) {
+                    Toast.makeText(mActivity, "Please Enter Valid Credentials", Toast.LENGTH_SHORT).show();
+                } else {
                     if (flag.equals("1")) {
                         String deviceId = Settings.Secure.getString(LoginActivity.this.getContentResolver(), Settings.Secure.ANDROID_ID);
                         String empcode = binding.employeeid.getText().toString();
                         String password = Utility.encodecusid(binding.password.getText().toString());
                         String spaceremoved = password.replaceAll("\\s", "");
                         showProgress();
-                        viewmodel.userLogin("68807", "wqv/NG39+Z6pAzqGwpsjlw==", "", deviceId);
+                        //   viewmodel.userLogin("68807", "wqv/NG39+Z6pAzqGwpsjlw==", "", deviceId);
 //                    //viewmodel.userLogin("407068", "wqv/NG39+Z6pAzqGwpsjlw==", "", deviceId);
-                        //   viewmodel.userLogin(empcode, spaceremoved, "", deviceId);
+                        viewmodel.userLogin(empcode, spaceremoved, "", deviceId);
+
+                        Log.i("dd", "dd");
                     } else if (flag.equals("2")) {
                         Utility.showSnackbar(binding.getRoot(), "No Internet Connection");
                     }
-              //  }
+                }
             }
 
         });

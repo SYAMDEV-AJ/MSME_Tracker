@@ -20,6 +20,8 @@
                 app:cardElevation="8dp">
 
                 <LinearLayout
+                    android:id="@+id/backbuttonclick"
+
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="30dp"
@@ -29,7 +31,6 @@
                     android:orientation="horizontal">
 
                     <LinearLayout
-                        android:id="@+id/backbuttonclick"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_weight=".6"
