@@ -34,6 +34,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     public String zoneId = "";
     public String startlatitudedata = "";
     public String startlogitudedata = "";
+    public String mapKey = "";
     private CustomLoader customLoader;
 
 
@@ -60,6 +61,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         branch = sharedPreferences.getString("branch", "");
         startlatitudedata = sharedPreferences.getString("startlatitude", "");
         startlogitudedata = sharedPreferences.getString("startlogitude", "");
+        mapKey = sharedPreferences.getString("mapKey", "");
 
 
     }

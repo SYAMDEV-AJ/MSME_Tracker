@@ -51,9 +51,11 @@ import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 import com.manappuram.msmetracker.R;
 import com.manappuram.msmetracker.base.BaseActivity;
 import com.manappuram.msmetracker.dashboard.modelclass.ImageViewResponse;
+import com.manappuram.msmetracker.dashboard.modelclass.MapDistanceResponse;
 import com.manappuram.msmetracker.dashboard.modelclass.StartServiceResponse;
 import com.manappuram.msmetracker.databinding.ActivityDistanceCalculationBinding;
 import com.manappuram.msmetracker.map.map.MapViewActivity;
+import com.manappuram.msmetracker.network.retrofit.RetrofitMap;
 import com.manappuram.msmetracker.utility.Utility;
 import com.manappuram.msmetracker.viewmodel.LoginViewmodel;
 import com.squareup.picasso.Picasso;
@@ -67,6 +69,9 @@ import java.util.List;
 import java.util.Locale;
 
 import pub.devrel.easypermissions.EasyPermissions;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 
 public class DistanceCalculationActivity extends BaseActivity {
@@ -428,7 +433,73 @@ public class DistanceCalculationActivity extends BaseActivity {
         runnable = new Runnable() {
             @Override
             public void run() {
-                distance(Double.parseDouble(startlatitudedata), Double.parseDouble(startlogitudedata), Double.parseDouble(endlocationlat), Double.parseDouble(endlocationlog));
+                showProgress();
+                Call<MapDistanceResponse> mapCall = RetrofitMap.getAPIInterface().mapCall("matric", startlatitudedata + "," + startlogitudedata, endlocationlat + "," + endlocationlog, mapKey);
+                mapCall.enqueue(new Callback<MapDistanceResponse>() {
+                    @Override
+                    public void onResponse(Call<MapDistanceResponse> call, Response<MapDistanceResponse> response) {
+                        hideProgress();
+                        Log.i("logDistance", "<==" + response.code());
+                        if (response.code() == 200) {
+                            try {
+                                MapDistanceResponse distanceResponse = response.body();
+                                if (response.body().getRows().get(0).getElements().get(0).getDistance().getValue() != null) {
+                                    double distance = Double.parseDouble(String.valueOf(distanceResponse.getRows().get(0).getElements().get(0).getDistance().getValue()));
+                                    String distancee = String.valueOf(distanceResponse.getRows().get(0).getElements().get(0).getDistance().getText());
+                                    String Distance= String.valueOf(distance);
+
+                                    Log.i("logDistance", "<==" + distance);
+                                    Log.i("logDistance", "<==" + distance / 1000 + " KM");
+
+                                    binding.totaldistance.setText(distancee);
+
+                                    if (halfimagename.equals("none")) {
+                                        if (profileimagevalue.equals("")) {
+                                            Toast.makeText(mActivity, "Please Upload Image", Toast.LENGTH_SHORT).show();
+                                        } else {
+                                            String data = Utility.encodecusid(sessionId + "$" + startimageid + "~" + endremark + "~" + endlocationlat + "~" + endlocationlog + "~" + Distance);
+                                            String enrypted = data.replaceAll("\\s", "");
+                                            Log.i("enddistance", enrypted);
+                                            showProgress();
+                                            viewmodel.MSME_end_activity(enrypted, profileimagevalue);
+                                        }
+                                    } else {
+                                        if (profileimagevalue.equals("")) {
+                                            Toast.makeText(mActivity, "Please Upload Image", Toast.LENGTH_SHORT).show();
+                                        } else {
+                                            String data = Utility.encodecusid(sessionId + "$" + halfimagename + "~" + endremark + "~" + endlocationlat + "~" + endlocationlat + "~" + Distance);
+                                            String enrypted = data.replaceAll("\\s", "");
+                                            Log.i("enddistance", enrypted);
+                                            showProgress();
+                                            viewmodel.MSME_end_activity(enrypted, profileimagevalue);
+                                        }
+
+                                    }
+
+                                }
+
+
+                            } catch (Exception e) {
+                                Log.i("logDistance", "<==" + e.getMessage());
+                                //showErrorMsg("To Confirm, Please click on the confirm button once again");
+                                e.printStackTrace();
+                            }
+
+
+                        }
+
+
+                    }
+
+                    @Override
+                    public void onFailure(Call<MapDistanceResponse> call, Throwable t) {
+                        hideProgress();
+                        Toast.makeText(mActivity, "Unable to fetch distance", Toast.LENGTH_SHORT).show();
+                    }
+                });
+
+
+              //  distance(Double.parseDouble(startlatitudedata), Double.parseDouble(startlogitudedata), Double.parseDouble(endlocationlat), Double.parseDouble(endlocationlog));
             }
         };
         handler.postDelayed(runnable, 100);
@@ -485,56 +556,56 @@ public class DistanceCalculationActivity extends BaseActivity {
                 .build());
     }
 
-    private double distance(double lat1, double lon1, double lat2, double lon2) {
-        double theta = lon1 - lon2;
-        double dist = Math.sin(deg2rad(lat1))
-                * Math.sin(deg2rad(lat2))
-                + Math.cos(deg2rad(lat1))
-                * Math.cos(deg2rad(lat2))
-                * Math.cos(deg2rad(theta));
-        dist = Math.acos(dist);
-        dist = rad2deg(dist);
-        dist = Math.round(dist * 60 * 1.60934);
-        int dist1 = (int) dist;
-        //dist = dist * 60 * 1.60934;
-
-        finalDist = String.valueOf(dist1);
-
-
-        binding.totaldistance.setText(finalDist + " KM");
-
-        if (halfimagename.equals("none")) {
-            if (profileimagevalue.equals("")) {
-                Toast.makeText(mActivity, "Please Upload Image", Toast.LENGTH_SHORT).show();
-            } else {
-                String data = Utility.encodecusid(sessionId + "$" + startimageid + "~" + endremark + "~" + lat2 + "~" + lon2 + "~" + finalDist);
-                String enrypted = data.replaceAll("\\s", "");
-                Log.i("enddistance", enrypted);
-                showProgress();
-                viewmodel.MSME_end_activity(enrypted, profileimagevalue);
-            }
-        } else {
-            if (profileimagevalue.equals("")) {
-                Toast.makeText(mActivity, "Please Upload Image", Toast.LENGTH_SHORT).show();
-            } else {
-                String data = Utility.encodecusid(sessionId + "$" + halfimagename + "~" + endremark + "~" + lat2 + "~" + lon2 + "~" + finalDist);
-                String enrypted = data.replaceAll("\\s", "");
-                Log.i("enddistance", enrypted);
-                showProgress();
-                viewmodel.MSME_end_activity(enrypted, profileimagevalue);
-            }
-
-        }
-        return (dist);
-    }
-
-    private double deg2rad(double deg) {
-        return (deg * Math.PI / 180.0);
-    }
-
-    private double rad2deg(double rad) {
-        return (rad * 180.0 / Math.PI);
-    }
+//    private double distance(double lat1, double lon1, double lat2, double lon2) {
+//        double theta = lon1 - lon2;
+//        double dist = Math.sin(deg2rad(lat1))
+//                * Math.sin(deg2rad(lat2))
+//                + Math.cos(deg2rad(lat1))
+//                * Math.cos(deg2rad(lat2))
+//                * Math.cos(deg2rad(theta));
+//        dist = Math.acos(dist);
+//        dist = rad2deg(dist);
+//        dist = Math.round(dist * 60 * 1.60934);
+//        int dist1 = (int) dist;
+//        //dist = dist * 60 * 1.60934;
+//
+//        finalDist = String.valueOf(dist1);
+//
+//
+//        binding.totaldistance.setText(finalDist + " KM");
+//
+//        if (halfimagename.equals("none")) {
+//            if (profileimagevalue.equals("")) {
+//                Toast.makeText(mActivity, "Please Upload Image", Toast.LENGTH_SHORT).show();
+//            } else {
+//                String data = Utility.encodecusid(sessionId + "$" + startimageid + "~" + endremark + "~" + lat2 + "~" + lon2 + "~" + finalDist);
+//                String enrypted = data.replaceAll("\\s", "");
+//                Log.i("enddistance", enrypted);
+//                showProgress();
+//                viewmodel.MSME_end_activity(enrypted, profileimagevalue);
+//            }
+//        } else {
+//            if (profileimagevalue.equals("")) {
+//                Toast.makeText(mActivity, "Please Upload Image", Toast.LENGTH_SHORT).show();
+//            } else {
+//                String data = Utility.encodecusid(sessionId + "$" + halfimagename + "~" + endremark + "~" + lat2 + "~" + lon2 + "~" + finalDist);
+//                String enrypted = data.replaceAll("\\s", "");
+//                Log.i("enddistance", enrypted);
+//                showProgress();
+//                viewmodel.MSME_end_activity(enrypted, profileimagevalue);
+//            }
+//
+//        }
+//        return (dist);
+//    }
+//
+//    private double deg2rad(double deg) {
+//        return (deg * Math.PI / 180.0);
+//    }
+//
+//    private double rad2deg(double rad) {
+//        return (rad * 180.0 / Math.PI);
+//    }
 
     private void camerpermissionforupsidedowncake() {
         // Check if the camera permission is granted

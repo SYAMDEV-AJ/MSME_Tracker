@@ -1,10 +1,7 @@
 package com.manappuram.msmetracker.deviceupdation.view;
 
 import android.app.AlertDialog;
-import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
@@ -12,8 +9,6 @@ import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
-import androidx.transition.AutoTransition;
-import androidx.transition.TransitionManager;
 
 import com.manappuram.msmetracker.R;
 import com.manappuram.msmetracker.base.BaseActivity;
@@ -122,9 +117,7 @@ public class DeviceUpdationActivity extends BaseActivity {
                     binding.devicedeletionlayout.setVisibility(View.GONE);
                     binding.devicedeletion.setVisibility(View.VISIBLE);
                     showAlertDialog(deviceDeletionResponse.getResult());
-
                 }
-
             }
         });
     }
@@ -184,7 +177,6 @@ public class DeviceUpdationActivity extends BaseActivity {
                     String encoded = data.replaceAll("\\s", "");
                     showProgress();
                     viewmodel.Msme_Deviceid_Updation(encoded);
-                    Log.i(encoded, "updation");
                 }
 
             }

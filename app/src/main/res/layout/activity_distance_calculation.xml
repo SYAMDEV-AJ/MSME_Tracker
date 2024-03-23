@@ -432,7 +432,7 @@
                             android:text="Open Map"
                             android:textColor="#2A5B82"
                             android:textSize="12sp"
-                            android:visibility="gone" />
+                            android:visibility="visible" />
 
 
                     </LinearLayout>

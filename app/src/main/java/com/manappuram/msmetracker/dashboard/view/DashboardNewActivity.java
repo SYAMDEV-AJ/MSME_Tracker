@@ -34,10 +34,22 @@ public class DashboardNewActivity extends BaseActivity {
         if (reporthide.equals("reporthide")) {
             binding.reportclick.setVisibility(View.GONE);
             binding.activityclick.setVisibility(View.VISIBLE);
-
+        } else if (reporthide.equals("none")) {
+            binding.reportclick.setVisibility(View.GONE);
+            binding.activityclick.setVisibility(View.GONE);
         } else {
             binding.reportclick.setVisibility(View.VISIBLE);
             binding.activityclick.setVisibility(View.GONE);
+        }
+        if (empCode.equals("53805") || empCode.equals("48762") || empCode.equals("13077") || empCode.equals("409357") || empCode.equals("380692") || empCode.equals("383184") || empCode.equals("68327") || empCode.equals("57047") || empCode.equals("385590") || empCode.equals("382400")) {
+            binding.reportclick.setVisibility(View.GONE);
+            binding.activityclick.setVisibility(View.GONE);
+            binding.deviceupdation.setVisibility(View.VISIBLE);
+        } else if (empCode.equals("43425") || empCode.equals("13645") || empCode.equals("10527") || empCode.equals("68807")) {
+            binding.reportclick.setVisibility(View.VISIBLE);
+            binding.activityclick.setVisibility(View.GONE);
+            binding.deviceupdation.setVisibility(View.VISIBLE);
+
         }
 
         activityclick();

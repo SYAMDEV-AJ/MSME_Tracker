@@ -90,6 +90,11 @@ public class LoginActivity extends BaseActivity {
                             Intent intent = new Intent(mActivity, DashboardNewActivity.class);
                             intent.putExtra("reporthide", "reportshow");
                             startActivity(intent);
+                        } else if (loginResponse.getEmpDetails().getEmpCode().equals("53805") || loginResponse.getEmpDetails().getEmpCode().equals("48762") || loginResponse.getEmpDetails().getEmpCode().equals("13077") || loginResponse.getEmpDetails().getEmpCode().equals("409357") || loginResponse.getEmpDetails().getEmpCode().equals("380692") || loginResponse.getEmpDetails().getEmpCode().equals("383184") || loginResponse.getEmpDetails().getEmpCode().equals("68327") || loginResponse.getEmpDetails().getEmpCode().equals("57047") || loginResponse.getEmpDetails().getEmpCode().equals("385590") || loginResponse.getEmpDetails().getEmpCode().equals("382400")) {
+                            Intent intent = new Intent(mActivity, DashboardNewActivity.class);
+                            intent.putExtra("reporthide", "none");
+                            startActivity(intent);
+
                         } else {
                             Toast.makeText(mActivity, "You are Not Authorized to this Application", Toast.LENGTH_SHORT).show();
 
@@ -110,23 +115,23 @@ public class LoginActivity extends BaseActivity {
         binding.loginBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (binding.employeeid.getText().toString().equals("") & binding.password.getText().toString().equals("")) {
-                    Toast.makeText(mActivity, "Please Enter Valid Credentials", Toast.LENGTH_SHORT).show();
-                } else {
-                    if (flag.equals("1")) {
-                        String deviceId = Settings.Secure.getString(LoginActivity.this.getContentResolver(), Settings.Secure.ANDROID_ID);
-                        String empcode = binding.employeeid.getText().toString();
-                        String password = Utility.encodecusid(binding.password.getText().toString());
-                        String spaceremoved = password.replaceAll("\\s", "");
-                        showProgress();
-                        //   viewmodel.userLogin("68807", "wqv/NG39+Z6pAzqGwpsjlw==", "", deviceId);
-//                    //viewmodel.userLogin("407068", "wqv/NG39+Z6pAzqGwpsjlw==", "", deviceId);
-                        viewmodel.userLogin(empcode, spaceremoved, "", deviceId);
+//                if (binding.employeeid.getText().toString().equals("") & binding.password.getText().toString().equals("")) {
+//                    Toast.makeText(mActivity, "Please Enter Valid Credentials", Toast.LENGTH_SHORT).show();
+//                } else {
+                if (flag.equals("1")) {
+                    String deviceId = Settings.Secure.getString(LoginActivity.this.getContentResolver(), Settings.Secure.ANDROID_ID);
+                    String empcode = binding.employeeid.getText().toString();
+                    String password = Utility.encodecusid(binding.password.getText().toString());
+                    String spaceremoved = password.replaceAll("\\s", "");
+                    showProgress();
+                    //  viewmodel.userLogin("43425", "wqv/NG39+Z6pAzqGwpsjlw==", "", deviceId);
+                    //  viewmodel.userLogin("53805", "wqv/NG39+Z6pAzqGwpsjlw==", "", deviceId);
+                    //  viewmodel.userLogin("407068", "wqv/NG39+Z6pAzqGwpsjlw==", "", deviceId);
+                    viewmodel.userLogin(empcode, spaceremoved, "", deviceId);
 
-                        Log.i("dd", "dd");
-                    } else if (flag.equals("2")) {
-                        Utility.showSnackbar(binding.getRoot(), "No Internet Connection");
-                    }
+                } else if (flag.equals("2")) {
+                    Utility.showSnackbar(binding.getRoot(), "No Internet Connection");
+                    //  }
                 }
             }
 

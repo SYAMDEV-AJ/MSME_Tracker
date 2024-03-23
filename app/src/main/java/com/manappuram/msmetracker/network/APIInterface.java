@@ -2,6 +2,7 @@ package com.manappuram.msmetracker.network;
 
 import com.manappuram.msmetracker.dashboard.modelclass.ActivitylistResponse;
 import com.manappuram.msmetracker.dashboard.modelclass.ImageViewResponse;
+import com.manappuram.msmetracker.dashboard.modelclass.MapDistanceResponse;
 import com.manappuram.msmetracker.dashboard.modelclass.StartServiceResponse;
 import com.manappuram.msmetracker.deviceupdation.response.DeviceDeletionResponse;
 import com.manappuram.msmetracker.deviceupdation.response.DeviceRegistrationResponse;
@@ -19,7 +20,9 @@ import com.manappuram.msmetracker.reports.modelclass.StateListReponse;
 import retrofit2.Call;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
+import retrofit2.http.GET;
 import retrofit2.http.POST;
+import retrofit2.http.Query;
 
 public interface APIInterface {
 
@@ -100,6 +103,10 @@ public interface APIInterface {
     @POST("Msme_Deviceid_delete")
     @FormUrlEncoded
     Call<DeviceDeletionResponse> Msme_Deviceid_delete(@Field("p_data") String p_data);
+
+    @GET("json")
+    Call<MapDistanceResponse> mapCall(@Query("units") String units, @Query("origins") String origins, @Query("destinations") String destinations, @Query("key") String key);
+
 
 }
 

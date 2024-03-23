@@ -53,9 +53,12 @@ public class SplashActivity extends BaseActivity {
                             Log.d(TAG, "Config params updated: " + updated);
 
                             // Get the values from Remote Config
-                            String versionname = firebaseRemoteConfig.getString("versionname");
-                            int versioncode = (int) firebaseRemoteConfig.getLong("versioncode");
-                            boolean forceupdate = firebaseRemoteConfig.getBoolean("forceupdate");
+                            String versionname = firebaseRemoteConfig.getString("version_name");
+                            String mapKey = firebaseRemoteConfig.getString("map_key");
+                            int versioncode = (int) firebaseRemoteConfig.getLong("version_code");
+                            boolean forceupdate = firebaseRemoteConfig.getBoolean("force_update");
+                            editor.putString("mapKey", mapKey);
+                            editor.apply();
 
                             if (versioncode > BuildConfig.VERSION_CODE) {
 
@@ -65,6 +68,7 @@ public class SplashActivity extends BaseActivity {
 
 //                                Toast.makeText(SplashActivity.this, "Update available", Toast.LENGTH_SHORT).show();
                             }
+                            Log.i("mapKey", mapKey);
 
                         } else {
                             Log.e(TAG, "Fetch failed");
