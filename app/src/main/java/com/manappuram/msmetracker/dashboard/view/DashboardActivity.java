@@ -67,6 +67,7 @@ import com.manappuram.msmetracker.dashboard.modelclass.ImageViewResponse;
 import com.manappuram.msmetracker.dashboard.modelclass.StartServiceResponse;
 import com.manappuram.msmetracker.databinding.ActivityDashboardBinding;
 import com.manappuram.msmetracker.login.model.ActivityCheckResponse;
+import com.manappuram.msmetracker.login.view.LoginActivity;
 import com.manappuram.msmetracker.receiver.Restarter;
 import com.manappuram.msmetracker.receiver.YourService;
 import com.manappuram.msmetracker.utility.Utility;
@@ -210,7 +211,6 @@ public class DashboardActivity extends BaseActivity {
         binding.viewimagebtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(mActivity, "clicked", Toast.LENGTH_SHORT).show();
                 String imageview = Utility.encodecusid(sessionId + "$" + imageid);
                 String encrypted = imageview.replaceAll("\\s", "");
                 Log.i("imageview", encrypted);
@@ -766,4 +766,30 @@ public class DashboardActivity extends BaseActivity {
         }
     }
 
+    @Override
+    public void onBackPressed() {
+        builder = new AlertDialog.Builder(mActivity);
+        builder.setMessage("Are you Sure Want to Exit ?");
+        builder.setCancelable(false);
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                Intent intent = new Intent(mActivity, LoginActivity.class);
+                startActivity(intent);
+                finish();
+                dialog.dismiss();
+            }
+        });
+
+        builder.setNegativeButton("cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                dialog.dismiss();
+
+            }
+
+        });
+        dialog = builder.create();
+        dialog.show();
+    }
 }

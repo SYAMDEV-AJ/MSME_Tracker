@@ -34,6 +34,7 @@ public class DashboardNewActivity extends BaseActivity {
         if (reporthide.equals("reporthide")) {
             binding.reportclick.setVisibility(View.GONE);
             binding.activityclick.setVisibility(View.VISIBLE);
+            binding.deviceupdation.setVisibility(View.GONE);
         } else if (reporthide.equals("none")) {
             binding.reportclick.setVisibility(View.GONE);
             binding.activityclick.setVisibility(View.GONE);
@@ -49,9 +50,7 @@ public class DashboardNewActivity extends BaseActivity {
             binding.reportclick.setVisibility(View.VISIBLE);
             binding.activityclick.setVisibility(View.GONE);
             binding.deviceupdation.setVisibility(View.VISIBLE);
-
         }
-
         activityclick();
         reportclick();
         deviceupdationclick();
@@ -130,6 +129,7 @@ public class DashboardNewActivity extends BaseActivity {
                     intent.putExtra("halfimagename", "none");
                     intent.putExtra("unfinishedtask", "none");
                     startActivity(intent);
+
                 }
             }
         });

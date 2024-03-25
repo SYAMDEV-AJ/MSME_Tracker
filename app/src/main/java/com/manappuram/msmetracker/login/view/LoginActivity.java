@@ -85,16 +85,18 @@ public class LoginActivity extends BaseActivity {
                         Intent intent = new Intent(mActivity, DashboardNewActivity.class);
                         intent.putExtra("reporthide", "reporthide");
                         startActivity(intent);
+                        mActivity.finish();
                     } else if ((loginResponse.getEmpDetails().getDeptId().equals("617") && loginResponse.getEmpDetails().getBranchId().equals("0"))) {
                         if (loginResponse.getEmpDetails().getPostId().equals("-454") || loginResponse.getEmpDetails().getPostId().equals("822") || loginResponse.getEmpDetails().getPostId().equals("-128") || loginResponse.getEmpDetails().getPostId().equals("-129")) {
                             Intent intent = new Intent(mActivity, DashboardNewActivity.class);
                             intent.putExtra("reporthide", "reportshow");
                             startActivity(intent);
+                            mActivity.finish();
                         } else if (loginResponse.getEmpDetails().getEmpCode().equals("53805") || loginResponse.getEmpDetails().getEmpCode().equals("48762") || loginResponse.getEmpDetails().getEmpCode().equals("13077") || loginResponse.getEmpDetails().getEmpCode().equals("409357") || loginResponse.getEmpDetails().getEmpCode().equals("380692") || loginResponse.getEmpDetails().getEmpCode().equals("383184") || loginResponse.getEmpDetails().getEmpCode().equals("68327") || loginResponse.getEmpDetails().getEmpCode().equals("57047") || loginResponse.getEmpDetails().getEmpCode().equals("385590") || loginResponse.getEmpDetails().getEmpCode().equals("382400")) {
                             Intent intent = new Intent(mActivity, DashboardNewActivity.class);
                             intent.putExtra("reporthide", "none");
                             startActivity(intent);
-
+                            mActivity.finish();
                         } else {
                             Toast.makeText(mActivity, "You are Not Authorized to this Application", Toast.LENGTH_SHORT).show();
 
@@ -124,10 +126,10 @@ public class LoginActivity extends BaseActivity {
                     String password = Utility.encodecusid(binding.password.getText().toString());
                     String spaceremoved = password.replaceAll("\\s", "");
                     showProgress();
-                    //  viewmodel.userLogin("43425", "wqv/NG39+Z6pAzqGwpsjlw==", "", deviceId);
+                    //viewmodel.userLogin("43425", "wqv/NG39+Z6pAzqGwpsjlw==", "", deviceId);
                     //  viewmodel.userLogin("53805", "wqv/NG39+Z6pAzqGwpsjlw==", "", deviceId);
-                    //  viewmodel.userLogin("407068", "wqv/NG39+Z6pAzqGwpsjlw==", "", deviceId);
-                    viewmodel.userLogin(empcode, spaceremoved, "", deviceId);
+                    viewmodel.userLogin("407068", "wqv/NG39+Z6pAzqGwpsjlw==", "", deviceId);
+                    //  viewmodel.userLogin(empcode, spaceremoved, "", deviceId);
 
                 } else if (flag.equals("2")) {
                     Utility.showSnackbar(binding.getRoot(), "No Internet Connection");

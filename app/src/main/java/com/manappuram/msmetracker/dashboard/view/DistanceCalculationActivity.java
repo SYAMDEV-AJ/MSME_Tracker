@@ -191,7 +191,6 @@ public class DistanceCalculationActivity extends BaseActivity {
             @Override
             public void onClick(View v) {
 
-                Toast.makeText(mActivity, "clicked", Toast.LENGTH_SHORT).show();
                 String imageview = Utility.encodecusid(sessionId + "$" + startimageid);
                 String encrypted = imageview.replaceAll("\\s", "");
 
@@ -205,7 +204,6 @@ public class DistanceCalculationActivity extends BaseActivity {
         binding.endimageviewbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(mActivity, "clicked", Toast.LENGTH_SHORT).show();
                 String imageview = Utility.encodecusid(sessionId + "$" + endimageid);
                 String encrypted = imageview.replaceAll("\\s", "");
                 showProgress();
@@ -240,13 +238,12 @@ public class DistanceCalculationActivity extends BaseActivity {
                 hideProgress();
                 if (imageViewResponse.getStatus().equals("111")) {
                     String imagenameofpic = imageViewResponse.getImage();
-
                     AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
                     final View customLayout = getLayoutInflater().inflate(R.layout.custom_kyc_layout_new, null);
                     builder.setView(customLayout);
                     ZoomageView image = customLayout.findViewById(R.id.imageView);
-                    Picasso.get().invalidate("https://online.manappuram.com/TrackerAPI/images/" + imagenameofpic);
-                    Picasso.get().load(("https://online.manappuram.com/TrackerAPI/images/") + imagenameofpic).into(image);
+                    Picasso.get().invalidate("https://uatonpay.manappuram.com/TrackerAPI/images/" + imagenameofpic);
+                    Picasso.get().load(("https://uatonpay.manappuram.com/TrackerAPI/images/") + imagenameofpic).into(image);
 
                     builder.setPositiveButton("CANCEL", (dialog, which) -> {
                         dialog.dismiss();
@@ -446,7 +443,7 @@ public class DistanceCalculationActivity extends BaseActivity {
                                 if (response.body().getRows().get(0).getElements().get(0).getDistance().getValue() != null) {
                                     double distance = Double.parseDouble(String.valueOf(distanceResponse.getRows().get(0).getElements().get(0).getDistance().getValue()));
                                     String distancee = String.valueOf(distanceResponse.getRows().get(0).getElements().get(0).getDistance().getText());
-                                    String Distance= String.valueOf(distance);
+                                    String Distance = String.valueOf(distance);
 
                                     Log.i("logDistance", "<==" + distance);
                                     Log.i("logDistance", "<==" + distance / 1000 + " KM");
@@ -499,7 +496,7 @@ public class DistanceCalculationActivity extends BaseActivity {
                 });
 
 
-              //  distance(Double.parseDouble(startlatitudedata), Double.parseDouble(startlogitudedata), Double.parseDouble(endlocationlat), Double.parseDouble(endlocationlog));
+                //  distance(Double.parseDouble(startlatitudedata), Double.parseDouble(startlogitudedata), Double.parseDouble(endlocationlat), Double.parseDouble(endlocationlog));
             }
         };
         handler.postDelayed(runnable, 100);
