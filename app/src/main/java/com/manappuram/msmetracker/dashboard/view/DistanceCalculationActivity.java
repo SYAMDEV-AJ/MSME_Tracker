@@ -75,27 +75,18 @@ import retrofit2.Response;
 
 
 public class DistanceCalculationActivity extends BaseActivity {
-
     ActivityDistanceCalculationBinding binding;
     LoginViewmodel viewmodel;
     Thread t = null;
-    String[] perms = {
-            Manifest.permission.CAMERA,
-            Manifest.permission.WRITE_EXTERNAL_STORAGE,
-            Manifest.permission.ACCESS_FINE_LOCATION,
-            Manifest.permission.ACCESS_COARSE_LOCATION
-    };
+    String[] perms = {Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION};
     String endremark = "", startimagename = "", profileimagevalue = "", activitynamefrom = "", halfimagename = "", startlongitude = "", startlatitude = "";
     String endlocationlat = "", endlocationlog = "", startimageid = "", endimageid = "", endimagename = "", finalDist = "", activityname = "", activityid = "";
-
     private static final int REQUEST_CAPTURE_IMAGE = 1;
     private static final int CAMERA_PERMISSION_REQUEST_CODE = 100;
-
     Handler handler;
     Runnable runnable;
     AlertDialog dialog;
     AlertDialog.Builder builder;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -129,7 +120,6 @@ public class DistanceCalculationActivity extends BaseActivity {
         observers();
         imageviewclick();
         imageviewendclick();
-        mapdistance();
 
     }
 
@@ -137,18 +127,12 @@ public class DistanceCalculationActivity extends BaseActivity {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-//                try {
-//                   // Thread.sleep(1000);
-//                } catch (InterruptedException e) {
-//                    e.printStackTrace();
-//                }
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
                     //14 code
                     camerpermissionforupsidedowncake();
                 } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                     //13 code
                     camerpermissionforupsidedowncake();
-
                 } else {
                     if (ActivityCompat.checkSelfPermission(DistanceCalculationActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(DistanceCalculationActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
                         requestforMediaPermission();
@@ -157,8 +141,6 @@ public class DistanceCalculationActivity extends BaseActivity {
                     }
 
                 }
-
-
             }
         });
     }
@@ -190,10 +172,8 @@ public class DistanceCalculationActivity extends BaseActivity {
         binding.viewimagebtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 String imageview = Utility.encodecusid(sessionId + "$" + startimageid);
                 String encrypted = imageview.replaceAll("\\s", "");
-
                 showProgress();
                 viewmodel.photo_view(encrypted, "1");
             }
@@ -223,8 +203,6 @@ public class DistanceCalculationActivity extends BaseActivity {
                     binding.endimagename.setText(endimagename);
                     binding.click.setVisibility(View.VISIBLE);
                     Toast.makeText(mActivity, "Successfully Uploaded", Toast.LENGTH_SHORT).show();
-
-
                 } else {
                     Toast.makeText(mActivity, startServiceResponse.getResult(), Toast.LENGTH_SHORT).show();
 
@@ -261,9 +239,7 @@ public class DistanceCalculationActivity extends BaseActivity {
     private void fetchLastLocation() {
         LocationManager locationManager;
         locationManager = (LocationManager) mActivity.getSystemService(Context.LOCATION_SERVICE);
-        if (ActivityCompat.checkSelfPermission(mActivity, Manifest.permission.ACCESS_FINE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(mActivity, Manifest.permission.ACCESS_COARSE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED) {
+        if (ActivityCompat.checkSelfPermission(mActivity, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(mActivity, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
 
             requestforGpsPermission();
 
@@ -271,11 +247,7 @@ public class DistanceCalculationActivity extends BaseActivity {
             boolean gps_enabled = false;
             gps_enabled = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
             if (!gps_enabled) {
-                new android.app.AlertDialog.Builder(mActivity)
-                        .setMessage("To continue, let your device turn on location using Google\\'s location Service")
-                        .setNegativeButton("Cancel", null)
-                        .setPositiveButton("Turn on", (paramDialogInterface, paramInt) ->
-                                mActivity.startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS))).show();
+                new android.app.AlertDialog.Builder(mActivity).setMessage("To continue, let your device turn on location using Google\\'s location Service").setNegativeButton("Cancel", null).setPositiveButton("Turn on", (paramDialogInterface, paramInt) -> mActivity.startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS))).show();
             } else {
                 showProgress();
                 getCurrentLocation();
@@ -294,74 +266,69 @@ public class DistanceCalculationActivity extends BaseActivity {
         if (ActivityCompat.checkSelfPermission(mActivity, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(mActivity, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             checkAndRequestPermissions();
         }
-        LocationServices.getFusedLocationProviderClient(mActivity).
-                requestLocationUpdates(locationRequest, new LocationCallback() {
-                    @Override
-                    public void onLocationResult(LocationResult locationResult) {
-                        super.onLocationResult(locationResult);
-                        LocationServices.getFusedLocationProviderClient(mActivity).
-                                removeLocationUpdates(this);
-                        try {
-                            if (locationResult != null && locationResult.getLocations().size() > 0) {
-                                int lastLocationIndex = locationResult.getLocations().size() - 1;
-                                double endlatitude = locationResult.getLocations().get(lastLocationIndex).getLatitude();
-                                double endlongitude = locationResult.getLocations().get(lastLocationIndex).getLongitude();
-                                endlocationlat = String.valueOf(endlatitude);
-                                endlocationlog = String.valueOf(endlongitude);
+        LocationServices.getFusedLocationProviderClient(mActivity).requestLocationUpdates(locationRequest, new LocationCallback() {
+            @Override
+            public void onLocationResult(LocationResult locationResult) {
+                super.onLocationResult(locationResult);
+                LocationServices.getFusedLocationProviderClient(mActivity).removeLocationUpdates(this);
+                try {
+                    if (locationResult != null && locationResult.getLocations().size() > 0) {
+                        int lastLocationIndex = locationResult.getLocations().size() - 1;
+                        double endlatitude = locationResult.getLocations().get(lastLocationIndex).getLatitude();
+                        double endlongitude = locationResult.getLocations().get(lastLocationIndex).getLongitude();
+                        endlocationlat = String.valueOf(endlatitude);
+                        endlocationlog = String.valueOf(endlongitude);
 
-                                if (endlocationlat.equals("") || endlocationlog.equals("")) {
-                                    hideProgress();
-                                    Toast.makeText(mActivity, "Not Getting Location", Toast.LENGTH_SHORT).show();
-                                } else {
-                                    hideProgress();
-                                    runthread1();
-                                }
-
-                                try {
-                                    Geocoder geocoder;
-                                    List<Address> addresses;
-                                    geocoder = new Geocoder(mActivity, Locale.getDefault());
-                                    addresses = geocoder.getFromLocation(endlatitude, endlongitude, 1);
-                                    String address = addresses.get(0).getAddressLine(0); // If any additional address line present than only, check with max available address lines by getMaxAddressLineIndex()
-                                    String currentCity = addresses.get(0).getLocality();
-//                                binding.location.setText(address);
-                                    if (currentCity == null) {
-                                        String[] location_name = address.split(",");
-                                        String loc_name1 = location_name[1];
-                                        String loc_name2 = location_name[2];
-                                        currentCity = loc_name2;
-
-                                    }
-                                } catch (IOException e) {
-                                    e.printStackTrace();
-                                }
-                            }
-                        } catch (Exception e) {
-                            return;
+                        if (endlocationlat.equals("") || endlocationlog.equals("")) {
+                            hideProgress();
+                            Toast.makeText(mActivity, "Not Getting Location", Toast.LENGTH_SHORT).show();
+                        } else {
+                            hideProgress();
+                            runthread1();
                         }
 
+                        try {
+                            Geocoder geocoder;
+                            List<Address> addresses;
+                            geocoder = new Geocoder(mActivity, Locale.getDefault());
+                            addresses = geocoder.getFromLocation(endlatitude, endlongitude, 1);
+                            String address = addresses.get(0).getAddressLine(0); // If any additional address line present than only, check with max available address lines by getMaxAddressLineIndex()
+                            String currentCity = addresses.get(0).getLocality();
+//                                binding.location.setText(address);
+                            if (currentCity == null) {
+                                String[] location_name = address.split(",");
+                                String loc_name1 = location_name[1];
+                                String loc_name2 = location_name[2];
+                                currentCity = loc_name2;
+
+                            }
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
                     }
-                }, Looper.getMainLooper());
+                } catch (Exception e) {
+                    return;
+                }
+
+            }
+        }, Looper.getMainLooper());
     }
 
     public void requestforMediaPermission() {
-        Dexter.withActivity(this)
-                .withPermissions(perms)
-                .withListener(new MultiplePermissionsListener() {
-                    @Override
-                    public void onPermissionsChecked(MultiplePermissionsReport report) {
-                        if (report.areAllPermissionsGranted()) {
-                            ChooseTypeBottomsheet();
-                        } else if (report.isAnyPermissionPermanentlyDenied()) {
+        Dexter.withActivity(this).withPermissions(perms).withListener(new MultiplePermissionsListener() {
+            @Override
+            public void onPermissionsChecked(MultiplePermissionsReport report) {
+                if (report.areAllPermissionsGranted()) {
+                    ChooseTypeBottomsheet();
+                } else if (report.isAnyPermissionPermanentlyDenied()) {
 
-                        }
-                    }
+                }
+            }
 
-                    @Override
-                    public void onPermissionRationaleShouldBeShown(List<PermissionRequest> permissions, PermissionToken token) {
-                    }
-                }).onSameThread()
-                .check();
+            @Override
+            public void onPermissionRationaleShouldBeShown(List<PermissionRequest> permissions, PermissionToken token) {
+            }
+        }).onSameThread().check();
     }
 
 
@@ -373,23 +340,21 @@ public class DistanceCalculationActivity extends BaseActivity {
 
     }
 
-    ActivityResultLauncher<Intent> proofPhotoUpload = registerForActivityResult(
-            new ActivityResultContracts.StartActivityForResult(),
-            new ActivityResultCallback<ActivityResult>() {
-                @SuppressLint("NotifyDataSetChanged")
-                @Override
-                public void onActivityResult(ActivityResult result) {
-                    // Do your code from onActivityResult
-                    if (result.getResultCode() == RESULT_OK) {
-                        Intent data = result.getData();
-                        Bundle extras = data.getExtras();
-                        Bitmap photo = extras.getParcelable("data");
-                        assert data != null;
-                        Uri selectedFileUri = getImageUri(DistanceCalculationActivity.this.getApplicationContext(), photo);
-                        UploadMedia(selectedFileUri);
-                    }
-                }
-            });
+    ActivityResultLauncher<Intent> proofPhotoUpload = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
+        @SuppressLint("NotifyDataSetChanged")
+        @Override
+        public void onActivityResult(ActivityResult result) {
+            // Do your code from onActivityResult
+            if (result.getResultCode() == RESULT_OK) {
+                Intent data = result.getData();
+                Bundle extras = data.getExtras();
+                Bitmap photo = extras.getParcelable("data");
+                assert data != null;
+                Uri selectedFileUri = getImageUri(DistanceCalculationActivity.this.getApplicationContext(), photo);
+                UploadMedia(selectedFileUri);
+            }
+        }
+    });
 
     private void UploadMedia(Uri businesspicUri) {
         Bitmap originalBitmap = null;
@@ -443,8 +408,8 @@ public class DistanceCalculationActivity extends BaseActivity {
                                 if (response.body().getRows().get(0).getElements().get(0).getDistance().getValue() != null) {
                                     double distance = Double.parseDouble(String.valueOf(distanceResponse.getRows().get(0).getElements().get(0).getDistance().getValue()));
                                     String distancee = String.valueOf(distanceResponse.getRows().get(0).getElements().get(0).getDistance().getText());
-                                    String Distance = String.valueOf(distance);
-
+                                    String Distance = String.valueOf(distance / 1000);
+                                    Log.i("floatdistance", Distance);
                                     Log.i("logDistance", "<==" + distance);
                                     Log.i("logDistance", "<==" + distance / 1000 + " KM");
 
@@ -464,7 +429,7 @@ public class DistanceCalculationActivity extends BaseActivity {
                                         if (profileimagevalue.equals("")) {
                                             Toast.makeText(mActivity, "Please Upload Image", Toast.LENGTH_SHORT).show();
                                         } else {
-                                            String data = Utility.encodecusid(sessionId + "$" + halfimagename + "~" + endremark + "~" + endlocationlat + "~" + endlocationlat + "~" + Distance);
+                                            String data = Utility.encodecusid(sessionId + "$" + halfimagename + "~" + endremark + "~" + endlocationlat + "~" + endlocationlog + "~" + Distance);
                                             String enrypted = data.replaceAll("\\s", "");
                                             Log.i("enddistance", enrypted);
                                             showProgress();
@@ -494,8 +459,6 @@ public class DistanceCalculationActivity extends BaseActivity {
                         Toast.makeText(mActivity, "Unable to fetch distance", Toast.LENGTH_SHORT).show();
                     }
                 });
-
-
                 //  distance(Double.parseDouble(startlatitudedata), Double.parseDouble(startlogitudedata), Double.parseDouble(endlocationlat), Double.parseDouble(endlocationlog));
             }
         };
@@ -518,24 +481,21 @@ public class DistanceCalculationActivity extends BaseActivity {
     }
 
     public void requestforGpsPermission() {
-        Dexter.withActivity(mActivity)
-                .withPermissions(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION)
-                .withListener(new MultiplePermissionsListener() {
-                    @Override
-                    public void onPermissionsChecked(MultiplePermissionsReport report) {
-                        if (report.areAllPermissionsGranted()) {
-                            fetchLastLocation();
-                        } else if (report.isAnyPermissionPermanentlyDenied()) {
+        Dexter.withActivity(mActivity).withPermissions(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION).withListener(new MultiplePermissionsListener() {
+            @Override
+            public void onPermissionsChecked(MultiplePermissionsReport report) {
+                if (report.areAllPermissionsGranted()) {
+                    fetchLastLocation();
+                } else if (report.isAnyPermissionPermanentlyDenied()) {
 
-                        }
-                    }
+                }
+            }
 
-                    @Override
-                    public void onPermissionRationaleShouldBeShown(List<PermissionRequest> permissions, PermissionToken token) {
-                        token.continuePermissionRequest();
-                    }
-                }).onSameThread()
-                .check();
+            @Override
+            public void onPermissionRationaleShouldBeShown(List<PermissionRequest> permissions, PermissionToken token) {
+                token.continuePermissionRequest();
+            }
+        }).onSameThread().check();
     }
 
     private boolean checkAndRequestPermissions() {
@@ -548,9 +508,7 @@ public class DistanceCalculationActivity extends BaseActivity {
     }
 
     private void requestPerms() {
-        EasyPermissions.requestPermissions(new pub.devrel.easypermissions.PermissionRequest.Builder(this, REQUEST_CAPTURE_IMAGE, perms)
-                .setRationale("Camera and Location access required for this app")
-                .build());
+        EasyPermissions.requestPermissions(new pub.devrel.easypermissions.PermissionRequest.Builder(this, REQUEST_CAPTURE_IMAGE, perms).setRationale("Camera and Location access required for this app").build());
     }
 
 //    private double distance(double lat1, double lon1, double lat2, double lon2) {
@@ -659,17 +617,5 @@ public class DistanceCalculationActivity extends BaseActivity {
         dialog.show();
     }
 
-    private void mapdistance() {
-        binding.click.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
 
-                Intent intent = new Intent(mActivity, MapViewActivity.class);
-                intent.putExtra("three", endlocationlat);
-                intent.putExtra("four", endlocationlog);
-                startActivity(intent);
-
-            }
-        });
-    }
 }

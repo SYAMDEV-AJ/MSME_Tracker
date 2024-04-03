@@ -58,6 +58,22 @@ public class BranchDetailsReponse extends BaseResponse {
         @Expose
         public String mobile_no;
 
+        @SerializedName("start_lattitude")
+        @Expose
+        public String start_lattitude;
+
+        @SerializedName("start_longitude")
+        @Expose
+        public String start_longitude;
+
+        @SerializedName("end_lattitude")
+        @Expose
+        public String end_lattitude;
+
+        @SerializedName("end_longitude")
+        @Expose
+        public String end_longitude;
+
         public String getPost_name() {
             return post_name;
         }
@@ -144,6 +160,39 @@ public class BranchDetailsReponse extends BaseResponse {
 
         public void setMobile_no(String mobile_no) {
             this.mobile_no = mobile_no;
+        }
+
+
+        public String getStart_longitude() {
+            return start_longitude;
+        }
+
+        public void setStart_longitude(String start_longitude) {
+            this.start_longitude = start_longitude;
+        }
+
+        public String getStart_lattitude() {
+            return start_lattitude;
+        }
+
+        public void setStart_lattitude(String start_lattitude) {
+            this.start_lattitude = start_lattitude;
+        }
+
+        public String getEnd_lattitude() {
+            return end_lattitude;
+        }
+
+        public void setEnd_lattitude(String end_lattitude) {
+            this.end_lattitude = end_lattitude;
+        }
+
+        public String getEnd_longitude() {
+            return end_longitude;
+        }
+
+        public void setEnd_longitude(String end_longitude) {
+            this.end_longitude = end_longitude;
         }
     }
 

@@ -5,6 +5,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -20,22 +21,16 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import com.manappuram.msmetracker.R;
 import com.manappuram.msmetracker.base.BaseActivity;
 import com.manappuram.msmetracker.databinding.ActivityReportBranchDetailsBinding;
-import com.manappuram.msmetracker.databinding.ActivityReportDeptDetailsBinding;
+import com.manappuram.msmetracker.map.map.MapViewActivity;
 import com.manappuram.msmetracker.reports.adapterclass.BranchDetailsAdapter;
-import com.manappuram.msmetracker.reports.adapterclass.DepartmentAdapter;
-import com.manappuram.msmetracker.reports.adapterclass.StateAdapter;
 import com.manappuram.msmetracker.reports.adapterclass.StatusAdapter;
 import com.manappuram.msmetracker.reports.modelclass.BranchDetailsReponse;
 import com.manappuram.msmetracker.reports.modelclass.StatusmodelClass;
 import com.manappuram.msmetracker.utility.Utility;
 import com.manappuram.msmetracker.viewmodel.LoginViewmodel;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
 public class ReportBranchDtsActivity extends BaseActivity {
     ActivityReportBranchDetailsBinding binding;
@@ -104,6 +99,8 @@ public class ReportBranchDtsActivity extends BaseActivity {
     private void firstselectionall() {
         String data = Utility.encodecusid(sessionId + "$" + "1" + "~" + selecteddate + "~" + selecteddepartment);
         String encrypted = data.replaceAll("\\s", "");
+        Log.i("finalreportall", encrypted);
+
         showProgress();
         viewmodel.getmovementwiseall(encrypted);
         StatusSpinnerList.clear();
@@ -141,12 +138,16 @@ public class ReportBranchDtsActivity extends BaseActivity {
                     if (selectedbranchid.equals("0")) {
                         String data = Utility.encodecusid(sessionId + "$" + "1" + "~" + selecteddate + "~" + selecteddepartment);
                         String encrypted = data.replaceAll("\\s", "");
+                        Log.i("finalreportall", encrypted);
                         showProgress();
                         viewmodel.getmovementwiseall(encrypted);
                     } else {
                         String data = Utility.encodecusid(sessionId + "$" + "1" + "~" + selecteddate + "~" + selecteddepartment + "~" + selectedbranchid);
                         String encrypted = data.replaceAll("\\s", "");
+                        Log.i("finalreportall", encrypted);
+
                         showProgress();
+
                         viewmodel.getmovementwise(encrypted);
                     }
 
@@ -159,11 +160,15 @@ public class ReportBranchDtsActivity extends BaseActivity {
                     if (selectedbranchid.equals("0")) {
                         String data = Utility.encodecusid(sessionId + "$" + "2" + "~" + selecteddate + "~" + selecteddepartment);
                         String encrypted = data.replaceAll("\\s", "");
+                        Log.i("finalreportall", encrypted);
+
                         showProgress();
                         viewmodel.getmovementwiseall(encrypted);
                     } else {
                         String data = Utility.encodecusid(sessionId + "$" + "2" + "~" + selecteddate + "~" + selecteddepartment + "~" + selectedbranchid);
                         String encrypted = data.replaceAll("\\s", "");
+                        Log.i("finalreportall", encrypted);
+
                         showProgress();
                         viewmodel.getmovementwise(encrypted);
                     }
@@ -196,6 +201,17 @@ public class ReportBranchDtsActivity extends BaseActivity {
                 Uri number = Uri.parse("tel:" + phonenumber);
                 Intent callIntent = new Intent(Intent.ACTION_DIAL, number);
                 startActivity(callIntent);
+            }
+
+            @Override
+            public void mapclick(String one, String two, String three, String four) {
+                Intent intent = new Intent(mActivity, MapViewActivity.class);
+                intent.putExtra("one", one);
+                intent.putExtra("two", two);
+                intent.putExtra("three", three);
+                intent.putExtra("four", four);
+                startActivity(intent);
+
             }
         });
         binding.branchdetialsrecycler.setAdapter(adapter);
@@ -234,4 +250,6 @@ public class ReportBranchDtsActivity extends BaseActivity {
         adapter.branchlist = newList;
         adapter.notifyDataSetChanged();
     }
+
+
 }

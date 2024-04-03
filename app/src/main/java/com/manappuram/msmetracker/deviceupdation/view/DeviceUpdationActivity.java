@@ -2,6 +2,7 @@ package com.manappuram.msmetracker.deviceupdation.view;
 
 import android.app.AlertDialog;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
@@ -136,6 +137,7 @@ public class DeviceUpdationActivity extends BaseActivity {
                     String deviceid = binding.regDeviceid.getText().toString();
                     String data = Utility.encodecusid(sessionId + "$" + binding.regEmpcode.getText().toString() + "~" + deviceid + "~" + binding.regEnteredEmpcode.getText().toString());
                     String encoded = data.replaceAll("\\s", "");
+                    Log.i("deviceinsertion", encoded);
                     showProgress();
                     viewmodel.Msme_Deviceid_Insertion(encoded);
                 }
@@ -175,6 +177,7 @@ public class DeviceUpdationActivity extends BaseActivity {
                     String deviceid = binding.updationDeviceid.getText().toString();
                     String data = Utility.encodecusid(sessionId + "$" + deviceid + "~" + empCode + "~" + binding.updationEmpcode.getText().toString());
                     String encoded = data.replaceAll("\\s", "");
+                    Log.i("deviceupdation", encoded);
                     showProgress();
                     viewmodel.Msme_Deviceid_Updation(encoded);
                 }

@@ -785,7 +785,6 @@ public class DashboardActivity extends BaseActivity {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 dialog.dismiss();
-
             }
 
         });

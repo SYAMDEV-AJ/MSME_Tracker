@@ -47,8 +47,7 @@ public class RetrofitClient {
 
 
     public static APIInterface getAPIInterface() {
-        if (sInstance == null)
-            create();
+        if (sInstance == null) create();
         return sInstance.retrofit.create(APIInterface.class);
     }
 
@@ -69,9 +68,7 @@ public class RetrofitClient {
         httpClient.writeTimeout(300, TimeUnit.SECONDS);
         httpClient.readTimeout(300, TimeUnit.SECONDS);
 
-        retrofit = new Retrofit.Builder()
-                .baseUrl(BASE_URL)
-                .client(httpClient.build())
+        retrofit = new Retrofit.Builder().baseUrl(BASE_URL).client(httpClient.build())
                 //.client(okHttpClient)
                 .addConverterFactory(GsonConverterFactory.create())
                 // .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
@@ -86,8 +83,7 @@ public class RetrofitClient {
      */
     public static Retrofit retrofit() {
         synchronized (RetrofitClient.class) {
-            if (sInstance == null)
-                create();
+            if (sInstance == null) create();
         }
         return sInstance.retrofit;
     }
@@ -96,22 +92,20 @@ public class RetrofitClient {
         public static OkHttpClient getUnsafeOkHttpClient() {
             try {
                 // Create a trust manager that does not validate certificate chains
-                final TrustManager[] trustAllCerts = new TrustManager[]{
-                        new X509TrustManager() {
-                            @Override
-                            public void checkClientTrusted(java.security.cert.X509Certificate[] chain, String authType) throws CertificateException {
-                            }
+                final TrustManager[] trustAllCerts = new TrustManager[]{new X509TrustManager() {
+                    @Override
+                    public void checkClientTrusted(java.security.cert.X509Certificate[] chain, String authType) throws CertificateException {
+                    }
 
-                            @Override
-                            public void checkServerTrusted(java.security.cert.X509Certificate[] chain, String authType) throws CertificateException {
-                            }
+                    @Override
+                    public void checkServerTrusted(java.security.cert.X509Certificate[] chain, String authType) throws CertificateException {
+                    }
 
-                            @Override
-                            public java.security.cert.X509Certificate[] getAcceptedIssuers() {
-                                return new java.security.cert.X509Certificate[]{};
-                            }
-                        }
-                };
+                    @Override
+                    public java.security.cert.X509Certificate[] getAcceptedIssuers() {
+                        return new java.security.cert.X509Certificate[]{};
+                    }
+                }};
 
                 // Install the all-trusting trust manager
                 final SSLContext sslContext = SSLContext.getInstance("SSL");

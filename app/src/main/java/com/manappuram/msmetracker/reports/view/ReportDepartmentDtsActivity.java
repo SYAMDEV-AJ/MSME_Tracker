@@ -103,7 +103,6 @@ public class ReportDepartmentDtsActivity extends BaseActivity {
             showProgress();
             viewmodel.getdepartmentwise(encrypted);
         }
-
     }
 
     private void observer() {

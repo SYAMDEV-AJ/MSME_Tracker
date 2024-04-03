@@ -14,12 +14,15 @@ import com.manappuram.msmetracker.databinding.WebviewmapBinding;
 
 public class MapViewActivity extends BaseActivity {
     WebviewmapBinding binding;
-    String three = "", four = "";
+    String one = "", two = "", three = "", four = "";
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = DataBindingUtil.setContentView(this, R.layout.webviewmap);
+
+        one = getIntent().getStringExtra("one");
+        two = getIntent().getStringExtra("two");
         three = getIntent().getStringExtra("three");
         four = getIntent().getStringExtra("four");
 
@@ -32,7 +35,7 @@ public class MapViewActivity extends BaseActivity {
         binding.webViewDocument.getSettings().setBuiltInZoomControls(true);
         //  Utility.setProgressbar(this);
         binding.webViewDocument.setWebViewClient(new WebViewClient());
-        binding.webViewDocument.loadUrl("https://www.google.com/maps/dir/" + startlatitudedata + "," + startlogitudedata + "/" + three + "," + four);
+        binding.webViewDocument.loadUrl("https://www.google.com/maps/dir/" + one + "," + two + "/" + three + "," + four);
 
     }
 

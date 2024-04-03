@@ -21,12 +21,13 @@ import java.util.List;
 public class BranchDetailsAdapter extends RecyclerView.Adapter<BranchDetailsAdapter.ViewHolder> {
     Context context;
     public List<BranchDetailsReponse.get_activity_list_data> branchlist;
-    Spinnerclick spinnerclick;
+    public Spinnerclick spinnerclick;
+
 
     public interface Spinnerclick {
-
         void spinnerclick(String id);
 
+        void mapclick(String one, String two, String three, String four);
     }
 
 
@@ -34,6 +35,7 @@ public class BranchDetailsAdapter extends RecyclerView.Adapter<BranchDetailsAdap
         this.context = context;
         this.branchlist = branchlist;
         this.spinnerclick = spinnerclick;
+
 
     }
 
@@ -61,6 +63,12 @@ public class BranchDetailsAdapter extends RecyclerView.Adapter<BranchDetailsAdap
             @Override
             public void onClick(View v) {
                 spinnerclick.spinnerclick(branchlist.get(position).getMobile_no());
+            }
+        });
+        holder.binding.routeMaplick.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                spinnerclick.mapclick(branchlist.get(position).getStart_lattitude(), branchlist.get(position).getStart_longitude(), branchlist.get(position).getEnd_lattitude(), branchlist.get(position).getEnd_longitude());
             }
         });
 
