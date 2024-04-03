@@ -65,7 +65,7 @@ public class BranchDetailsAdapter extends RecyclerView.Adapter<BranchDetailsAdap
                 spinnerclick.spinnerclick(branchlist.get(position).getMobile_no());
             }
         });
-        holder.binding.routeMaplick.setOnClickListener(new View.OnClickListener() {
+        holder.binding.routemapclick.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 spinnerclick.mapclick(branchlist.get(position).getStart_lattitude(), branchlist.get(position).getStart_longitude(), branchlist.get(position).getEnd_lattitude(), branchlist.get(position).getEnd_longitude());
