@@ -471,12 +471,6 @@ public class DashboardActivity extends BaseActivity {
                             editor.apply();
 
 
-                            Log.i("locationnn", "<==" + currentLatitude);
-                            Log.i("locationnn", "<==" + currentLongitude);
-                            Log.i("locationnn", "<==" + currentlatitiudestring);
-                            Log.i("locationnn", "<==" + currentlongitudestring);
-
-
                             try {
                                 Geocoder geocoder;
                                 List<Address> addresses;

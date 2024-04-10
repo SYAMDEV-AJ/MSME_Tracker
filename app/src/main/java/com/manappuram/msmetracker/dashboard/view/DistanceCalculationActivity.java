@@ -201,7 +201,6 @@ public class DistanceCalculationActivity extends BaseActivity {
                     endimageid = startServiceResponse.getResult();
                     endimagename = startServiceResponse.getName();
                     binding.endimagename.setText(endimagename);
-                    binding.click.setVisibility(View.VISIBLE);
                     Toast.makeText(mActivity, "Successfully Uploaded", Toast.LENGTH_SHORT).show();
                 } else {
                     Toast.makeText(mActivity, startServiceResponse.getResult(), Toast.LENGTH_SHORT).show();
@@ -220,9 +219,8 @@ public class DistanceCalculationActivity extends BaseActivity {
                     final View customLayout = getLayoutInflater().inflate(R.layout.custom_kyc_layout_new, null);
                     builder.setView(customLayout);
                     ZoomageView image = customLayout.findViewById(R.id.imageView);
-                    Picasso.get().invalidate("https://uatonpay.manappuram.com/TrackerAPI/images/" + imagenameofpic);
-                    Picasso.get().load(("https://uatonpay.manappuram.com/TrackerAPI/images/") + imagenameofpic).into(image);
-
+                    Picasso.get().invalidate("https://online.manappuram.com/TrackerAPI/images/" + imagenameofpic);
+                    Picasso.get().load(("https://online.manappuram.com/TrackerAPI/images/") + imagenameofpic).into(image);
                     builder.setPositiveButton("CANCEL", (dialog, which) -> {
                         dialog.dismiss();
                     });
@@ -409,10 +407,6 @@ public class DistanceCalculationActivity extends BaseActivity {
                                     double distance = Double.parseDouble(String.valueOf(distanceResponse.getRows().get(0).getElements().get(0).getDistance().getValue()));
                                     String distancee = String.valueOf(distanceResponse.getRows().get(0).getElements().get(0).getDistance().getText());
                                     String Distance = String.valueOf(distance / 1000);
-                                    Log.i("floatdistance", Distance);
-                                    Log.i("logDistance", "<==" + distance);
-                                    Log.i("logDistance", "<==" + distance / 1000 + " KM");
-
                                     binding.totaldistance.setText(distancee);
 
                                     if (halfimagename.equals("none")) {
@@ -437,20 +431,17 @@ public class DistanceCalculationActivity extends BaseActivity {
                                         }
 
                                     }
-
                                 }
-
 
                             } catch (Exception e) {
                                 Log.i("logDistance", "<==" + e.getMessage());
                                 //showErrorMsg("To Confirm, Please click on the confirm button once again");
                                 e.printStackTrace();
                             }
-
+                        } else {
+                            Toast.makeText(mActivity, "Unable to Calculate distance", Toast.LENGTH_SHORT).show();
 
                         }
-
-
                     }
 
                     @Override
@@ -459,7 +450,6 @@ public class DistanceCalculationActivity extends BaseActivity {
                         Toast.makeText(mActivity, "Unable to fetch distance", Toast.LENGTH_SHORT).show();
                     }
                 });
-                //  distance(Double.parseDouble(startlatitudedata), Double.parseDouble(startlogitudedata), Double.parseDouble(endlocationlat), Double.parseDouble(endlocationlog));
             }
         };
         handler.postDelayed(runnable, 100);
@@ -510,57 +500,6 @@ public class DistanceCalculationActivity extends BaseActivity {
     private void requestPerms() {
         EasyPermissions.requestPermissions(new pub.devrel.easypermissions.PermissionRequest.Builder(this, REQUEST_CAPTURE_IMAGE, perms).setRationale("Camera and Location access required for this app").build());
     }
-
-//    private double distance(double lat1, double lon1, double lat2, double lon2) {
-//        double theta = lon1 - lon2;
-//        double dist = Math.sin(deg2rad(lat1))
-//                * Math.sin(deg2rad(lat2))
-//                + Math.cos(deg2rad(lat1))
-//                * Math.cos(deg2rad(lat2))
-//                * Math.cos(deg2rad(theta));
-//        dist = Math.acos(dist);
-//        dist = rad2deg(dist);
-//        dist = Math.round(dist * 60 * 1.60934);
-//        int dist1 = (int) dist;
-//        //dist = dist * 60 * 1.60934;
-//
-//        finalDist = String.valueOf(dist1);
-//
-//
-//        binding.totaldistance.setText(finalDist + " KM");
-//
-//        if (halfimagename.equals("none")) {
-//            if (profileimagevalue.equals("")) {
-//                Toast.makeText(mActivity, "Please Upload Image", Toast.LENGTH_SHORT).show();
-//            } else {
-//                String data = Utility.encodecusid(sessionId + "$" + startimageid + "~" + endremark + "~" + lat2 + "~" + lon2 + "~" + finalDist);
-//                String enrypted = data.replaceAll("\\s", "");
-//                Log.i("enddistance", enrypted);
-//                showProgress();
-//                viewmodel.MSME_end_activity(enrypted, profileimagevalue);
-//            }
-//        } else {
-//            if (profileimagevalue.equals("")) {
-//                Toast.makeText(mActivity, "Please Upload Image", Toast.LENGTH_SHORT).show();
-//            } else {
-//                String data = Utility.encodecusid(sessionId + "$" + halfimagename + "~" + endremark + "~" + lat2 + "~" + lon2 + "~" + finalDist);
-//                String enrypted = data.replaceAll("\\s", "");
-//                Log.i("enddistance", enrypted);
-//                showProgress();
-//                viewmodel.MSME_end_activity(enrypted, profileimagevalue);
-//            }
-//
-//        }
-//        return (dist);
-//    }
-//
-//    private double deg2rad(double deg) {
-//        return (deg * Math.PI / 180.0);
-//    }
-//
-//    private double rad2deg(double rad) {
-//        return (rad * 180.0 / Math.PI);
-//    }
 
     private void camerpermissionforupsidedowncake() {
         // Check if the camera permission is granted
