@@ -68,7 +68,6 @@ import com.manappuram.msmetracker.dashboard.modelclass.StartServiceResponse;
 import com.manappuram.msmetracker.databinding.ActivityDashboardBinding;
 import com.manappuram.msmetracker.login.model.ActivityCheckResponse;
 import com.manappuram.msmetracker.login.view.LoginActivity;
-import com.manappuram.msmetracker.receiver.Restarter;
 import com.manappuram.msmetracker.receiver.YourService;
 import com.manappuram.msmetracker.utility.Utility;
 import com.manappuram.msmetracker.viewmodel.LoginViewmodel;
@@ -102,19 +101,9 @@ public class DashboardActivity extends BaseActivity {
     ArrayList<String> spinnerlistone = new ArrayList<>();
     List<ActivitylistResponse.get_activity_list_data> spinnerdata;
     AlertDialog dialog;
-    String[] perms = {
-            Manifest.permission.CAMERA,
-            Manifest.permission.WRITE_EXTERNAL_STORAGE,
-            Manifest.permission.ACCESS_FINE_LOCATION,
-            Manifest.permission.ACCESS_COARSE_LOCATION,
-            Manifest.permission.READ_EXTERNAL_STORAGE
-    };
+    String[] perms = {Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.READ_EXTERNAL_STORAGE};
     private static final int CAMERA_PERMISSION_REQUEST_CODE = 100;
     private static final int REQUEST_CAPTURE_IMAGE = 1;
-
-
-    Intent mServiceIntent;
-    private YourService mYourService;
 
 
     @Override
@@ -130,10 +119,7 @@ public class DashboardActivity extends BaseActivity {
             fetchLastLocation();
             getCurrentLocation();
         }
-//        mServiceIntent = new Intent(this, mYourService.getClass());
-//        if (!isMyServiceRunning(mYourService.getClass())) {
-//            startService(mServiceIntent);
-//        }
+
 
         pullToRefresh();
         checkAndRequestPermissions();
@@ -195,17 +181,6 @@ public class DashboardActivity extends BaseActivity {
         }
     }
 
-    private boolean isMyServiceRunning(Class<?> serviceClass) {
-        ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
-        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
-            if (serviceClass.getName().equals(service.service.getClassName())) {
-                Log.i("Service status", "Running");
-                return true;
-            }
-        }
-        Log.i("Service status", "Not running");
-        return false;
-    }
 
     private void imageviewclick() {
         binding.viewimagebtn.setOnClickListener(new View.OnClickListener() {
@@ -410,9 +385,7 @@ public class DashboardActivity extends BaseActivity {
     private void fetchLastLocation() {
         LocationManager locationManager;
         locationManager = (LocationManager) mActivity.getSystemService(Context.LOCATION_SERVICE);
-        if (ActivityCompat.checkSelfPermission(mActivity, Manifest.permission.ACCESS_FINE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(mActivity, Manifest.permission.ACCESS_COARSE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED) {
+        if (ActivityCompat.checkSelfPermission(mActivity, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(mActivity, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
 
             requestforGpsPermission();
 
@@ -423,11 +396,7 @@ public class DashboardActivity extends BaseActivity {
 
             gps_enabled = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
             if (!gps_enabled) {
-                new android.app.AlertDialog.Builder(mActivity)
-                        .setMessage("To continue, let your device turn on location using Google\\'s location Service")
-                        .setNegativeButton("Cancel", null)
-                        .setPositiveButton("Turn on", (paramDialogInterface, paramInt) ->
-                                mActivity.startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS))).show();
+                new android.app.AlertDialog.Builder(mActivity).setMessage("To continue, let your device turn on location using Google\\'s location Service").setNegativeButton("Cancel", null).setPositiveButton("Turn on", (paramDialogInterface, paramInt) -> mActivity.startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS))).show();
             } else {
 
                 getCurrentLocation();
@@ -448,85 +417,80 @@ public class DashboardActivity extends BaseActivity {
         if (ActivityCompat.checkSelfPermission(mActivity, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(mActivity, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             checkAndRequestPermissions();
         }
-        LocationServices.getFusedLocationProviderClient(mActivity).
-                requestLocationUpdates(locationRequest, new LocationCallback() {
-                    @Override
-                    public void onLocationResult(LocationResult locationResult) {
-                        super.onLocationResult(locationResult);
-                        LocationServices.getFusedLocationProviderClient(mActivity).
-                                removeLocationUpdates(this);
+        LocationServices.getFusedLocationProviderClient(mActivity).requestLocationUpdates(locationRequest, new LocationCallback() {
+            @Override
+            public void onLocationResult(LocationResult locationResult) {
+                super.onLocationResult(locationResult);
+                LocationServices.getFusedLocationProviderClient(mActivity).removeLocationUpdates(this);
 
-                        if (locationResult != null && locationResult.getLocations().size() > 0) {
+                if (locationResult != null && locationResult.getLocations().size() > 0) {
 
 
-                            int lastLocationIndex = locationResult.getLocations().size() - 1;
-                            currentLatitude = locationResult.getLocations().get(lastLocationIndex).getLatitude();
-                            currentLongitude = locationResult.getLocations().get(lastLocationIndex).getLongitude();
+                    int lastLocationIndex = locationResult.getLocations().size() - 1;
+                    currentLatitude = locationResult.getLocations().get(lastLocationIndex).getLatitude();
+                    currentLongitude = locationResult.getLocations().get(lastLocationIndex).getLongitude();
 
-                            currentlatitiudestring = String.valueOf(currentLatitude);
-                            currentlongitudestring = String.valueOf(currentLongitude);
+                    currentlatitiudestring = String.valueOf(currentLatitude);
+                    currentlongitudestring = String.valueOf(currentLongitude);
 
-                            editor.putString("startlatitude", currentlatitiudestring);
-                            editor.putString("startlogitude", currentlongitudestring);
-                            editor.apply();
+                    editor.putString("startlatitude", currentlatitiudestring);
+                    editor.putString("startlogitude", currentlongitudestring);
+                    editor.apply();
 
 
-                            try {
-                                Geocoder geocoder;
-                                List<Address> addresses;
-                                geocoder = new Geocoder(mActivity, Locale.getDefault());
-                                addresses = geocoder.getFromLocation(currentLatitude, currentLongitude, 1);
-                                String address = addresses.get(0).getAddressLine(0); // If any additional address line present than only, check with max available address lines by getMaxAddressLineIndex()
-                                String currentCity = addresses.get(0).getLocality();
+                    try {
+                        Geocoder geocoder;
+                        List<Address> addresses;
+                        geocoder = new Geocoder(mActivity, Locale.getDefault());
+                        addresses = geocoder.getFromLocation(currentLatitude, currentLongitude, 1);
+                        String address = addresses.get(0).getAddressLine(0); // If any additional address line present than only, check with max available address lines by getMaxAddressLineIndex()
+                        String currentCity = addresses.get(0).getLocality();
 //                                binding.location.setText(address);
-                                if (currentCity == null) {
-                                    String[] location_name = address.split(",");
-                                    String loc_name1 = location_name[1];
-                                    String loc_name2 = location_name[2];
-                                    Log.i("locationnn_loc_name", loc_name2);
-                                    currentCity = loc_name2;
-
-
-                                }
-                                String state = addresses.get(0).getAdminArea();
-                                String country = addresses.get(0).getCountryName();
-                                String postalCode = addresses.get(0).getPostalCode();
-                                String knownName = addresses.get(0).getFeatureName();
-
-
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
+                        if (currentCity == null) {
+                            String[] location_name = address.split(",");
+                            String loc_name1 = location_name[1];
+                            String loc_name2 = location_name[2];
+                            Log.i("locationnn_loc_name", loc_name2);
+                            currentCity = loc_name2;
 
 
                         }
+                        String state = addresses.get(0).getAdminArea();
+                        String country = addresses.get(0).getCountryName();
+                        String postalCode = addresses.get(0).getPostalCode();
+                        String knownName = addresses.get(0).getFeatureName();
 
+
+                    } catch (IOException e) {
+                        e.printStackTrace();
                     }
-                }, Looper.getMainLooper());
+
+
+                }
+
+            }
+        }, Looper.getMainLooper());
     }
 
     public void requestforMediaPermission() {
-        Dexter.withActivity(this)
-                .withPermissions(perms)
-                .withListener(new MultiplePermissionsListener() {
-                    @Override
-                    public void onPermissionsChecked(MultiplePermissionsReport report) {
-                        if (report.areAllPermissionsGranted()) {
+        Dexter.withActivity(this).withPermissions(perms).withListener(new MultiplePermissionsListener() {
+            @Override
+            public void onPermissionsChecked(MultiplePermissionsReport report) {
+                if (report.areAllPermissionsGranted()) {
 
-                            ChooseTypeBottomsheet();
+                    ChooseTypeBottomsheet();
 
-                        } else if (report.isAnyPermissionPermanentlyDenied()) {
+                } else if (report.isAnyPermissionPermanentlyDenied()) {
 
-                        }
-                    }
+                }
+            }
 
-                    @Override
-                    public void onPermissionRationaleShouldBeShown(List<PermissionRequest> permissions, PermissionToken token) {
+            @Override
+            public void onPermissionRationaleShouldBeShown(List<PermissionRequest> permissions, PermissionToken token) {
 
-                    }
+            }
 
-                }).onSameThread()
-                .check();
+        }).onSameThread().check();
     }
 
 
@@ -540,26 +504,24 @@ public class DashboardActivity extends BaseActivity {
     }
 
 
-    ActivityResultLauncher<Intent> proofPhotoUpload = registerForActivityResult(
-            new ActivityResultContracts.StartActivityForResult(),
-            new ActivityResultCallback<ActivityResult>() {
-                @SuppressLint("NotifyDataSetChanged")
-                @Override
-                public void onActivityResult(ActivityResult result) {
-                    // Do your code from onActivityResult
-                    if (result.getResultCode() == RESULT_OK) {
-                        Intent data = result.getData();
-                        Bundle extras = data.getExtras();
-                        Bitmap photo = extras.getParcelable("data");
-                        assert data != null;
-                        Uri selectedFileUri = getImageUri(DashboardActivity.this.getApplicationContext(), photo);
-                        UploadMedia(selectedFileUri);
+    ActivityResultLauncher<Intent> proofPhotoUpload = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
+        @SuppressLint("NotifyDataSetChanged")
+        @Override
+        public void onActivityResult(ActivityResult result) {
+            // Do your code from onActivityResult
+            if (result.getResultCode() == RESULT_OK) {
+                Intent data = result.getData();
+                Bundle extras = data.getExtras();
+                Bitmap photo = extras.getParcelable("data");
+                assert data != null;
+                Uri selectedFileUri = getImageUri(DashboardActivity.this.getApplicationContext(), photo);
+                UploadMedia(selectedFileUri);
 
 
-                    }
+            }
 
-                }
-            });
+        }
+    });
 
     private void UploadMedia(Uri businesspicUri) {
         Bitmap originalBitmap = null;
@@ -643,25 +605,22 @@ public class DashboardActivity extends BaseActivity {
     }
 
     public void requestforGpsPermission() {
-        Dexter.withActivity(mActivity)
-                .withPermissions(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION)
-                .withListener(new MultiplePermissionsListener() {
-                    @Override
-                    public void onPermissionsChecked(MultiplePermissionsReport report) {
-                        if (report.areAllPermissionsGranted()) {
-                            fetchLastLocation();
+        Dexter.withActivity(mActivity).withPermissions(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION).withListener(new MultiplePermissionsListener() {
+            @Override
+            public void onPermissionsChecked(MultiplePermissionsReport report) {
+                if (report.areAllPermissionsGranted()) {
+                    fetchLastLocation();
 
-                        } else if (report.isAnyPermissionPermanentlyDenied()) {
+                } else if (report.isAnyPermissionPermanentlyDenied()) {
 
-                        }
-                    }
+                }
+            }
 
-                    @Override
-                    public void onPermissionRationaleShouldBeShown(List<com.karumi.dexter.listener.PermissionRequest> permissions, PermissionToken token) {
-                        token.continuePermissionRequest();
-                    }
-                }).onSameThread()
-                .check();
+            @Override
+            public void onPermissionRationaleShouldBeShown(List<com.karumi.dexter.listener.PermissionRequest> permissions, PermissionToken token) {
+                token.continuePermissionRequest();
+            }
+        }).onSameThread().check();
     }
 
     private boolean checkAndRequestPermissions() {
@@ -677,9 +636,7 @@ public class DashboardActivity extends BaseActivity {
 
     private void requestPerms() {
 
-        EasyPermissions.requestPermissions(new pub.devrel.easypermissions.PermissionRequest.Builder(this, REQUEST_CAPTURE_IMAGE, perms)
-                .setRationale("Camera and Location access required for this app")
-                .build());
+        EasyPermissions.requestPermissions(new pub.devrel.easypermissions.PermissionRequest.Builder(this, REQUEST_CAPTURE_IMAGE, perms).setRationale("Camera and Location access required for this app").build());
 
     }
 
@@ -735,16 +692,6 @@ public class DashboardActivity extends BaseActivity {
 
     }
 
-    //    @Override
-//    protected void onDestroy() {
-//        super.onDestroy();
-//
-//        Intent broadcastIntent = new Intent();
-//        broadcastIntent.setAction("restartservice");
-//        broadcastIntent.setClass(this, Restarter.class);
-//        this.sendBroadcast(broadcastIntent);
-//        super.onDestroy();
-//    }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
