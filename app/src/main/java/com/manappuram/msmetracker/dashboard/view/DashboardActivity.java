@@ -499,8 +499,6 @@ public class DashboardActivity extends BaseActivity {
         intent.addCategory(Intent.CATEGORY_OPENABLE);
         Intent camera_intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         proofPhotoUpload.launch(camera_intent);
-
-
     }
 
 

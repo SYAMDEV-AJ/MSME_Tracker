@@ -1,6 +1,7 @@
 package com.manappuram.msmetracker.receiver;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -17,6 +18,7 @@ import android.util.Log;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.core.app.ActivityCompat;
@@ -27,6 +29,17 @@ import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import com.manappuram.msmetracker.DB.DatabaseHandler;
+import com.manappuram.msmetracker.DB.LocationClass;
 import com.manappuram.msmetracker.dashboard.view.DashboardNewActivity;
 
 import java.util.Timer;
@@ -44,14 +57,18 @@ public class YourService extends Service {
     private static final long INTERVAL = 1000 * 10;
     private static final long FASTEST_INTERVAL = 1000 * 5;
 
+    String action = "";
+    String stopaction = "";
+
+    DatabaseHandler db = new DatabaseHandler(this);
+    DatabaseReference ref;
+
+
     @Override
     public void onCreate() {
         super.onCreate();
-        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.O)
-            startMyOwnForeground();
-        else
-            startForeground(1, new Notification());
-        getlocationupdate();
+
+
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -67,19 +84,48 @@ public class YourService extends Service {
         manager.createNotificationChannel(chan);
 
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID);
-        Notification notification = notificationBuilder.setOngoing(true)
-                .setContentTitle("App is running in background")
-                .setPriority(NotificationManager.IMPORTANCE_MIN)
-                .setCategory(Notification.CATEGORY_SERVICE)
-                .build();
+        Notification notification = notificationBuilder.setOngoing(true).setContentTitle("App is running in background").setPriority(NotificationManager.IMPORTANCE_MIN).setCategory(Notification.CATEGORY_SERVICE).build();
         startForeground(2, notification);
+
+
     }
 
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         super.onStartCommand(intent, flags, startId);
-        startTimer();
+        stopaction = intent.getStringExtra("stopaction");
+
+        Log.i("Actionnnns", "<==First" + stopaction);
+
+        if (stopaction != null) {
+            if (stopaction.equals("startaction")) {
+
+                if (Build.VERSION.SDK_INT > Build.VERSION_CODES.O) startMyOwnForeground();
+                else startForeground(1, new Notification());
+                getlocationupdate();
+
+            }
+
+        }
+        action = intent.getAction();
+        if (action != null) {
+            switch (action) {
+                case "stop":
+                    stopService(intent);
+                    stopForeground(true);
+                    stopSelf();
+                    break;
+
+            }
+        }
+
+
+//        if (action.equals(ACTION_STOP_FOREGROUND_SERVICE)) {
+//            stopForegroundService();
+//        } else {
+//            startTimer();
+//        }
         return START_STICKY;
     }
 
@@ -87,12 +133,21 @@ public class YourService extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        stoptimertask();
+        if (action != null) {
+            if (action.equals("stop")) {
+                Toast.makeText(this, "Not calling", Toast.LENGTH_SHORT).show();
 
-        Intent broadcastIntent = new Intent();
-        broadcastIntent.setAction("restartservice");
-        broadcastIntent.setClass(this, Restarter.class);
-        this.sendBroadcast(broadcastIntent);
+            } else {
+                stoptimertask();
+                Intent broadcastIntent = new Intent();
+                broadcastIntent.setAction("restartservice");
+                broadcastIntent.setClass(this, Restarter.class);
+                this.sendBroadcast(broadcastIntent);
+            }
+
+        }
+
+
     }
 
 
@@ -124,7 +179,6 @@ public class YourService extends Service {
 
     private void getlocationupdate() {
 
-
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
 
 //Not the best practices to get runtime permissions, but still here I ask permissions.
@@ -144,11 +198,33 @@ public class YourService extends Service {
                         return;
                     }
                     //Showing the latitude, longitude and accuracy on the home screen.
-                    for (Location location : locationResult.getLocations()) {
-                        Toast.makeText(getApplicationContext(), location.getLatitude() + "-" + location.getLongitude(), Toast.LENGTH_SHORT).show();
-                        //    locationTextView.setText(MessageFormat.format("Lat: {0} Long: {1} Accuracy: {2} Time:{3}", location.getLatitude(),
-                        //  location.getLongitude(), location.getAccuracy(), DateFormat.getTimeInstance().format(new Date())));
+                    Log.i("Actionnnns", "<==Second" + stopaction);
+                    if (!stopaction.equals("stopaction")) {
+                        for (Location location : locationResult.getLocations()) {
+                            Toast.makeText(getApplicationContext(), location.getLatitude() + "-" + location.getLongitude(), Toast.LENGTH_SHORT).show();
+                            Log.i("Actionnnns", "<==Third" + stopaction);
+                            db.addLocation(new LocationClass(String.valueOf(location.getLatitude()), String.valueOf(location.getLongitude())));
+
+
+//
+
+                            DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
+                            mDatabase.child("Location").child("352735").child("currentlat").setValue(String.valueOf(location.getLatitude()));
+                            mDatabase.child("Location").child("352735").child("currentlong").setValue(String.valueOf(location.getLongitude()));
+
+                            mDatabase.push();
+
+
+                            if (stopaction.equals("stopaction")) {
+                                break;
+                            }
+
+
+                            //    locationTextView.setText(MessageFormat.format("Lat: {0} Long: {1} Accuracy: {2} Time:{3}", location.getLatitude(),
+                            //  location.getLongitude(), location.getAccuracy(), DateFormat.getTimeInstance().format(new Date())));
+                        }
                     }
+
                 }
             }
         };

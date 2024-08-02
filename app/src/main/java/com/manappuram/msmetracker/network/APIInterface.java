@@ -106,6 +106,7 @@ public interface APIInterface {
 
     @GET("json")
     Call<MapDistanceResponse> mapCall(@Query("units") String units, @Query("origins") String origins, @Query("destinations") String destinations, @Query("key") String key);
+   // https://maps.googleapis.com/maps/api/distancematrix/json?units=matric&origins=" + lat1 + "," + lng1 + "&destinations=" + lat2 + "," + lng2 + "&key=" + apikey
 
 
 }
